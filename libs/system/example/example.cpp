@@ -1,14 +1,14 @@
 //  boost timer example.cpp  -----------------------------------------------------------//
 
-//  Copyright Beman Dawes 1994-2007, 2011
+//  Copyright Beman Dawes 2011
 
 //  Distributed under the Boost Software License, Version 1.0.
 //  See http://www.boost.org/LICENSE_1_0.txt
 
-#include <boost/timer/timer.hpp>
+#include <boost/system/timer.hpp>
 #include <iostream>
 
-using boost::timer::run_timer;
+using boost::system::run_timer;
 using std::cout;
 using std::endl;
 
