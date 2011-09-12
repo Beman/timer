@@ -1,6 +1,6 @@
 //  boost timer.cpp  ---------------------------------------------------------//
 
-//  Copyright Beman Dawes 1994-2006
+//  Copyright Beman Dawes 1994-2006, 2011
 
 //  Distributed under the Boost Software License, Version 1.0. (See accompanying
 //  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -9,11 +9,11 @@
 
 //----------------------------------------------------------------------------//
 
-// define BOOST_ENDIAN_SOURCE so that <boost/system/config.hpp> knows
+// define BOOST_TIMER_SOURCE so that <boost/system/config.hpp> knows
 // the library is being built (possibly exporting rather than importing code)
-#define BOOST_ENDIAN_SOURCE 
+#define BOOST_TIMER_SOURCE 
 
-#include <boost/endian/support/timer.hpp>
+#include <boost/timer/timer.hpp>
 #include <boost/system/system_error.hpp>
 #include <boost/io/ios_state.hpp>
 #include <boost/throw_exception.hpp>
@@ -57,10 +57,10 @@ namespace
 
 namespace boost
 {
-  namespace endian
+  namespace timer
   {
 
-    BOOST_ENDIAN_DECL
+    BOOST_TIMER_DECL
     void times(times_t& current)
     {
       error_code ec;
@@ -68,7 +68,7 @@ namespace boost
         boost::throw_exception(system::system_error(ec, "boost::endian::times"));
     }
 
-    BOOST_ENDIAN_DECL
+    BOOST_TIMER_DECL
     error_code& times(times_t& current, error_code& ec)
     {
       ec = error_code();
@@ -163,5 +163,5 @@ namespace boost
       }
     }
 
-  } // namespace endian
+  } // namespace timer
 } // namespace boost

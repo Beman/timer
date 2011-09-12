@@ -1,6 +1,6 @@
 //  boost run_timer_ctors.cpp  -----------------------------------------------//
 
-//  Copyright Beman Dawes 2007
+//  Copyright Beman Dawes 2007, 2011
 
 //  Distributed under the Boost Software License, Version 1.0.
 //  See http://www.boost.org/LICENSE_1_0.txt)
@@ -16,16 +16,16 @@
 
 //----------------------------------------------------------------------------//
 
-// define BOOST_ENDIAN_SOURCE so that <boost/endian/detail/config.hpp> knows
+// define BOOST_TIMER_SOURCE so that <boost/endian/detail/config.hpp> knows
 // the library is being built (possibly exporting rather than importing code)
-#define BOOST_ENDIAN_SOURCE 
+#define BOOST_TIMER_SOURCE 
 
-#include <boost/endian/support/timer.hpp>
+#include <boost/timer/timer.hpp>
 #include <iostream>
 
 namespace boost
 {
-  namespace endian
+  namespace timer
   {
     run_timer::run_timer(int places)
       : m_places(places), m_os(std::cout), m_format(0) {}
@@ -34,5 +34,5 @@ namespace boost
       : m_places(places), m_os(std::cout), m_format(new char[format.size()+1])
         { std::strcpy(m_format, format.c_str()); }
 
-  } // namespace endian
+  } // namespace timer
 } // namespace boost

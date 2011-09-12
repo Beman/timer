@@ -1,18 +1,16 @@
 //  boost timer.hpp  ---------------------------------------------------------//
 
-//  Copyright Beman Dawes 1994-2007
+//  Copyright Beman Dawes 1994-2007, 2011
 
 //  Distributed under the Boost Software License, Version 1.0.
 //  See http://www.boost.org/LICENSE_1_0.txt
 
-//  See http://www.boost.org/libs/system for documentation.
-
-#ifndef BOOST_ENDIAN_TIMER_HPP                  
-#define BOOST_ENDIAN_TIMER_HPP
+#ifndef BOOST_NEW_TIMER_HPP                  
+#define BOOST_NEW_TIMER_HPP
 
 #include <boost/config/warning_disable.hpp>
 
-#include <boost/endian/detail/config.hpp>
+#include <boost/timer/detail/config.hpp>
 #include <boost/system/error_code.hpp>
 #include <boost/cstdint.hpp>
 #include <string>
@@ -23,7 +21,7 @@
 
 namespace boost
 {
-  namespace endian
+  namespace timer
   {
     typedef boost::int_least64_t microsecond_t;
 
@@ -38,17 +36,17 @@ namespace boost
 
     //  low-level functions  -------------------------------------------------//
 
-    BOOST_ENDIAN_DECL
+    BOOST_TIMER_DECL
     void  times(times_t& result); // throws on error
 
-    BOOST_ENDIAN_DECL
+    BOOST_TIMER_DECL
     system::error_code& times(times_t& result, system::error_code& ec); // never throws
 
     //  timer  ---------------------------------------------------------------//
 
     //  unless otherwise specified, all functions throw on error
 
-    class BOOST_ENDIAN_DECL timer
+    class BOOST_TIMER_DECL timer
     {
     public:
 
@@ -72,7 +70,7 @@ namespace boost
 
     //  unless otherwise specified, all functions throw on error
 
-    class BOOST_ENDIAN_DECL run_timer : public timer
+    class BOOST_TIMER_DECL run_timer : public timer
     {
     public:
 
@@ -110,9 +108,9 @@ namespace boost
                                  // across DLL boundaries due to warning C4251
     };
     
-  } // namespace endian
+  } // namespace timer
 } // namespace boost
 
 #include <boost/config/abi_suffix.hpp> // pops abi_prefix.hpp pragmas
 
-#endif  // BOOST_ENDIAN_TIMER_HPP
+#endif  // BOOST_NEW_TIMER_HPP
