@@ -7,11 +7,11 @@
 
 //----------------------------------------------------------------------------//
 
-// define BOOST_TIMER_SOURCE so that <boost/endian/detail/config.hpp> knows
+// define BOOST_SYSTEM_SOURCE so that <boost/system/config.hpp> knows
 // the library is being built (possibly exporting rather than importing code)
-#define BOOST_TIMER_SOURCE
+#define BOOST_SYSTEM_SOURCE 
 
-#include <boost/timer/timer.hpp>
+#include <boost/system/timer.hpp>
 #include <boost/system/system_error.hpp>
 #include <boost/io/ios_state.hpp>
 #include <boost/throw_exception.hpp>
@@ -19,8 +19,8 @@
 #include <cstring>
 #include <cassert>
 
-using boost::timer::microsecond_t;
-using boost::timer::times_t;
+using boost::system::microsecond_t;
+using boost::system::times_t;
 using boost::system::error_code;
 
 # if defined(BOOST_WINDOWS_API)
@@ -98,7 +98,7 @@ void show_time(const char * format, int places, std::ostream& os,
 
 namespace boost
 {
-  namespace timer
+  namespace system
   {
     //  run_timer:: report  --------------------------------------//
 
@@ -126,5 +126,5 @@ namespace boost
       return ec;
     }
 
-  } // namespace timer
+  } // namespace system
 } // namespace boost

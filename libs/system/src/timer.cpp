@@ -9,11 +9,11 @@
 
 //----------------------------------------------------------------------------//
 
-// define BOOST_TIMER_SOURCE so that <boost/system/config.hpp> knows
+// define BOOST_SYSTEM_SOURCE so that <boost/system/config.hpp> knows
 // the library is being built (possibly exporting rather than importing code)
-#define BOOST_TIMER_SOURCE 
+#define BOOST_SYSTEM_SOURCE 
 
-#include <boost/timer/timer.hpp>
+#include <boost/system/timer.hpp>
 #include <boost/system/system_error.hpp>
 #include <boost/io/ios_state.hpp>
 #include <boost/throw_exception.hpp>
@@ -57,18 +57,18 @@ namespace
 
 namespace boost
 {
-  namespace timer
+  namespace system
   {
 
-    BOOST_TIMER_DECL
-    void times(times_t& current)
+    BOOST_SYSTEM_DECL
+    void times( times_t & current )
     {
       error_code ec;
       if (times(current, ec))
-        boost::throw_exception(system::system_error(ec, "boost::endian::times"));
+        boost::throw_exception( system_error( ec, "boost::system::times" ) );
     }
 
-    BOOST_TIMER_DECL
+    BOOST_SYSTEM_DECL
     error_code& times(times_t& current, error_code& ec)
     {
       ec = error_code();
@@ -163,5 +163,5 @@ namespace boost
       }
     }
 
-  } // namespace timer
+  } // namespace system
 } // namespace boost

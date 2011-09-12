@@ -5,12 +5,12 @@
 //  Distributed under the Boost Software License, Version 1.0.
 //  See http://www.boost.org/LICENSE_1_0.txt
 
-#ifndef BOOST_NEW_TIMER_HPP                  
-#define BOOST_NEW_TIMER_HPP
+#ifndef BOOST_SYSTEM_TIMER_HPP                  
+#define BOOST_SYSTEM_TIMER_HPP
 
 #include <boost/config/warning_disable.hpp>
 
-#include <boost/timer/detail/config.hpp>
+#include <boost/system/config.hpp>
 #include <boost/system/error_code.hpp>
 #include <boost/cstdint.hpp>
 #include <string>
@@ -21,7 +21,7 @@
 
 namespace boost
 {
-  namespace timer
+  namespace system
   {
     typedef boost::int_least64_t microsecond_t;
 
@@ -36,17 +36,17 @@ namespace boost
 
     //  low-level functions  -------------------------------------------------//
 
-    BOOST_TIMER_DECL
+    BOOST_SYSTEM_DECL
     void  times(times_t& result); // throws on error
 
-    BOOST_TIMER_DECL
+    BOOST_SYSTEM_DECL
     system::error_code& times(times_t& result, system::error_code& ec); // never throws
 
     //  timer  ---------------------------------------------------------------//
 
     //  unless otherwise specified, all functions throw on error
 
-    class BOOST_TIMER_DECL timer
+    class BOOST_SYSTEM_DECL timer
     {
     public:
 
@@ -70,7 +70,7 @@ namespace boost
 
     //  unless otherwise specified, all functions throw on error
 
-    class BOOST_TIMER_DECL run_timer : public timer
+    class BOOST_SYSTEM_DECL run_timer : public timer
     {
     public:
 
@@ -108,9 +108,9 @@ namespace boost
                                  // across DLL boundaries due to warning C4251
     };
     
-  } // namespace timer
+  } // namespace system
 } // namespace boost
 
 #include <boost/config/abi_suffix.hpp> // pops abi_prefix.hpp pragmas
 
-#endif  // BOOST_NEW_TIMER_HPP
+#endif  // BOOST_SYSTEM_TIMER_HPP

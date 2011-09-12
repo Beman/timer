@@ -16,16 +16,16 @@
 
 //----------------------------------------------------------------------------//
 
-// define BOOST_TIMER_SOURCE so that <boost/endian/detail/config.hpp> knows
+// define BOOST_SYSTEM_SOURCE so that <boost/system/config.hpp> knows
 // the library is being built (possibly exporting rather than importing code)
-#define BOOST_TIMER_SOURCE 
+#define BOOST_SYSTEM_SOURCE 
 
-#include <boost/timer/timer.hpp>
+#include <boost/system/timer.hpp>
 #include <iostream>
 
 namespace boost
 {
-  namespace timer
+  namespace system
   {
     run_timer::run_timer(int places)
       : m_places(places), m_os(std::cout), m_format(0) {}
@@ -34,5 +34,5 @@ namespace boost
       : m_places(places), m_os(std::cout), m_format(new char[format.size()+1])
         { std::strcpy(m_format, format.c_str()); }
 
-  } // namespace timer
+  } // namespace system
 } // namespace boost
