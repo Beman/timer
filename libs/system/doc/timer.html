@@ -19,16 +19,24 @@ Boost System Timers<br>
 production environments. It is also helpful if such timing information is broken down 
 into wall clock time, CPU time spent by the user, and CPU time spent by the 
 operating system servicing user requests.</p>
-<p>The Boost System Library's timer components provide that information:</p>
 <ul>
-  <li>At the highest level, class <code>run_timer</code> provides a 
+  <li>The POSIX API provides that information via the <code>times()</code> 
+  function.<br>
+&nbsp;</li>
+  <li>The Windows API provides that information via the <code>
+  GetSystemTimeAsFileTime()</code> and <code>GetProcessTimes()</code> API's.</li>
+</ul>
+<p>The Boost System Library timer components provide access to those API's with 
+a portable and C++ friendly interface:</p>
+<ul>
+  <li>At the highest level, <a href="#run_timer">class <code><b>run_timer</b></code></a> provides a 
   complete run time reporting package that can be invoked in a single line of 
   code.<br>
 &nbsp;</li>
-  <li>At a middle level, class <code>timer</code> provides a widely useful timer 
+  <li>At a middle level, <a href="#timer">class <code><b>timer</b></code></a> provides a widely useful timer 
   object abstraction.<br>
 &nbsp;</li>
-  <li>At the lowest level, two <code>times</code> functions provide  
+  <li>At the lowest level, two <a href="#Non-member-functions"><b> <code>times</code></b> functions</a> provide  
   thin wrappers around the operating system's process timer API.</li>
 </ul>
 
@@ -50,9 +58,9 @@ int main()
   return 0;
 }</pre>
 </blockquote>
-<p>When the <code>run_timer t</code> object is created, it starts timing. When 
+<p dir="ltr">When the <code>run_timer t</code> object is created, it starts timing. When 
 it is destroyed at the end of the program, its destructor stops the timer and 
-displays timing information on cout.</p>
+displays timing information on an output stream that defaults to <code>std::cout</code>.</p>
 <p>The output of this program run on a circa 2006 processor looks was this:</p>
 <p><code>&nbsp;&nbsp; wall 0.42 s, user 0.41 s + system 0.00 s = total cpu 0.41 s, 
 (96.3%)</code></p>
@@ -420,8 +428,8 @@ timer</a></code>. For the description of inherited functions, see
 
 <hr>
 <p>Last revised:
-<!--webbot bot="Timestamp" s-type="EDITED" s-format="%d %B, %Y" startspan -->01 May, 2011<!--webbot bot="Timestamp" endspan i-checksum="13960" --></p>
-<p>© Copyright Beman Dawes, 2006</p>
+<!--webbot bot="Timestamp" s-type="EDITED" s-format="%d %B, %Y" startspan -->12 September, 2011<!--webbot bot="Timestamp" endspan i-checksum="39333" --></p>
+<p>© Copyright Beman Dawes, 2006, 2011</p>
 <p>Distributed under the Boost Software License, Version 1.0. (See accompanying 
 file <a href="../../../../LICENSE_1_0.txt">LICENSE_1_0.txt</a> or copy at
 <a href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/ LICENSE_1_0.txt</a>)</p>
