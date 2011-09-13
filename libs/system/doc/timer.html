@@ -14,6 +14,34 @@
 
 <h1><img border="0" src="../../../boost.png" align="center" width="277" height="86">
 Boost System Timers<br>
+&nbsp;</h1>
+<div align="center">
+  <center>
+  <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="70%" bgcolor="#CCFFFF">
+    <tr>
+      <td width="100%">
+      <p align="center"><b><font size="6">Heads ups!</font></b></p>
+      <ul>
+        <li>
+        <p align="left">The unit of time is in process of being changed to 
+        nanoseconds.<br>
+&nbsp;</li>
+        <li>
+        <p align="left">The specs are in process of being changed to emphasize 
+        that higher resolution / lower granularity timers will be used if 
+        available on the specific platform.<br>
+&nbsp;</li>
+        <li>
+        <p align="left">Implementation is in process of being updated 
+        accordingly.</li>
+      </ul>
+      </td>
+    </tr>
+  </table>
+  </center>
+</div>
+
+<h1>
 <a name="Introduction">Introduction</a></h1>
 <p>Knowing how long a program takes to execute is useful in both test and 
 production environments. It is also helpful if such timing information is broken down 
@@ -21,12 +49,16 @@ into wall clock time, CPU time spent by the user, and CPU time spent by the
 operating system servicing user requests.</p>
 <ul>
   <li>The POSIX API provides that information via the <code>times()</code> 
-  function.<br>
+  function. <br>
 &nbsp;</li>
   <li>The Windows API provides that information via the <code>
-  GetSystemTimeAsFileTime()</code> and <code>GetProcessTimes()</code> API's.</li>
+  GetSystemTimeAsFileTime()</code> and <code>GetProcessTimes()</code> API's.<br>
+&nbsp;</li>
+  <li>Higher resolution / lower granularity timer functions are available on 
+  most popular systems.</li>
 </ul>
-<p>The Boost System Library timer components provide access to those API's with 
+<p>The Boost System Library timer components provide access to those, or 
+similar, system API's with 
 a portable and C++ friendly interface:</p>
 <ul>
   <li>At the highest level, <a href="#run_timer">class <code><b>run_timer</b></code></a> provides a 
@@ -37,7 +69,7 @@ a portable and C++ friendly interface:</p>
   object abstraction.<br>
 &nbsp;</li>
   <li>At the lowest level, two <a href="#Non-member-functions"><b> <code>times</code></b> functions</a> provide  
-  thin wrappers around the operating system's process timer API.</li>
+  thin wrappers around the operating system's actual API's.</li>
 </ul>
 
 <h2><a name="Example">Example</a>s</h2>
@@ -180,12 +212,13 @@ synopsis</font></h2>
 of representing microseconds. For POSIX and Windows systems, <code>
 microseconds_t</code> is <code>boost::int_least64_</code>t.</p>
 
-<p>The underlying type is not based on the Boost Date-Time library to avoid a 
+<p>The underlying type is not based on the Boost Date-Time or Chrono library to avoid a 
 dependency on a large library. This design choice may change at some future 
 date.</p>
 
 <p>Although <code>microsecond_t</code> is capable of representing .000001 
-second, the actual resolution of common operating system timers is often only 
+second, the actual granularity of common operating system timers may be as high 
+as 
 .015 second.</p>
 
 <h3>Struct <a name="times_t"><code>times_t</code></a></h3>
@@ -428,7 +461,7 @@ timer</a></code>. For the description of inherited functions, see
 
 <hr>
 <p>Last revised:
-<!--webbot bot="Timestamp" s-type="EDITED" s-format="%d %B, %Y" startspan -->12 September, 2011<!--webbot bot="Timestamp" endspan i-checksum="39333" --></p>
+<!--webbot bot="Timestamp" s-type="EDITED" s-format="%d %B, %Y" startspan -->13 September, 2011<!--webbot bot="Timestamp" endspan i-checksum="39335" --></p>
 <p>© Copyright Beman Dawes, 2006, 2011</p>
 <p>Distributed under the Boost Software License, Version 1.0. (See accompanying 
 file <a href="../../../../LICENSE_1_0.txt">LICENSE_1_0.txt</a> or copy at

@@ -8,6 +8,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "example", "example\example.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "system_dll", "system_dll\system_dll.vcxproj", "{BC364B41-28C9-48D0-8728-A46740122552}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "run_timer_example", "run_timer_example\run_timer_example.vcxproj", "{AB490ECB-CB2B-4EE4-A566-EA074790C6DD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BC364B41-28C9-48D0-8728-A46740122552} = {BC364B41-28C9-48D0-8728-A46740122552}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -22,6 +27,10 @@ Global
 		{BC364B41-28C9-48D0-8728-A46740122552}.Debug|Win32.Build.0 = Debug|Win32
 		{BC364B41-28C9-48D0-8728-A46740122552}.Release|Win32.ActiveCfg = Release|Win32
 		{BC364B41-28C9-48D0-8728-A46740122552}.Release|Win32.Build.0 = Release|Win32
+		{AB490ECB-CB2B-4EE4-A566-EA074790C6DD}.Debug|Win32.ActiveCfg = Debug|Win32
+		{AB490ECB-CB2B-4EE4-A566-EA074790C6DD}.Debug|Win32.Build.0 = Debug|Win32
+		{AB490ECB-CB2B-4EE4-A566-EA074790C6DD}.Release|Win32.ActiveCfg = Release|Win32
+		{AB490ECB-CB2B-4EE4-A566-EA074790C6DD}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
