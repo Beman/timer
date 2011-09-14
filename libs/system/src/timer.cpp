@@ -118,10 +118,10 @@ namespace boost
     }
 
 #define  BOOST_TIMES(C)            \
-      if (m_flags& m_nothrow)   \
+      if (m_flags& m_nothrow)      \
       {                            \
         error_code ec;             \
-        times(C, ec);            \
+        times(C, ec);              \
       }                            \
       else                         \
         times(C);

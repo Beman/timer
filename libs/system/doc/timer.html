@@ -23,8 +23,9 @@ Boost System Timers<br>
       <p align="center"><b><font size="6">Heads ups!</font></b></p>
       <ul>
         <li>
-        <p align="left">The unit of time is in process of being changed to 
-        nanoseconds.<br>
+        <p align="left">The unit of time just been changed from microseconds to 
+        nanoseconds. Only limited testing has been performed, so be very 
+        skeptical of results until more experience develops.<br>
 &nbsp;</li>
         <li>
         <p align="left">The specs are in process of being changed to emphasize 
@@ -43,6 +44,26 @@ Boost System Timers<br>
 
 <h1>
 <a name="Introduction">Introduction</a></h1>
+<table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" align="right">
+  <tr>
+    <td width="100%" bgcolor="#D7EEFF" align="center">
+      <i><b>Contents</b></i></td>
+  </tr>
+  <tr>
+    <td width="100%" bgcolor="#E8F5FF">
+      <p dir="ltr"><a href="#Introduction">Introduction</a><br>
+      <a href="#Example">Examples</a><br>
+      <a href="#Synopsis">Synopsis</a><br>
+      <a href="#nanosecond_t">Typedef <code>nanosecond_t</code></a><br>
+      <a href="#times_t">Struct <code>times_t</code></a><br>
+      <a href="#Non-member-functions">Non-member functions</a><br>
+      <a href="#timer">Class <code>timer</code></a><br>
+&nbsp;&nbsp;&nbsp; <a href="#timer_members">Members</a><br>
+      <a href="#run_timer">Class <code>run_timer</code></a><br>
+&nbsp;&nbsp;&nbsp; <a href="#run_timer_members">Members</a></td>
+  </tr>
+</table>
+
 <p>Knowing how long a program takes to execute is useful in both test and 
 production environments. It is also helpful if such timing information is broken down 
 into wall clock time, CPU time spent by the user, and CPU time spent by the 
@@ -54,8 +75,8 @@ operating system servicing user requests.</p>
   <li>The Windows API provides that information via the <code>
   GetSystemTimeAsFileTime()</code> and <code>GetProcessTimes()</code> API's.<br>
 &nbsp;</li>
-  <li>Higher resolution / lower granularity timer functions are available on 
-  most popular systems.</li>
+  <li>Higher resolution / lower granularity timer functions will be used if 
+  available.</li>
 </ul>
 <p>The Boost System Library timer components provide access to those, or 
 similar, system API's with 
@@ -136,14 +157,14 @@ run_timer_example2 &quot;%w wall clock seconds\n&quot; 6
 run_timer_example2 &quot;%t total CPU seconds\n&quot; 3
 0.422 total CPU seconds</pre>
 </blockquote>
-<h2>Header
-<font size="5"><a href="../../../boost/system/timer.hpp">boost/system/timer.hpp</a> 
-synopsis</font></h2>
+<h2><a href="../../../boost/system/timer.hpp" name="Synopsis">Header
+<font size="5">boost/system/timer.hpp 
+synopsis</font></a></h2>
 <pre>namespace boost
 {
   namespace system
   {
-    typedef <i>implementation-defined</i> microsecond_t;
+    typedef <i>implementation-defined</i> nanosecond_t;
 
     struct times_t;
     class timer;
@@ -151,9 +172,9 @@ synopsis</font></h2>
 
     struct times_t
     {
-      microsecond_t wall;
-      microsecond_t user;
-      microsecond_t system;
+      nanosecond_t wall;
+      nanosecond_t user;
+      nanosecond_t system;
     };
 
     // low-level functions --------------------------------------------//
@@ -206,17 +227,17 @@ synopsis</font></h2>
 } // namespace boost
 </pre>
 
-<h3>Typedef <a name="microsecond_t"><code>microsecond_t</code></a></h3>
+<h3>Typedef <a name="nanosecond_t"><code>nanosecond_t</code></a></h3>
 
-<p>The typedef <code>microsecond_t</code> provides an implementation defined type capable 
-of representing microseconds. For POSIX and Windows systems, <code>
-microseconds_t</code> is <code>boost::int_least64_</code>t.</p>
+<p>The typedef <code>nanosecond_t</code> provides an implementation defined type capable 
+of representing nanoseconds. For POSIX and Windows systems, <code>
+nanoseconds_t</code> is <code>boost::int_least64_</code>t.</p>
 
 <p>The underlying type is not based on the Boost Date-Time or Chrono library to avoid a 
 dependency on a large library. This design choice may change at some future 
 date.</p>
 
-<p>Although <code>microsecond_t</code> is capable of representing .000001 
+<p>Although <code>nanosecond_t</code> is capable of representing .000000001 
 second, the actual granularity of common operating system timers may be as high 
 as 
 .015 second.</p>
@@ -275,7 +296,7 @@ reported by setting time values to -1.</p>
 <p>The semantics of member functions are achieved by calling the <code>
 <a href="#Non-member-functions">times()</a></code> function.</p>
 
-<h3>Class <a name="cpu_timer_members"><code>timer</code> members</a></h3>
+<h3>Class <a name="timer_members"><code>timer</code> members</a></h3>
 
 <p><code>timer();</code></p>
 
@@ -361,7 +382,7 @@ stored by the preceding invocation of <code>stop()</code>.</p>
 timer</a></code>. For the description of inherited functions, see
 <a href="#timer">Class <code>timer</code>.</a></p>
 
-<h3>Class run_timer members</h3>
+<h3>Class <a name="run_timer_members">run_timer members</a></h3>
 
 <pre>explicit run_timer(int places = 2);</pre>
 <blockquote>
@@ -460,12 +481,10 @@ timer</a></code>. For the description of inherited functions, see
 </blockquote>
 
 <hr>
-<p>Last revised:
-<!--webbot bot="Timestamp" s-type="EDITED" s-format="%d %B, %Y" startspan -->13 September, 2011<!--webbot bot="Timestamp" endspan i-checksum="39335" --></p>
-<p>© Copyright Beman Dawes, 2006, 2011</p>
-<p>Distributed under the Boost Software License, Version 1.0. (See accompanying 
-file <a href="../../../../LICENSE_1_0.txt">LICENSE_1_0.txt</a> or copy at
-<a href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/ LICENSE_1_0.txt</a>)</p>
+<p><font size="2">Last revised:
+<!--webbot bot="Timestamp" s-type="EDITED" s-format="%d %B, %Y" startspan -->14 September, 2011<!--webbot bot="Timestamp" endspan i-checksum="39337" --></font></p>
+<p><font size="2">© Copyright Beman Dawes, 2006, 2011</font></p>
+<p><font size="2">Distributed under the Boost Software License, Version 1.0. (See<a href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/ LICENSE_1_0.txt</a>)</font></p>
 
 </body>
 

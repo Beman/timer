@@ -37,7 +37,7 @@ int main( int argc, char * argv[] )
 
   long count = 0;
   times_t times;
-  times.wall = 0;
+  times.clear();
   nanosecond_t timeout
     = nanosecond_t(100000000); // default .1 second
 
