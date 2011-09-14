@@ -8,6 +8,12 @@
       <AdditionalIncludeDirectories>../../../../..;../../../../../../trunk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BOOST_ALL_NO_LIB;BOOST_ALL_DYN_LINK;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <PostBuildEvent>
+      <Command>"$(TargetDir)\$(TargetName).exe"</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Executing test $(TargetName).exe...</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup />
 </Project>

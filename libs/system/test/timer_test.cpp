@@ -17,6 +17,15 @@ using boost::system::times_t;
 using boost::system::timer;
 using boost::system::run_timer;
 
+//----------------------------------------------------------------------------//
+//
+//  TODO
+//
+//  * Turn this program into a real test!
+//  * Probe errors in format string handled properly
+//
+//----------------------------------------------------------------------------//
+
 int main( int argc, char * argv[] )
 {
   std::locale loc( "" );

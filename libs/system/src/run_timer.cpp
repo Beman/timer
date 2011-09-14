@@ -61,7 +61,8 @@ void show_time(const char * format, int places, std::ostream& os,
     for (; *format; ++format)
     {
       if (*format != '%' || !*(format+1) || !std::strchr("wustp", *(format+1)))
-        os << *format;
+        os << *format;  // anything except % followed by a valid format character
+                        // gets sent to the output stream
       else
       {
         ++format;
@@ -88,7 +89,8 @@ void show_time(const char * format, int places, std::ostream& os,
           os.precision(places);
           break;
         default:
-          assert(0);
+          assert(0);  // program logic error in "// anything except..." if stmt 
+                      // above; no user error should ever fire this assert
         }
       }
     }
