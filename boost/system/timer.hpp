@@ -23,13 +23,13 @@ namespace boost
 {
   namespace system
   {
-    typedef boost::int_least64_t microsecond_t;
+    typedef boost::int_least64_t nanosecond_t;
 
     struct times_t
     {
-      microsecond_t wall;
-      microsecond_t user;
-      microsecond_t system;
+      nanosecond_t wall;
+      nanosecond_t user;
+      nanosecond_t system;
 
       void clear() { wall = user = system = 0LL; }
     };

@@ -19,7 +19,7 @@
 #include <cstring>
 #include <cassert>
 
-using boost::system::microsecond_t;
+using boost::system::nanosecond_t;
 using boost::system::times_t;
 using boost::system::error_code;
 
@@ -41,7 +41,7 @@ void show_time(const char * format, int places, std::ostream& os,
   //  NOTE WELL: Will truncate least-significant digits to LDBL_DIG, which may
   //  be as low as 10, although will be 15 for many common platforms.
   {
-    if (times.wall < microsecond_t(0))
+    if (times.wall < nanosecond_t(0))
       return;
     if (places > 6)
       places = 6;
@@ -53,8 +53,8 @@ void show_time(const char * format, int places, std::ostream& os,
     os.setf(std::ios_base::fixed, std::ios_base::floatfield);
     os.precision(places);
 
-    const long double sec = 1000000.0L;
-    microsecond_t total = times.system + times.user;
+    const long double sec = 1000000000.0L;
+    nanosecond_t total = times.system + times.user;
     long double wall_sec = times.wall / sec;
     long double total_sec = total / sec;
 

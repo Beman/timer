@@ -35,19 +35,20 @@ using boost::system::error_code;
 # if defined(BOOST_POSIX_API)
 namespace
 {
-  long tick_factor()        // multiplier to convert ticks
-                            //  to microseconds; -1 if unknown
+  boost::int_least64_t tick_factor() // multiplier to convert ticks
+                                     //  to nanoseconds; -1 if unknown
   {
-    static long tick_factor = 0;
+    static boost::int_least64_t tick_factor = 0;
     if (!tick_factor)
     {
       if ((tick_factor = ::sysconf(_SC_CLK_TCK)) <= 0)
         tick_factor = -1;
       else
       {
-        assert(tick_factor <= 1000000L); // doesn't handle large ticks
-        tick_factor = 1000000L / tick_factor;  // compute factor
-        if (!tick_factor) tick_factor = -1;
+        assert(tick_factor <= 1000000000LL); // logic doesn't handle large ticks
+        tick_factor = 1000000000LL / tick_factor;  // compute factor
+        if (!tick_factor)
+          tick_factor = -1;
       }
     }
     return tick_factor;
@@ -78,14 +79,14 @@ namespace boost
       if (::GetProcessTimes(::GetCurrentProcess(), &creation, &exit,
              (LPFILETIME)&current.system, (LPFILETIME)&current.user))
       {
-        current.wall   /= 10;  // Windows uses 100 nanosecond ticks
-        current.user   /= 10;
-        current.system /= 10;
+        current.wall   *= 100;  // Windows uses 100 nanosecond ticks
+        current.user   *= 100;
+        current.system *= 100;
       }
       else
       {
         ec = error_code(::GetLastError(), system::system_category());
-        current.wall = current.system = current.user = microsecond_t(-1);
+        current.wall = current.system = current.user = nanosecond_t(-1);
       }
 #   else
       tms tm;
@@ -93,13 +94,13 @@ namespace boost
       if (c == -1) // error
       {
         ec = error_code(errno, system::system_category());
-        current.wall = current.system = current.user = microsecond_t(-1);
+        current.wall = current.system = current.user = nanosecond_t(-1);
       }
       else
       {
-        current.wall = microsecond_t(c);
-        current.system = microsecond_t(tm.tms_stime + tm.tms_cstime);
-        current.user = microsecond_t(tm.tms_utime + tm.tms_cutime);
+        current.wall = nanosecond_t(c);
+        current.system = nanosecond_t(tm.tms_stime + tm.tms_cstime);
+        current.user = nanosecond_t(tm.tms_utime + tm.tms_cutime);
         if (tick_factor() != -1)
         {
           current.wall *= tick_factor();
@@ -109,7 +110,7 @@ namespace boost
         else
         {
           ec = error_code(errno, system::system_category());
-          current.wall = current.user = current.system = microsecond_t(-1);
+          current.wall = current.user = current.system = nanosecond_t(-1);
         }
       }
 #   endif

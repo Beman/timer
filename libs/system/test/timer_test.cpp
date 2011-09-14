@@ -12,7 +12,7 @@
 #include <iostream>
 #include <locale>
 
-using boost::system::microsecond_t;
+using boost::system::nanosecond_t;
 using boost::system::times_t;
 using boost::system::timer;
 using boost::system::run_timer;
@@ -38,10 +38,11 @@ int main( int argc, char * argv[] )
   long count = 0;
   times_t times;
   times.wall = 0;
-  microsecond_t timeout
-    = microsecond_t(500000); // default .5 seconds
+  nanosecond_t timeout
+    = nanosecond_t(100000000); // default .1 second
 
-  if ( argc > 1 ) timeout = microsecond_t(std::atol( argv[1] ));
+  if ( argc > 1 )
+    timeout = nanosecond_t(std::atol( argv[1] ));
 
   while ( times.wall < timeout )
   {
@@ -49,11 +50,10 @@ int main( int argc, char * argv[] )
     //  with the total less than wall clock time.
     ++count;
     timer.elapsed( times );
-    //    sleep(1);
     std::cout << "iteration " << count << ", "
       << times.wall << " wall, "
       << times.user << " user, "
-      << times.system << " system microsecs"
+      << times.system << " system nanoseconds"
       << std::endl;
   }
 
