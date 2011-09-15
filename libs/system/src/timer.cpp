@@ -11,7 +11,10 @@
 
 // define BOOST_SYSTEM_SOURCE so that <boost/system/config.hpp> knows
 // the library is being built (possibly exporting rather than importing code)
-#define BOOST_SYSTEM_SOURCE 
+#define BOOST_SYSTEM_SOURCE
+
+#define BOOST_CHRONO_HEADER_ONLY
+#include <boost/chrono/chrono.hpp>
 
 #include <boost/system/timer.hpp>
 #include <boost/system/system_error.hpp>
@@ -73,25 +76,33 @@ namespace boost
     error_code& times(times_t& current, error_code& ec)
     {
       ec = error_code();
+
+      // use boost::chrono::steady_clock since it has platform specific
+      // implementations likely to yield highest reliable steady resolution
+      boost::chrono::duration<boost::int64_t, boost::nano>
+        x (boost::chrono::steady_clock::now().time_since_epoch());
+      current.wall = x.count();
+
 #   if defined(BOOST_WINDOWS_API)
-#     ifdef BOOST_SYSTEM_LOW_RES_TIMER
-        ::GetSystemTimeAsFileTime((LPFILETIME)&current.wall);
-        current.wall   *= 100;  
-#     else
-        LARGE_INTEGER freq;
-        if (::QueryPerformanceFrequency(&freq))  // OK?
-        {
-          LARGE_INTEGER now;
-          ::QueryPerformanceCounter(&now);
-          current.wall = now.QuadPart * 1000000000;
-          current.wall /= freq.QuadPart;
-        }
-        else
-        {
-          ::GetSystemTimeAsFileTime((LPFILETIME)&current.wall);
-          current.wall   *= 100;  
-        }
-#     endif
+//#     ifdef BOOST_SYSTEM_LOW_RES_TIMER
+//        ::GetSystemTimeAsFileTime((LPFILETIME)&current.wall);
+//        current.wall   *= 100;  
+//#     else
+//        LARGE_INTEGER freq;
+//        if (::QueryPerformanceFrequency(&freq))  // OK?
+//        {
+//          LARGE_INTEGER now;
+//          ::QueryPerformanceCounter(&now);
+//          current.wall = now.QuadPart * 1000000000;
+//          current.wall /= freq.QuadPart;
+//        }
+//        else
+//        {
+//          ::GetSystemTimeAsFileTime((LPFILETIME)&current.wall);
+//          current.wall   *= 100;  
+//        }
+//#     endif
+
       FILETIME creation, exit;
       if (::GetProcessTimes(::GetCurrentProcess(), &creation, &exit,
              (LPFILETIME)&current.system, (LPFILETIME)&current.user))
@@ -110,23 +121,21 @@ namespace boost
       if (c == -1) // error
       {
         ec = error_code(errno, system::system_category());
-        current.wall = current.system = current.user = nanosecond_t(-1);
+        current.system = current.user = nanosecond_t(-1);
       }
       else
       {
-        current.wall = nanosecond_t(c);
         current.system = nanosecond_t(tm.tms_stime + tm.tms_cstime);
         current.user = nanosecond_t(tm.tms_utime + tm.tms_cutime);
         if (tick_factor() != -1)
         {
-          current.wall *= tick_factor();
           current.user *= tick_factor();
           current.system *= tick_factor();
         }
         else
         {
           ec = error_code(errno, system::system_category());
-          current.wall = current.user = current.system = nanosecond_t(-1);
+          current.user = current.system = nanosecond_t(-1);
         }
       }
 #   endif
@@ -134,7 +143,7 @@ namespace boost
     }
 
 #define  BOOST_TIMES(C)            \
-      if (m_flags& m_nothrow)      \
+      if (m_flags & m_nothrow)     \
       {                            \
         error_code ec;             \
         times(C, ec);              \
