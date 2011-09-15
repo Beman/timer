@@ -74,13 +74,29 @@ namespace boost
     {
       ec = error_code();
 #   if defined(BOOST_WINDOWS_API)
-      ::GetSystemTimeAsFileTime((LPFILETIME)&current.wall);
+#     ifdef BOOST_SYSTEM_LOW_RES_TIMER
+        ::GetSystemTimeAsFileTime((LPFILETIME)&current.wall);
+        current.wall   *= 100;  
+#     else
+        LARGE_INTEGER freq;
+        if (::QueryPerformanceFrequency(&freq))  // OK?
+        {
+          LARGE_INTEGER now;
+          ::QueryPerformanceCounter(&now);
+          current.wall = now.QuadPart * 1000000000;
+          current.wall /= freq.QuadPart;
+        }
+        else
+        {
+          ::GetSystemTimeAsFileTime((LPFILETIME)&current.wall);
+          current.wall   *= 100;  
+        }
+#     endif
       FILETIME creation, exit;
       if (::GetProcessTimes(::GetCurrentProcess(), &creation, &exit,
              (LPFILETIME)&current.system, (LPFILETIME)&current.user))
       {
-        current.wall   *= 100;  // Windows uses 100 nanosecond ticks
-        current.user   *= 100;
+        current.user   *= 100;  // Windows uses 100 nanosecond ticks
         current.system *= 100;
       }
       else
