@@ -7,11 +7,11 @@
 
 //----------------------------------------------------------------------------//
 
-// define BOOST_SYSTEM_SOURCE so that <boost/system/config.hpp> knows
+// define BOOST_TIMER_SOURCE so that <boost/timer/config.hpp> knows
 // the library is being built (possibly exporting rather than importing code)
-#define BOOST_SYSTEM_SOURCE 
+#define BOOST_TIMER_SOURCE 
 
-#include <boost/system/timer.hpp>
+#include <boost/timer/timer.hpp>
 #include <boost/system/system_error.hpp>
 #include <boost/io/ios_state.hpp>
 #include <boost/throw_exception.hpp>
@@ -19,8 +19,8 @@
 #include <cstring>
 #include <cassert>
 
-using boost::system::nanosecond_t;
-using boost::system::times_t;
+using boost::timer::nanosecond_t;
+using boost::timer::times_t;
 using boost::system::error_code;
 
 # if defined(BOOST_WINDOWS_API)
@@ -34,7 +34,7 @@ using boost::system::error_code;
 namespace
 {
   const char * default_format =
-    " %ws wall, %us user + %ss system = %ts cpu (%p%)\n";
+    " %ws wall, %us user + %ss timer = %ts cpu (%p%)\n";
 
 void show_time(const char * format, int places, std::ostream& os,
     const times_t& times)
@@ -100,7 +100,7 @@ void show_time(const char * format, int places, std::ostream& os,
 
 namespace boost
 {
-  namespace system
+  namespace timer
   {
     //  run_timer:: report  --------------------------------------//
 
@@ -128,5 +128,5 @@ namespace boost
       return ec;
     }
 
-  } // namespace system
+  } // namespace timer
 } // namespace boost

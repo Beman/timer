@@ -9,14 +9,12 @@
 
 //----------------------------------------------------------------------------//
 
-// define BOOST_SYSTEM_SOURCE so that <boost/system/config.hpp> knows
+// define BOOST_TIMER_SOURCE so that <boost/system/config.hpp> knows
 // the library is being built (possibly exporting rather than importing code)
-#define BOOST_SYSTEM_SOURCE
+#define BOOST_TIMER_SOURCE
 
-#define BOOST_CHRONO_HEADER_ONLY
+#include <boost/timer/timer.hpp>
 #include <boost/chrono/chrono.hpp>
-
-#include <boost/system/timer.hpp>
 #include <boost/system/system_error.hpp>
 #include <boost/io/ios_state.hpp>
 #include <boost/throw_exception.hpp>
@@ -61,18 +59,18 @@ namespace
 
 namespace boost
 {
-  namespace system
+  namespace timer
   {
 
-    BOOST_SYSTEM_DECL
+    BOOST_TIMER_DECL
     void times( times_t & current )
     {
       error_code ec;
       if (times(current, ec))
-        boost::throw_exception( system_error( ec, "boost::system::times" ) );
+        boost::throw_exception( system::system_error( ec, "boost::timer::times" ) );
     }
 
-    BOOST_SYSTEM_DECL
+    BOOST_TIMER_DECL
     error_code& times(times_t& current, error_code& ec)
     {
       ec = error_code();
@@ -84,7 +82,7 @@ namespace boost
       current.wall = x.count();
 
 #   if defined(BOOST_WINDOWS_API)
-//#     ifdef BOOST_SYSTEM_LOW_RES_TIMER
+//#     ifdef BOOST_TIMER_LOW_RES_TIMER
 //        ::GetSystemTimeAsFileTime((LPFILETIME)&current.wall);
 //        current.wall   *= 100;  
 //#     else
@@ -189,5 +187,5 @@ namespace boost
       }
     }
 
-  } // namespace system
+  } // namespace timer
 } // namespace boost

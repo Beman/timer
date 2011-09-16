@@ -18,6 +18,14 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "timer_test", "timer_test\ti
 		{BC364B41-28C9-48D0-8728-A46740122552} = {BC364B41-28C9-48D0-8728-A46740122552}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "timer_dll", "timer_dll\timer_dll.vcxproj", "{EF948E2F-F07A-4359-9DBA-E0D625D2A156}"
+	ProjectSection(ProjectDependencies) = postProject
+		{994AF121-7D16-41AC-B864-B32D8ED5DD01} = {994AF121-7D16-41AC-B864-B32D8ED5DD01}
+		{BC364B41-28C9-48D0-8728-A46740122552} = {BC364B41-28C9-48D0-8728-A46740122552}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "chrono_dll", "chrono_dll\chrono_dll.vcxproj", "{994AF121-7D16-41AC-B864-B32D8ED5DD01}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -40,6 +48,14 @@ Global
 		{C8F0341F-D47D-4A33-881A-14C044D05302}.Debug|Win32.Build.0 = Debug|Win32
 		{C8F0341F-D47D-4A33-881A-14C044D05302}.Release|Win32.ActiveCfg = Release|Win32
 		{C8F0341F-D47D-4A33-881A-14C044D05302}.Release|Win32.Build.0 = Release|Win32
+		{EF948E2F-F07A-4359-9DBA-E0D625D2A156}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EF948E2F-F07A-4359-9DBA-E0D625D2A156}.Debug|Win32.Build.0 = Debug|Win32
+		{EF948E2F-F07A-4359-9DBA-E0D625D2A156}.Release|Win32.ActiveCfg = Release|Win32
+		{EF948E2F-F07A-4359-9DBA-E0D625D2A156}.Release|Win32.Build.0 = Release|Win32
+		{994AF121-7D16-41AC-B864-B32D8ED5DD01}.Debug|Win32.ActiveCfg = Debug|Win32
+		{994AF121-7D16-41AC-B864-B32D8ED5DD01}.Debug|Win32.Build.0 = Debug|Win32
+		{994AF121-7D16-41AC-B864-B32D8ED5DD01}.Release|Win32.ActiveCfg = Release|Win32
+		{994AF121-7D16-41AC-B864-B32D8ED5DD01}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

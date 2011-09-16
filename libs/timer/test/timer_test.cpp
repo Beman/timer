@@ -5,18 +5,18 @@
 //  Distributed under the Boost Software License, Version 1.0. (See accompanying
 //  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-//  See http://www.boost.org/libs/system for documentation.
+//  See http://www.boost.org/libs/timer for documentation.
 
-#include <boost/system/timer.hpp>
+#include <boost/timer/timer.hpp>
 #include <cstdlib> // for atol()
 #include <iostream>
 #include <locale>
 
-using boost::system::nanosecond_t;
-using boost::system::times_t;
-using boost::system::timer;
-using boost::system::run_timer;
-using boost::system::times;
+using boost::timer::nanosecond_t;
+using boost::timer::times_t;
+using boost::timer::timer;
+using boost::timer::run_timer;
+using boost::timer::times;
 
 //----------------------------------------------------------------------------//
 //
@@ -73,7 +73,7 @@ int main( int argc, char * argv[] )
     times(now);
   }
   std::cout << now.wall - start.wall
-            << "ns is the measured boost::system::times() resolution for wall time\n";
+            << "ns is the measured boost::timer::times() resolution for wall time\n";
 
   times(start);
   now.user = start.user;
@@ -82,7 +82,7 @@ int main( int argc, char * argv[] )
     times(now);
   }
   std::cout << now.user - start.user
-            << "ns is the measured boost::system::times() resolution for user time\n";
+            << "ns is the measured boost::timer::times() resolution for user time\n";
 
   times(start);
   now.system = start.system;
@@ -91,7 +91,7 @@ int main( int argc, char * argv[] )
     times(now);
   }
   std::cout << now.system - start.system
-            << "ns is the measured boost::system::times() resolution for system time\n";
+            << "ns is the measured boost::timer::times() resolution for system time\n";
 
   return 0;
 }

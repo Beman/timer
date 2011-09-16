@@ -5,7 +5,7 @@
 //  Distributed under the Boost Software License, Version 1.0.
 //  See http://www.boost.org/LICENSE_1_0.txt)
 
-//  See http://www.boost.org/libs/system for documentation.
+//  See http://www.boost.org/libs/timer for documentation.
 
 //----------------------------------------------------------------------------//
 
@@ -16,16 +16,16 @@
 
 //----------------------------------------------------------------------------//
 
-// define BOOST_SYSTEM_SOURCE so that <boost/system/config.hpp> knows
+// define BOOST_TIMER_SOURCE so that <boost/timer/config.hpp> knows
 // the library is being built (possibly exporting rather than importing code)
-#define BOOST_SYSTEM_SOURCE 
+#define BOOST_TIMER_SOURCE 
 
-#include <boost/system/timer.hpp>
+#include <boost/timer/timer.hpp>
 #include <iostream>
 
 namespace boost
 {
-  namespace system
+  namespace timer
   {
     run_timer::run_timer(int places)
       : m_places(places), m_os(std::cout), m_format(0) {}
@@ -34,5 +34,5 @@ namespace boost
       : m_places(places), m_os(std::cout), m_format(new char[format.size()+1])
         { std::strcpy(m_format, format.c_str()); }
 
-  } // namespace system
+  } // namespace timer
 } // namespace boost
