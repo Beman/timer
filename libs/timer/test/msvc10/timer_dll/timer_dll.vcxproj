@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{EF948E2F-F07A-4359-9DBA-E0D625D2A156}</ProjectGuid>
+    <ProjectGuid>{FEFC051D-2276-480C-A18F-C657F9C22B6E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>timer_dll</RootNamespace>
   </PropertyGroup>
@@ -51,7 +51,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>BOOST_ALL_NO_LIB;BOOST_ALL_DYN_LINK;WIN32;_DEBUG;_WINDOWS;_USRDLL;TIMER_DLL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;TIMER_DLL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -74,7 +74,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>BOOST_ALL_NO_LIB;BOOST_ALL_DYN_LINK;WIN32;NDEBUG;_WINDOWS;_USRDLL;TIMER_DLL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;TIMER_DLL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -92,9 +92,9 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\run_timer.cpp" />
-    <ClCompile Include="..\..\..\src\run_timer_ctors.cpp" />
-    <ClCompile Include="..\..\..\src\timer.cpp" />
+    <ClCompile Include="..\..\..\src\auto_timers.cpp" />
+    <ClCompile Include="..\..\..\src\auto_timers_construction.cpp" />
+    <ClCompile Include="..\..\..\src\cpu_timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\chrono_dll\chrono_dll.vcxproj">

@@ -1,4 +1,4 @@
-//  boost run_timer.cpp  -----------------------------------------------------//
+//  boost auto_cpu_timer.cpp  -----------------------------------------------------//
 
 //  Copyright Beman Dawes 1994-2006, 2011
 
@@ -33,10 +33,12 @@ using boost::system::error_code;
 
 namespace
 {
+  //  auto_cpu_timer helpers  ----------------------------------------------------------//
+
   const char * default_format =
     " %ws wall, %us user + %ss timer = %ts cpu (%p%)\n";
 
-void show_time(const char * format, int places, std::ostream& os,
+  void show_time(const char * format, int places, std::ostream& os,
     const times_t& times)
   //  NOTE WELL: Will truncate least-significant digits to LDBL_DIG, which may
   //  be as low as 10, although will be 15 for many common platforms.
@@ -96,36 +98,89 @@ void show_time(const char * format, int places, std::ostream& os,
     }
   }
 
+  //  auto_high_resolution_timer helpers  ----------------------------------------------//
+
+  const char * default_hi_res_format =
+    " %ws wall, %us user + %ss timer = %ts cpu (%p%)\n";
+
+  void show_time(const char * format, int places, std::ostream& os,
+    boost::timer::nanosecond_t time)
+  //  NOTE WELL: Will truncate least-significant digits to LDBL_DIG, which may
+  //  be as low as 10, although will be 15 for many common platforms.
+  {
+    if (time < nanosecond_t(0))
+      return;
+    if (places > 9)
+      places = 9;
+    else if (places < 0)
+      places = 0;
+
+    boost::io::ios_flags_saver ifs(os);
+    boost::io::ios_precision_saver ips(os);
+    os.setf(std::ios_base::fixed, std::ios_base::floatfield);
+    os.precision(places);
+
+    const long double sec = 1000000000.0L;
+
+    for (; *format; ++format)
+    {
+      if (*format != '%' || !*(format+1) || !std::strchr("w", *(format+1)))
+        os << *format;  // anything except % followed by a valid format character
+                        // gets sent to the output stream
+      else
+      {
+        ++format;
+        switch (*format)
+        {
+        case 'w':
+          os << time / sec;
+          break;
+        default:
+          assert(0);  // program logic error in "// anything except..." if stmt 
+                      // above; no user error should ever fire this assert
+        }
+      }
+    }
+  }
+
 }  // unnamed namespace
 
 namespace boost
 {
   namespace timer
   {
-    //  run_timer:: report  --------------------------------------//
+    //  auto_cpu_timer::report  --------------------------------------------------------//
 
-    void run_timer::report()
-    {
-      show_time(!m_format
-          ? default_format
-          : m_format,
-        m_places, m_os, this->stop());
-    }
-
-    error_code run_timer::report(error_code& ec)
+     void auto_cpu_timer::report()
     {
       try
       {
-        report();
-        ec = error_code();
+        show_time(m_format.empty()
+            ? default_format
+            : m_format.c_str(),
+          m_places, m_os, this->stop());
       }
 
       catch (...) // eat any exceptions
       {
-        ec = error_code(EIO, system::generic_category());
+      }
+    }
+
+    //  auto_high_resolution_timer::report  --------------------------------------------//
+
+     void auto_high_resolution_timer::report()
+    {
+      try
+      {
+        show_time(m_format.empty()
+            ? default_format
+            : m_format.c_str(),
+          m_places, m_os, this->stop());
       }
 
-      return ec;
+      catch (...) // eat any exceptions
+      {
+      }
     }
 
   } // namespace timer

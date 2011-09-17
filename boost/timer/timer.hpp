@@ -11,6 +11,7 @@
 #include <boost/config/warning_disable.hpp>
 
 #include <boost/timer/config.hpp>
+#include <boost/chrono/chrono.hpp>
 #include <boost/system/error_code.hpp>
 #include <boost/cstdint.hpp>
 #include <string>
@@ -19,11 +20,15 @@
 
 #include <boost/config/abi_prefix.hpp> // must be the last #include
 
+#   if defined(_MSC_VER)
+#     pragma warning(push)           // Save warning settings
+#     pragma warning(disable : 4251) // disable warning: class 'std::basic_string<_Elem,_Traits,_Ax>'
+#   endif                            // needs to have dll-interface...
+
 //--------------------------------------------------------------------------------------//
 
 //  TODO:
 //  
-//  * Verify "never throws"
 //  * Add BOOST_NOEXCEPT where applicable
 
 //--------------------------------------------------------------------------------------//
@@ -49,10 +54,8 @@ namespace boost
     class auto_cpu_timer;
 
     //  high_resolution_timer  ---------------------------------------------------------//
-    //
-    //    unless otherwise specified, all functions throw on error
 
-    class high_resolution_timer
+    class BOOST_TIMER_DECL high_resolution_timer
     {
     public:
 
@@ -62,7 +65,7 @@ namespace boost
                                                     : m_flags(static_cast<m_flags_t>(
                                                         m_stopped | m_nothrow))
                                                     { start(); }
-     ~high_resolution_timer()                       {}  // never throws
+     ~high_resolution_timer()                       {}
 
       void            start()
       {
@@ -95,8 +98,6 @@ namespace boost
     };
 
     //  auto_high_resolution_timer  ----------------------------------------------------//
-    //
-    //    unless otherwise specified, all functions throw on error
 
     class BOOST_TIMER_DECL auto_high_resolution_timer : public high_resolution_timer
     {
@@ -109,37 +110,29 @@ namespace boost
       explicit auto_high_resolution_timer(int places = 3);
 
       auto_high_resolution_timer(int places, std::ostream& os)  : m_places(places),
-                                                      m_os(os), m_format(0) {}
+                                                      m_os(os) {}
 
       explicit auto_high_resolution_timer(const std::string& format, int places = 3);
 
       auto_high_resolution_timer(const std::string& format, int places, std::ostream& os)
                                                : m_places(places), m_os(os),
-                                                 m_format(new char[format.size()+1])
-                                               { std::strcpy(m_format, format.c_str()); }
+                                                 m_format(format) {}
 
-     ~auto_high_resolution_timer()  // never throws
+     ~auto_high_resolution_timer()
       { 
-        system::error_code ec;
         if(!stopped())
-          report(ec);
-        delete [] m_format;
+          report();
       }
 
       void            report();
-      system::error_code
-                      report(system::error_code& ec); // never throws
 
     private:
       int             m_places;
       std::ostream&   m_os;
-      char*           m_format;  // doesn't use std::string as VC++ too painful
-                                 // across DLL boundaries due to warning C4251
+      std::string     m_format;  
     };
 
     //  cpu_timer  ---------------------------------------------------------------------//
-    //
-    //    unless otherwise specified, all functions throw on error
 
     class BOOST_TIMER_DECL cpu_timer
     {
@@ -163,8 +156,6 @@ namespace boost
     };
 
     //  auto_cpu_timer  ----------------------------------------------------------------//
-    //
-    //    unless otherwise specified, all functions throw on error
 
     class BOOST_TIMER_DECL auto_cpu_timer : public cpu_timer
     {
@@ -177,36 +168,34 @@ namespace boost
       explicit auto_cpu_timer(int places = 3);
 
       auto_cpu_timer(int places, std::ostream& os)  : m_places(places),
-                                                      m_os(os), m_format(0) {}
+                                                      m_os(os) {}
 
       explicit auto_cpu_timer(const std::string& format, int places = 3);
 
       auto_cpu_timer(const std::string& format, int places, std::ostream& os)
                                                : m_places(places), m_os(os),
-                                                 m_format(new char[format.size()+1])
-                                               { std::strcpy(m_format, format.c_str()); }
+                                                 m_format(format) {}
 
-     ~auto_cpu_timer()  // never throws
+     ~auto_cpu_timer()
       { 
-        system::error_code ec;
         if(!stopped())
-          report(ec);
-        delete [] m_format;
+          report();
       }
 
       void            report();
-      system::error_code
-                      report(system::error_code& ec); // never throws
 
     private:
       int             m_places;
       std::ostream&   m_os;
-      char*           m_format;  // doesn't use std::string as VC++ too painful
-                                 // across DLL boundaries due to warning C4251
+      std::string     m_format;  
     };
     
   } // namespace timer
 } // namespace boost
+
+#   if defined(_MSC_VER)
+#     pragma warning(pop) // restore warning settings.
+#   endif 
 
 #include <boost/config/abi_suffix.hpp> // pops abi_prefix.hpp pragmas
 

@@ -20,9 +20,6 @@
     <ProjectReference Include="..\system_dll\system_dll.vcxproj">
       <Project>{bc364b41-28c9-48d0-8728-a46740122552}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\timer_dll\timer_dll.vcxproj">
-      <Project>{ef948e2f-f07a-4359-9dba-e0d625d2a156}</Project>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{C8F0341F-D47D-4A33-881A-14C044D05302}</ProjectGuid>

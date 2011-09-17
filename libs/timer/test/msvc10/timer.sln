@@ -1,30 +1,20 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual C++ Express 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "example", "example\example.vcxproj", "{1C8E9995-2177-4063-A0EC-12AF93CB2DFB}"
-	ProjectSection(ProjectDependencies) = postProject
-		{BC364B41-28C9-48D0-8728-A46740122552} = {BC364B41-28C9-48D0-8728-A46740122552}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dummy", "dummy\dummy.vcxproj", "{2A3390EC-A69B-472C-96E0-091E1A76FCDC}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "system_dll", "system_dll\system_dll.vcxproj", "{BC364B41-28C9-48D0-8728-A46740122552}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "run_timer_example", "run_timer_example\run_timer_example.vcxproj", "{AB490ECB-CB2B-4EE4-A566-EA074790C6DD}"
-	ProjectSection(ProjectDependencies) = postProject
-		{BC364B41-28C9-48D0-8728-A46740122552} = {BC364B41-28C9-48D0-8728-A46740122552}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "timer_test", "timer_test\timer_test.vcxproj", "{C8F0341F-D47D-4A33-881A-14C044D05302}"
-	ProjectSection(ProjectDependencies) = postProject
-		{BC364B41-28C9-48D0-8728-A46740122552} = {BC364B41-28C9-48D0-8728-A46740122552}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "timer_dll", "timer_dll\timer_dll.vcxproj", "{EF948E2F-F07A-4359-9DBA-E0D625D2A156}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "timer_dll", "timer_dll\timer_dll.vcxproj", "{FEFC051D-2276-480C-A18F-C657F9C22B6E}"
 	ProjectSection(ProjectDependencies) = postProject
 		{994AF121-7D16-41AC-B864-B32D8ED5DD01} = {994AF121-7D16-41AC-B864-B32D8ED5DD01}
 		{BC364B41-28C9-48D0-8728-A46740122552} = {BC364B41-28C9-48D0-8728-A46740122552}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "chrono_dll", "chrono_dll\chrono_dll.vcxproj", "{994AF121-7D16-41AC-B864-B32D8ED5DD01}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BC364B41-28C9-48D0-8728-A46740122552} = {BC364B41-28C9-48D0-8728-A46740122552}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "system_dll", "system_dll\system_dll.vcxproj", "{BC364B41-28C9-48D0-8728-A46740122552}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,30 +22,22 @@ Global
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1C8E9995-2177-4063-A0EC-12AF93CB2DFB}.Debug|Win32.ActiveCfg = Debug|Win32
-		{1C8E9995-2177-4063-A0EC-12AF93CB2DFB}.Debug|Win32.Build.0 = Debug|Win32
-		{1C8E9995-2177-4063-A0EC-12AF93CB2DFB}.Release|Win32.ActiveCfg = Release|Win32
-		{1C8E9995-2177-4063-A0EC-12AF93CB2DFB}.Release|Win32.Build.0 = Release|Win32
-		{BC364B41-28C9-48D0-8728-A46740122552}.Debug|Win32.ActiveCfg = Debug|Win32
-		{BC364B41-28C9-48D0-8728-A46740122552}.Debug|Win32.Build.0 = Debug|Win32
-		{BC364B41-28C9-48D0-8728-A46740122552}.Release|Win32.ActiveCfg = Release|Win32
-		{BC364B41-28C9-48D0-8728-A46740122552}.Release|Win32.Build.0 = Release|Win32
-		{AB490ECB-CB2B-4EE4-A566-EA074790C6DD}.Debug|Win32.ActiveCfg = Debug|Win32
-		{AB490ECB-CB2B-4EE4-A566-EA074790C6DD}.Debug|Win32.Build.0 = Debug|Win32
-		{AB490ECB-CB2B-4EE4-A566-EA074790C6DD}.Release|Win32.ActiveCfg = Release|Win32
-		{AB490ECB-CB2B-4EE4-A566-EA074790C6DD}.Release|Win32.Build.0 = Release|Win32
-		{C8F0341F-D47D-4A33-881A-14C044D05302}.Debug|Win32.ActiveCfg = Debug|Win32
-		{C8F0341F-D47D-4A33-881A-14C044D05302}.Debug|Win32.Build.0 = Debug|Win32
-		{C8F0341F-D47D-4A33-881A-14C044D05302}.Release|Win32.ActiveCfg = Release|Win32
-		{C8F0341F-D47D-4A33-881A-14C044D05302}.Release|Win32.Build.0 = Release|Win32
-		{EF948E2F-F07A-4359-9DBA-E0D625D2A156}.Debug|Win32.ActiveCfg = Debug|Win32
-		{EF948E2F-F07A-4359-9DBA-E0D625D2A156}.Debug|Win32.Build.0 = Debug|Win32
-		{EF948E2F-F07A-4359-9DBA-E0D625D2A156}.Release|Win32.ActiveCfg = Release|Win32
-		{EF948E2F-F07A-4359-9DBA-E0D625D2A156}.Release|Win32.Build.0 = Release|Win32
+		{2A3390EC-A69B-472C-96E0-091E1A76FCDC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2A3390EC-A69B-472C-96E0-091E1A76FCDC}.Debug|Win32.Build.0 = Debug|Win32
+		{2A3390EC-A69B-472C-96E0-091E1A76FCDC}.Release|Win32.ActiveCfg = Release|Win32
+		{2A3390EC-A69B-472C-96E0-091E1A76FCDC}.Release|Win32.Build.0 = Release|Win32
+		{FEFC051D-2276-480C-A18F-C657F9C22B6E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FEFC051D-2276-480C-A18F-C657F9C22B6E}.Debug|Win32.Build.0 = Debug|Win32
+		{FEFC051D-2276-480C-A18F-C657F9C22B6E}.Release|Win32.ActiveCfg = Release|Win32
+		{FEFC051D-2276-480C-A18F-C657F9C22B6E}.Release|Win32.Build.0 = Release|Win32
 		{994AF121-7D16-41AC-B864-B32D8ED5DD01}.Debug|Win32.ActiveCfg = Debug|Win32
 		{994AF121-7D16-41AC-B864-B32D8ED5DD01}.Debug|Win32.Build.0 = Debug|Win32
 		{994AF121-7D16-41AC-B864-B32D8ED5DD01}.Release|Win32.ActiveCfg = Release|Win32
 		{994AF121-7D16-41AC-B864-B32D8ED5DD01}.Release|Win32.Build.0 = Release|Win32
+		{BC364B41-28C9-48D0-8728-A46740122552}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BC364B41-28C9-48D0-8728-A46740122552}.Debug|Win32.Build.0 = Debug|Win32
+		{BC364B41-28C9-48D0-8728-A46740122552}.Release|Win32.ActiveCfg = Release|Win32
+		{BC364B41-28C9-48D0-8728-A46740122552}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
