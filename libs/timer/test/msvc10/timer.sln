@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual C++ Express 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dummy", "dummy\dummy.vcxproj", "{2A3390EC-A69B-472C-96E0-091E1A76FCDC}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "timer_dll", "timer_dll\timer_dll.vcxproj", "{FEFC051D-2276-480C-A18F-C657F9C22B6E}"
 	ProjectSection(ProjectDependencies) = postProject
 		{994AF121-7D16-41AC-B864-B32D8ED5DD01} = {994AF121-7D16-41AC-B864-B32D8ED5DD01}
@@ -16,16 +14,17 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "chrono_dll", "chrono_dll\ch
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "system_dll", "system_dll\system_dll.vcxproj", "{BC364B41-28C9-48D0-8728-A46740122552}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "timer_test", "timer_test\timer_test.vcxproj", "{C8F0341F-D47D-4A33-881A-14C044D05302}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FEFC051D-2276-480C-A18F-C657F9C22B6E} = {FEFC051D-2276-480C-A18F-C657F9C22B6E}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2A3390EC-A69B-472C-96E0-091E1A76FCDC}.Debug|Win32.ActiveCfg = Debug|Win32
-		{2A3390EC-A69B-472C-96E0-091E1A76FCDC}.Debug|Win32.Build.0 = Debug|Win32
-		{2A3390EC-A69B-472C-96E0-091E1A76FCDC}.Release|Win32.ActiveCfg = Release|Win32
-		{2A3390EC-A69B-472C-96E0-091E1A76FCDC}.Release|Win32.Build.0 = Release|Win32
 		{FEFC051D-2276-480C-A18F-C657F9C22B6E}.Debug|Win32.ActiveCfg = Debug|Win32
 		{FEFC051D-2276-480C-A18F-C657F9C22B6E}.Debug|Win32.Build.0 = Debug|Win32
 		{FEFC051D-2276-480C-A18F-C657F9C22B6E}.Release|Win32.ActiveCfg = Release|Win32
@@ -38,6 +37,10 @@ Global
 		{BC364B41-28C9-48D0-8728-A46740122552}.Debug|Win32.Build.0 = Debug|Win32
 		{BC364B41-28C9-48D0-8728-A46740122552}.Release|Win32.ActiveCfg = Release|Win32
 		{BC364B41-28C9-48D0-8728-A46740122552}.Release|Win32.Build.0 = Release|Win32
+		{C8F0341F-D47D-4A33-881A-14C044D05302}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C8F0341F-D47D-4A33-881A-14C044D05302}.Debug|Win32.Build.0 = Debug|Win32
+		{C8F0341F-D47D-4A33-881A-14C044D05302}.Release|Win32.ActiveCfg = Release|Win32
+		{C8F0341F-D47D-4A33-881A-14C044D05302}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

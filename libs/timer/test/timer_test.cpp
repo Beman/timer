@@ -14,9 +14,8 @@
 
 using boost::timer::nanosecond_t;
 using boost::timer::times_t;
-using boost::timer::timer;
-using boost::timer::run_timer;
-using boost::timer::times;
+using boost::timer::cpu_timer;
+using boost::timer::auto_cpu_timer;
 
 //----------------------------------------------------------------------------//
 //
@@ -35,9 +34,9 @@ int main( int argc, char * argv[] )
   long count = 0;
   
   {
-    run_timer timer(6);
-    run_timer timer2("\nwall %w s, utilization %p%\n");
-    run_timer timer3("\nwall %w s, total cpu %t s, utilization %p%\n", 3);
+    auto_cpu_timer timer(6);
+    auto_cpu_timer timer2("\nwall %w s, utilization %p%\n");
+    auto_cpu_timer timer3("\nwall %w s, total cpu %t s, utilization %p%\n", 3);
 
     times_t times;
     times.clear();
@@ -66,29 +65,33 @@ int main( int argc, char * argv[] )
   times_t start;
   times_t now;
 
-  times(start);
+  cpu_timer cpu;
+
+  cpu.elapsed(start);
   now.wall = start.wall;
   while (now.wall == start.wall)
   {
-    times(now);
+    cpu.elapsed(now);
   }
   std::cout << now.wall - start.wall
             << "ns is the measured boost::timer::times() resolution for wall time\n";
 
-  times(start);
+  cpu.start();
+  cpu.elapsed(start);
   now.user = start.user;
   while (now.user == start.user)
   {
-    times(now);
+    cpu.elapsed(now);
   }
   std::cout << now.user - start.user
             << "ns is the measured boost::timer::times() resolution for user time\n";
 
-  times(start);
+  cpu.start();
+  cpu.elapsed(start);
   now.system = start.system;
   while (now.system == start.system)
   {
-    times(now);
+    cpu.elapsed(now);
   }
   std::cout << now.system - start.system
             << "ns is the measured boost::timer::times() resolution for system time\n";

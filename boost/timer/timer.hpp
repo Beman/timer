@@ -107,12 +107,12 @@ namespace boost
       // Such a default would require including <iostream>, with its high costs, even
       // when the standard streams are not used.
 
-      explicit auto_high_resolution_timer(int places = 3);
+      explicit auto_high_resolution_timer(int places = 6);
 
       auto_high_resolution_timer(int places, std::ostream& os)  : m_places(places),
                                                       m_os(os) {}
 
-      explicit auto_high_resolution_timer(const std::string& format, int places = 3);
+      explicit auto_high_resolution_timer(const std::string& format, int places = 6);
 
       auto_high_resolution_timer(const std::string& format, int places, std::ostream& os)
                                                : m_places(places), m_os(os),
