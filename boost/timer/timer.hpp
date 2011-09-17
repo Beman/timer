@@ -19,6 +19,15 @@
 
 #include <boost/config/abi_prefix.hpp> // must be the last #include
 
+//--------------------------------------------------------------------------------------//
+
+//  TODO:
+//  
+//  * Verify "never throws"
+//  * Add BOOST_NOEXCEPT where applicable
+
+//--------------------------------------------------------------------------------------//
+
 namespace boost
 {
   namespace timer
@@ -34,62 +43,82 @@ namespace boost
       void clear() { wall = user = system = 0LL; }
     };
 
-    //  low-level functions  -----------------------------------------------------------//
+    class high_resolution_timer;
+    class auto_high_resolution_timer;
+    class cpu_timer;
+    class auto_cpu_timer;
 
-    BOOST_TIMER_DECL
-    void  times(times_t& result); // throws on error
+    //  high_resolution_timer  ---------------------------------------------------------//
+    //
+    //    unless otherwise specified, all functions throw on error
 
-    BOOST_TIMER_DECL
-    system::error_code& times(times_t& result, system::error_code& ec); // never throws
-
-    //  timer  -------------------------------------------------------------------------//
-
-    //  unless otherwise specified, all functions throw on error
-
-    class BOOST_TIMER_DECL timer
+    class high_resolution_timer
     {
     public:
 
-      timer()                         : m_flags(m_stopped) { start(); }
-      timer(const std::nothrow_t&) : m_flags(static_cast<m_flags_t>(m_stopped
-                                                  | m_nothrow)) { start(); }
-     ~timer()                         {}  // never throws
+      high_resolution_timer()                       : m_flags(m_stopped)
+                                                    { start(); }
+      high_resolution_timer(const std::nothrow_t&)
+                                                    : m_flags(static_cast<m_flags_t>(
+                                                        m_stopped | m_nothrow))
+                                                    { start(); }
+     ~high_resolution_timer()                       {}  // never throws
 
-      void            start();
-      const times_t&  stop();
-      bool            stopped() const { return m_flags& m_stopped; }
-      void            elapsed(times_t& result); // does not stop()
-
+      void            start()
+      {
+        m_flags = static_cast<m_flags_t>(m_flags& ~m_stopped);
+        boost::chrono::duration<boost::int_least64_t, boost::nano> now
+          (boost::chrono::high_resolution_clock::now().time_since_epoch());
+        m_time = now.count();
+      }
+      nanosecond_t    stop()
+      {
+        boost::chrono::duration<boost::int_least64_t, boost::nano> now
+          (boost::chrono::high_resolution_clock::now().time_since_epoch());
+        m_time = now.count() - m_time;
+        m_flags = static_cast<m_flags_t>(m_flags | m_stopped);
+        return m_time;
+      }
+      bool            stopped() const               { return m_flags & m_stopped; }
+      nanosecond_t    elapsed()                     // does not stop()
+      {
+        if (stopped())
+          return m_time;
+        boost::chrono::duration<boost::int_least64_t, boost::nano> now
+          (boost::chrono::high_resolution_clock::now().time_since_epoch());
+        return now.count() - m_time;
+      }
     private:
-      times_t    m_times;
-      enum       m_flags_t { m_stopped=1, m_nothrow=2 };
-      m_flags_t  m_flags;
+      nanosecond_t    m_time;
+      enum            m_flags_t                     { m_stopped=1, m_nothrow=2 };
+      m_flags_t       m_flags;
     };
 
-    //  run_timer  -----------------------------------------------------------//
+    //  auto_high_resolution_timer  ----------------------------------------------------//
+    //
+    //    unless otherwise specified, all functions throw on error
 
-    //  unless otherwise specified, all functions throw on error
-
-    class BOOST_TIMER_DECL run_timer : public timer
+    class BOOST_TIMER_DECL auto_high_resolution_timer : public high_resolution_timer
     {
     public:
 
-      // each constructor has two overloads to avoid an explicit default to
-      // std::cout, which in turn would require including <iostream> with its
-      // high associated cost even when the standard streams are not used.
+      // Each constructor has two overloads to avoid an explicit default to std::cout.
+      // Such a default would require including <iostream>, with its high costs, even
+      // when the standard streams are not used.
 
-      explicit run_timer(int places = 2);
+      explicit auto_high_resolution_timer(int places = 3);
 
-      run_timer(int places, std::ostream& os)
-        : m_places(places), m_os(os), m_format(0) {}
+      auto_high_resolution_timer(int places, std::ostream& os)  : m_places(places),
+                                                      m_os(os), m_format(0) {}
 
-      explicit run_timer(const std::string& format, int places = 2);
+      explicit auto_high_resolution_timer(const std::string& format, int places = 3);
 
-      run_timer(const std::string& format, int places, std::ostream& os)
-         : m_places(places), m_os(os), m_format(new char[format.size()+1])
-           { std::strcpy(m_format, format.c_str()); }
+      auto_high_resolution_timer(const std::string& format, int places, std::ostream& os)
+                                               : m_places(places), m_os(os),
+                                                 m_format(new char[format.size()+1])
+                                               { std::strcpy(m_format, format.c_str()); }
 
-     ~run_timer()  // never throws
+     ~auto_high_resolution_timer()  // never throws
       { 
         system::error_code ec;
         if(!stopped())
@@ -97,9 +126,77 @@ namespace boost
         delete [] m_format;
       }
 
-      void        report();
+      void            report();
       system::error_code
-                  report(system::error_code& ec); // never throws
+                      report(system::error_code& ec); // never throws
+
+    private:
+      int             m_places;
+      std::ostream&   m_os;
+      char*           m_format;  // doesn't use std::string as VC++ too painful
+                                 // across DLL boundaries due to warning C4251
+    };
+
+    //  cpu_timer  ---------------------------------------------------------------------//
+    //
+    //    unless otherwise specified, all functions throw on error
+
+    class BOOST_TIMER_DECL cpu_timer
+    {
+    public:
+
+      cpu_timer()                                   : m_flags(m_stopped) { start(); }
+      cpu_timer(const std::nothrow_t&)              : m_flags(static_cast<m_flags_t>(
+                                                        m_stopped | m_nothrow))
+                                                    { start(); }
+     ~cpu_timer()                                   {}  // never throws
+
+      void            start();
+      const times_t&  stop();
+      bool            stopped() const               { return m_flags& m_stopped; }
+      void            elapsed(times_t& result);     // does not stop()
+
+    private:
+      times_t         m_times;
+      enum            m_flags_t                     { m_stopped=1, m_nothrow=2 };
+      m_flags_t       m_flags;
+    };
+
+    //  auto_cpu_timer  ----------------------------------------------------------------//
+    //
+    //    unless otherwise specified, all functions throw on error
+
+    class BOOST_TIMER_DECL auto_cpu_timer : public cpu_timer
+    {
+    public:
+
+      // Each constructor has two overloads to avoid an explicit default to std::cout.
+      // Such a default would require including <iostream>, with its high costs, even
+      // when the standard streams are not used.
+
+      explicit auto_cpu_timer(int places = 3);
+
+      auto_cpu_timer(int places, std::ostream& os)  : m_places(places),
+                                                      m_os(os), m_format(0) {}
+
+      explicit auto_cpu_timer(const std::string& format, int places = 3);
+
+      auto_cpu_timer(const std::string& format, int places, std::ostream& os)
+                                               : m_places(places), m_os(os),
+                                                 m_format(new char[format.size()+1])
+                                               { std::strcpy(m_format, format.c_str()); }
+
+     ~auto_cpu_timer()  // never throws
+      { 
+        system::error_code ec;
+        if(!stopped())
+          report(ec);
+        delete [] m_format;
+      }
+
+      void            report();
+      system::error_code
+                      report(system::error_code& ec); // never throws
 
     private:
       int             m_places;

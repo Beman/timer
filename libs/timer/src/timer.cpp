@@ -82,24 +82,6 @@ namespace boost
       current.wall = x.count();
 
 #   if defined(BOOST_WINDOWS_API)
-//#     ifdef BOOST_TIMER_LOW_RES_TIMER
-//        ::GetSystemTimeAsFileTime((LPFILETIME)&current.wall);
-//        current.wall   *= 100;  
-//#     else
-//        LARGE_INTEGER freq;
-//        if (::QueryPerformanceFrequency(&freq))  // OK?
-//        {
-//          LARGE_INTEGER now;
-//          ::QueryPerformanceCounter(&now);
-//          current.wall = now.QuadPart * 1000000000;
-//          current.wall /= freq.QuadPart;
-//        }
-//        else
-//        {
-//          ::GetSystemTimeAsFileTime((LPFILETIME)&current.wall);
-//          current.wall   *= 100;  
-//        }
-//#     endif
 
       FILETIME creation, exit;
       if (::GetProcessTimes(::GetCurrentProcess(), &creation, &exit,
@@ -149,15 +131,15 @@ namespace boost
       else                         \
         times(C);
 
-    //  timer  ---------------------------------------------------------------//
+    //  cpu_timer  ---------------------------------------------------------------------//
 
-    void timer::start()
+    void cpu_timer::start()
     {
       m_flags = static_cast<m_flags_t>(m_flags& ~m_stopped);
       BOOST_TIMES(m_times);
     }
 
-    const times_t& timer::stop()
+    const times_t& cpu_timer::stop()
     {
       if (stopped()) return m_times;
       m_flags = static_cast<m_flags_t>(m_flags | m_stopped);
@@ -170,7 +152,7 @@ namespace boost
       return m_times;
     }
 
-    void timer::elapsed(times_t& current)
+    void cpu_timer::elapsed(times_t& current)
     {
       if (stopped())
       {
