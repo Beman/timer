@@ -85,8 +85,8 @@ namespace
     }
     else
     {
-      current.system = nanosecond_t(tm.tms_stime + tm.tms_cstime);
-      current.user = nanosecond_t(tm.tms_utime + tm.tms_cutime);
+      current.system = boost::timer::nanosecond_t(tm.tms_stime + tm.tms_cstime);
+      current.user = boost::timer::nanosecond_t(tm.tms_utime + tm.tms_cutime);
       if (tick_factor() != -1)
       {
         current.user *= tick_factor();

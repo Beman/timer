@@ -10,6 +10,8 @@
 project
     : requirements
       <library>/boost/timer//boost_timer
+      <library>/boost/chrono//boost_chrono        #GCC needs this for high_resolution_timer
+	                                             #presumbably it can be elminated if that timer eliminated
       <toolset>msvc:<asynch-exceptions>on
     ;
  
