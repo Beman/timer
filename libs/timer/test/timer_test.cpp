@@ -14,6 +14,8 @@
 
 using boost::timer::nanosecond_t;
 using boost::timer::times_t;
+using boost::timer::high_resolution_timer;
+using boost::timer::auto_high_resolution_timer;
 using boost::timer::cpu_timer;
 using boost::timer::auto_cpu_timer;
 
@@ -61,20 +63,45 @@ int main( int argc, char * argv[] )
   }
   std::cout << count << " iterations\n\n";
 
-  count = 0;
+
+
   times_t start;
+  start.clear();
   times_t now;
+
+  {
+    auto_high_resolution_timer auto_hi_res(9);
+    high_resolution_timer hi_res;
+
+    for (int i = 0; i < 10; ++i)
+    {
+      now.wall = start.wall = hi_res.elapsed();
+      while (now.wall == start.wall)
+      {
+        now.wall = hi_res.elapsed();
+      }
+      std::cout << now.wall - start.wall
+                << "ns measured resolution - boost::timer::high_resolution_timer\n";
+    }
+  }
 
   cpu_timer cpu;
 
-  cpu.elapsed(start);
-  now.wall = start.wall;
-  while (now.wall == start.wall)
   {
-    cpu.elapsed(now);
+    auto_high_resolution_timer auto_hi_res(9);
+    for (int i = 0; i < 10; ++i)
+    {
+      cpu.start();
+      cpu.elapsed(start);
+      now.wall = start.wall;
+      while (now.wall == start.wall)
+      {
+        cpu.elapsed(now);
+      }
+      std::cout << now.wall - start.wall
+                << "ns measured resolution - boost::timer::cpu_timer resolution for wall-clock time\n";
+    }
   }
-  std::cout << now.wall - start.wall
-            << "ns is the measured boost::timer::times() resolution for wall time\n";
 
   cpu.start();
   cpu.elapsed(start);
@@ -84,7 +111,7 @@ int main( int argc, char * argv[] )
     cpu.elapsed(now);
   }
   std::cout << now.user - start.user
-            << "ns is the measured boost::timer::times() resolution for user time\n";
+            << "ns measured resolution - boost::timer::cpu_timer resolution for user time\n";
 
   cpu.start();
   cpu.elapsed(start);
@@ -94,7 +121,7 @@ int main( int argc, char * argv[] )
     cpu.elapsed(now);
   }
   std::cout << now.system - start.system
-            << "ns is the measured boost::timer::times() resolution for system time\n";
+            << "nsns measured resolution - boost::timer::cpu_timer resolution for system time\n";
 
   return 0;
 }

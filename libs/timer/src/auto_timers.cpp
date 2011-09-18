@@ -101,7 +101,7 @@ namespace
   //  auto_high_resolution_timer helpers  ----------------------------------------------//
 
   const char * default_hi_res_format =
-    " %ws wall, %us user + %ss timer = %ts cpu (%p%)\n";
+    " %ws elapsed wall clock time\n";
 
   void show_time(const char * format, int places, std::ostream& os,
     boost::timer::nanosecond_t time)
@@ -173,7 +173,7 @@ namespace boost
       try
       {
         show_time(m_format.empty()
-            ? default_format
+            ? default_hi_res_format
             : m_format.c_str(),
           m_places, m_os, this->stop());
       }

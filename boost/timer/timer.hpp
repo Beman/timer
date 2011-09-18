@@ -54,6 +54,9 @@ namespace boost
     class auto_cpu_timer;
 
     //  high_resolution_timer  ---------------------------------------------------------//
+    //
+    //  provides the same resolution but lower latency than using cpu_timer for
+    //  wall-clock timings
 
     class BOOST_TIMER_DECL high_resolution_timer
     {
