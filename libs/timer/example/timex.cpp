@@ -2,12 +2,12 @@
 
 //  Copyright Beman Dawes 2007
 
-//  Distributed under the Boost Software License, Version 1.0. (See accompanying
-//  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//  Distributed under the Boost Software License, Version 1.0.
+//  See http://www.boost.org/LICENSE_1_0.txt
 
-//  See http://www.boost.org/libs/system for documentation.
+//  See http://www.boost.org/libs/timer for documentation.
 
-#include <boost/system/timer.hpp>
+#include <boost/timer/timer.hpp>
 #include <cstdlib>
 #include <string>
 #include <iostream>
@@ -41,7 +41,7 @@ int main( int argc, char * argv[] )
   if ( verbose )
     { std::cout << "command: \"" << s.c_str() << "\"\n"; }
 
-  boost::system::run_timer t;
+  boost::timer::auto_high_resolution_timer t;
 
   return std::system( s.c_str() );
 }
