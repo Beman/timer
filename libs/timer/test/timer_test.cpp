@@ -8,6 +8,7 @@
 //  See http://www.boost.org/libs/timer for documentation.
 
 #include <boost/timer/timer.hpp>
+#include <boost/detail/lightweight_main.hpp>
 #include <cstdlib> // for atol()
 #include <iostream>
 #include <locale>
@@ -28,7 +29,7 @@ using boost::timer::auto_cpu_timer;
 //
 //----------------------------------------------------------------------------//
 
-int main( int argc, char * argv[] )
+int cpp_main( int argc, char * argv[] )
 {
   std::locale loc( "" );
   std::cout.imbue( loc );
@@ -70,6 +71,9 @@ int main( int argc, char * argv[] )
   times_t now;
 
   {
+    std::cout << "measure resolution - boost::timer::high_resolution_timer"
+                 " resolution for wall-clock time..." << std::endl;
+
     auto_high_resolution_timer auto_hi_res(9);
     high_resolution_timer hi_res;
 
@@ -80,14 +84,15 @@ int main( int argc, char * argv[] )
       {
         now.wall = hi_res.elapsed();
       }
-      std::cout << now.wall - start.wall
-                << "ns measured resolution - boost::timer::high_resolution_timer\n";
+      std::cout << now.wall - start.wall << "ns\n";
     }
   }
 
   cpu_timer cpu;
 
   {
+    std::cout << "measure resolution - boost::timer::cpu_timer"
+                 " resolution for wall-clock time..." << std::endl;
     auto_high_resolution_timer auto_hi_res(9);
     for (int i = 0; i < 10; ++i)
     {
@@ -98,8 +103,7 @@ int main( int argc, char * argv[] )
       {
         cpu.elapsed(now);
       }
-      std::cout << now.wall - start.wall
-                << "ns measured resolution - boost::timer::cpu_timer resolution for wall-clock time\n";
+      std::cout << now.wall - start.wall << "ns\n";
     }
   }
 
