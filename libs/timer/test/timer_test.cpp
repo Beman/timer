@@ -31,8 +31,9 @@ using boost::timer::auto_cpu_timer;
 
 int cpp_main( int argc, char * argv[] )
 {
-  std::locale loc( "" );
-  std::cout.imbue( loc );
+  // These fail on Mac OS X if environment not previously set up
+  //std::locale loc( "" );
+  //std::cout.imbue( loc );
 
   long count = 0;
   

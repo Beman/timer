@@ -10,8 +10,7 @@
 project
     : requirements
       <library>/boost/timer//boost_timer
-      <library>/boost/chrono//boost_chrono        #GCC needs this for high_resolution_timer
-	                                             #presumbably it can be elminated if that timer eliminated
+      <library>/boost/chrono//boost_chrono  #GCC needs this for high_resolution_timer
       <toolset>msvc:<asynch-exceptions>on
     ;
  
@@ -20,6 +19,7 @@ project
      [ run timer_test.cpp
        : # command line
        : # input files
-       : # requirements
+       : <test-info>always_show_run_output # requirements
      ]
-    ;
+     [ run ../example/timex.cpp : : : <link>shared <test-info>always_show_run_output ]
+   ;
