@@ -117,7 +117,7 @@ namespace boost
 
     const cpu_times& cpu_timer::stop()
     {
-      if (stopped()) return m_times;
+      if (is_stopped()) return m_times;
       m_flags = static_cast<m_flags_t>(m_flags | m_stopped);
       
       cpu_times current;
@@ -130,7 +130,7 @@ namespace boost
 
     void cpu_timer::elapsed(cpu_times& current)
     {
-      if (stopped())
+      if (is_stopped())
       {
         current.wall = m_times.wall;
         current.user = m_times.user;

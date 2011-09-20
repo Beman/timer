@@ -85,10 +85,10 @@ namespace boost
         m_flags = static_cast<m_flags_t>(m_flags | m_stopped);
         return m_time;
       }
-      bool            stopped() const               { return m_flags & m_stopped; }
+      bool            is_stopped() const               { return m_flags & m_stopped; }
       nanosecond_type    elapsed()                     // does not stop()
       {
-        if (stopped())
+        if (is_stopped())
           return m_time;
         boost::chrono::duration<boost::int_least64_t, boost::nano> now
           (boost::chrono::high_resolution_clock::now().time_since_epoch());
@@ -123,7 +123,7 @@ namespace boost
 
      ~auto_high_resolution_timer()
       { 
-        if(!stopped())
+        if(!is_stopped())
           report();
       }
 
@@ -149,7 +149,7 @@ namespace boost
 
       void            start();
       const cpu_times&  stop();
-      bool            stopped() const               { return m_flags& m_stopped; }
+      bool            is_stopped() const               { return m_flags& m_stopped; }
       void            elapsed(cpu_times& result);     // does not stop()
 
     private:
@@ -181,7 +181,7 @@ namespace boost
 
      ~auto_cpu_timer()
       { 
-        if(!stopped())
+        if(!is_stopped())
           report();
       }
 
