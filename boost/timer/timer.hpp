@@ -97,6 +97,8 @@ namespace boost
     };
 
     //  auto_high_resolution_timer  ----------------------------------------------------//
+    //
+    //  all functions except report() are noexcept 
 
     class BOOST_TIMER_DECL auto_high_resolution_timer : public high_resolution_timer
     {
@@ -119,11 +121,19 @@ namespace boost
 
      ~auto_high_resolution_timer()
       { 
-        if(!is_stopped())
-          report();
+        if (!is_stopped())
+        {
+          try
+          {
+            report();
+          }
+          catch (...) // eat any exceptions
+          {
+          }
+        }
       }
 
-      void            report();
+      void            report();  // throws iff I/O throws
 
     private:
       int             m_places;
@@ -132,29 +142,29 @@ namespace boost
     };
 
     //  cpu_timer  ---------------------------------------------------------------------//
+    //
+    //  all functions are noexcept 
 
     class BOOST_TIMER_DECL cpu_timer
     {
     public:
 
-      cpu_timer()                                   : m_flags(m_stopped) { start(); }
-      cpu_timer(const std::nothrow_t&)              : m_flags(static_cast<m_flags_t>(
-                                                        m_stopped | m_nothrow))
-                                                    { start(); }
-     ~cpu_timer()                                   {}  // never throws
+      cpu_timer()                                    { start(); }
+     ~cpu_timer()                                    {}
 
-      void            start();
+      void              start();
       const cpu_times&  stop();
-      bool            is_stopped() const               { return m_flags& m_stopped; }
-      void            elapsed(cpu_times& result);     // does not stop()
+      bool              is_stopped() const           { return m_is_stopped; }
+      void              elapsed(cpu_times& result);  // does not stop()
 
     private:
       cpu_times         m_times;
-      enum            m_flags_t                     { m_stopped=1, m_nothrow=2 };
-      m_flags_t       m_flags;
+      bool              m_is_stopped;
     };
 
     //  auto_cpu_timer  ----------------------------------------------------------------//
+    //
+    //  all functions except report() are noexcept 
 
     class BOOST_TIMER_DECL auto_cpu_timer : public cpu_timer
     {
@@ -177,11 +187,19 @@ namespace boost
 
      ~auto_cpu_timer()
       { 
-        if(!is_stopped())
-          report();
+        if (!is_stopped())
+        {
+          try
+          {
+            report();
+          }
+          catch (...) // eat any exceptions
+          {
+          }
+        }
       }
 
-      void            report();
+      void            report();    // throws iff I/O throws
 
     private:
       int             m_places;

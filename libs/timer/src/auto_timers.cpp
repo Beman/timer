@@ -153,34 +153,20 @@ namespace boost
 
      void auto_cpu_timer::report()
     {
-      try
-      {
-        show_time(m_format.empty()
-            ? default_format
-            : m_format.c_str(),
-          m_places, m_os, this->stop());
-      }
-
-      catch (...) // eat any exceptions
-      {
-      }
+      show_time(m_format.empty()
+          ? default_format
+          : m_format.c_str(),
+        m_places, m_os, this->stop());
     }
 
     //  auto_high_resolution_timer::report  --------------------------------------------//
 
      void auto_high_resolution_timer::report()
     {
-      try
-      {
-        show_time(m_format.empty()
-            ? default_hi_res_format
-            : m_format.c_str(),
-          m_places, m_os, this->stop());
-      }
-
-      catch (...) // eat any exceptions
-      {
-      }
+      show_time(m_format.empty()
+          ? default_hi_res_format
+          : m_format.c_str(),
+        m_places, m_os, this->stop());
     }
 
   } // namespace timer

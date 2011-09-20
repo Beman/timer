@@ -111,14 +111,15 @@ namespace boost
 
     void cpu_timer::start()
     {
-      m_flags = static_cast<m_flags_t>(m_flags& ~m_stopped);
+      m_is_stopped = false;
       get_cpu_times(m_times);
     }
 
     const cpu_times& cpu_timer::stop()
     {
-      if (is_stopped()) return m_times;
-      m_flags = static_cast<m_flags_t>(m_flags | m_stopped);
+      if (is_stopped())
+        return m_times;
+      m_is_stopped = true;
       
       cpu_times current;
       get_cpu_times(current);
