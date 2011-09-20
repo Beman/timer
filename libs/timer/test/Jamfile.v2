@@ -21,5 +21,9 @@ project
        : # input files
        : <test-info>always_show_run_output # requirements
      ]
-     [ run ../example/timex.cpp : : : <link>shared <test-info>always_show_run_output ]
+     [ run ../example/timex.cpp
+       : echo "Hello, world"
+	     :
+	     : <link>static <test-info>always_show_run_output
+     ]
    ;
