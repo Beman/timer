@@ -129,21 +129,16 @@ namespace boost
       return m_times;
     }
 
-    void cpu_timer::elapsed(cpu_times& current)
+    cpu_times cpu_timer::elapsed() const
     {
       if (is_stopped())
-      {
-        current.wall = m_times.wall;
-        current.user = m_times.user;
-        current.system = m_times.system;
-      }
-      else
-      {
-        get_cpu_times(current);
-        current.wall -= m_times.wall;
-        current.user -= m_times.user;
-        current.system -= m_times.system;
-      }
+        return m_times;
+      cpu_times current;
+      get_cpu_times(current);
+      current.wall -= m_times.wall;
+      current.user -= m_times.user;
+      current.system -= m_times.system;
+      return current;
     }
 
   } // namespace timer

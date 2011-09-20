@@ -83,7 +83,7 @@ namespace boost
         return m_time;
       }
       bool             is_stopped() const    { return m_is_stopped; }
-      nanosecond_type  elapsed() // does not stop()
+      nanosecond_type  elapsed() const // does not stop()
       {
         if (is_stopped())
           return m_time;
@@ -155,7 +155,7 @@ namespace boost
       void              start();
       const cpu_times&  stop();
       bool              is_stopped() const           { return m_is_stopped; }
-      void              elapsed(cpu_times& result);  // does not stop()
+      cpu_times         elapsed() const;  // does not stop()
 
     private:
       cpu_times         m_times;

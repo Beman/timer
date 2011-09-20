@@ -55,7 +55,7 @@ int cpp_main( int argc, char * argv[] )
       //  The point of this code is to burn both kernal and user cpu time,
       //  with the total less than wall clock time.
       ++count;
-      timer.elapsed( times );
+      times = timer.elapsed();
       std::cout << "iteration " << count << ", "
         << times.wall << " wall, "
         << times.user << " user, "
@@ -98,32 +98,32 @@ int cpp_main( int argc, char * argv[] )
     for (int i = 0; i < 10; ++i)
     {
       cpu.start();
-      cpu.elapsed(start);
+      start = cpu.elapsed();
       now.wall = start.wall;
       while (now.wall == start.wall)
       {
-        cpu.elapsed(now);
+        now = cpu.elapsed();
       }
       std::cout << now.wall - start.wall << "ns\n";
     }
   }
 
   cpu.start();
-  cpu.elapsed(start);
+  start = cpu.elapsed();
   now.user = start.user;
   while (now.user == start.user)
   {
-    cpu.elapsed(now);
+    now = cpu.elapsed();
   }
   std::cout << now.user - start.user
             << "ns measured resolution - boost::timer::cpu_timer resolution for user time\n";
 
   cpu.start();
-  cpu.elapsed(start);
+  start = cpu.elapsed();
   now.system = start.system;
   while (now.system == start.system)
   {
-    cpu.elapsed(now);
+    now = cpu.elapsed();
   }
   std::cout << now.system - start.system
             << "nsns measured resolution - boost::timer::cpu_timer resolution for system time\n";
