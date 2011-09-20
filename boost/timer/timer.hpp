@@ -57,36 +57,33 @@ namespace boost
     //
     //  provides the same resolution but lower latency than using cpu_timer for
     //  wall-clock timings
+    //
+    //  all functions are noexcept 
 
     class BOOST_TIMER_DECL high_resolution_timer
     {
     public:
 
-      high_resolution_timer()                       : m_flags(m_stopped)
-                                                    { start(); }
-      high_resolution_timer(const std::nothrow_t&)
-                                                    : m_flags(static_cast<m_flags_t>(
-                                                        m_stopped | m_nothrow))
-                                                    { start(); }
-     ~high_resolution_timer()                       {}
+      high_resolution_timer()                { start(); }
+     ~high_resolution_timer()                {}
 
-      void            start()
+      void             start()
       {
-        m_flags = static_cast<m_flags_t>(m_flags& ~m_stopped);
+        m_is_stopped = false;
         boost::chrono::duration<boost::int_least64_t, boost::nano> now
           (boost::chrono::high_resolution_clock::now().time_since_epoch());
         m_time = now.count();
       }
-      nanosecond_type    stop()
+      nanosecond_type  stop()
       {
         boost::chrono::duration<boost::int_least64_t, boost::nano> now
           (boost::chrono::high_resolution_clock::now().time_since_epoch());
         m_time = now.count() - m_time;
-        m_flags = static_cast<m_flags_t>(m_flags | m_stopped);
+        m_is_stopped = true;
         return m_time;
       }
-      bool            is_stopped() const               { return m_flags & m_stopped; }
-      nanosecond_type    elapsed()                     // does not stop()
+      bool             is_stopped() const    { return m_is_stopped; }
+      nanosecond_type  elapsed() // does not stop()
       {
         if (is_stopped())
           return m_time;
@@ -95,9 +92,8 @@ namespace boost
         return now.count() - m_time;
       }
     private:
-      nanosecond_type    m_time;
-      enum            m_flags_t                     { m_stopped=1, m_nothrow=2 };
-      m_flags_t       m_flags;
+      nanosecond_type  m_time;
+      bool             m_is_stopped;
     };
 
     //  auto_high_resolution_timer  ----------------------------------------------------//
