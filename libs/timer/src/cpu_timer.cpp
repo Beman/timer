@@ -57,7 +57,7 @@ namespace
   }
 # endif
 
-  void get_cpu_times(boost::timer::times_t& current)
+  void get_cpu_times(boost::timer::cpu_times& current)
   {
     boost::chrono::duration<boost::int64_t, boost::nano>
       x (boost::chrono::high_resolution_clock::now().time_since_epoch());
@@ -74,19 +74,19 @@ namespace
     }
     else
     {
-      current.wall = current.system = current.user = boost::timer::nanosecond_t(-1);
+      current.wall = current.system = current.user = boost::timer::nanosecond_type(-1);
     }
 # else
     tms tm;
     clock_t c = ::times(&tm);
     if (c == -1) // error
     {
-      current.system = current.user = boost::timer::nanosecond_t(-1);
+      current.system = current.user = boost::timer::nanosecond_type(-1);
     }
     else
     {
-      current.system = boost::timer::nanosecond_t(tm.tms_stime + tm.tms_cstime);
-      current.user = boost::timer::nanosecond_t(tm.tms_utime + tm.tms_cutime);
+      current.system = boost::timer::nanosecond_type(tm.tms_stime + tm.tms_cstime);
+      current.user = boost::timer::nanosecond_type(tm.tms_utime + tm.tms_cutime);
       if (tick_factor() != -1)
       {
         current.user *= tick_factor();
@@ -94,7 +94,7 @@ namespace
       }
       else
       {
-        current.user = current.system = boost::timer::nanosecond_t(-1);
+        current.user = current.system = boost::timer::nanosecond_type(-1);
       }
     }
 # endif
@@ -115,12 +115,12 @@ namespace boost
       get_cpu_times(m_times);
     }
 
-    const times_t& cpu_timer::stop()
+    const cpu_times& cpu_timer::stop()
     {
       if (stopped()) return m_times;
       m_flags = static_cast<m_flags_t>(m_flags | m_stopped);
       
-      times_t current;
+      cpu_times current;
       get_cpu_times(current);
       m_times.wall = (current.wall - m_times.wall);
       m_times.user = (current.user - m_times.user);
@@ -128,7 +128,7 @@ namespace boost
       return m_times;
     }
 
-    void cpu_timer::elapsed(times_t& current)
+    void cpu_timer::elapsed(cpu_times& current)
     {
       if (stopped())
       {

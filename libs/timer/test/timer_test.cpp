@@ -13,8 +13,8 @@
 #include <iostream>
 #include <locale>
 
-using boost::timer::nanosecond_t;
-using boost::timer::times_t;
+using boost::timer::nanosecond_type;
+using boost::timer::cpu_times;
 using boost::timer::high_resolution_timer;
 using boost::timer::auto_high_resolution_timer;
 using boost::timer::cpu_timer;
@@ -42,13 +42,13 @@ int cpp_main( int argc, char * argv[] )
     auto_cpu_timer timer2("\nwall %w s, utilization %p%\n");
     auto_cpu_timer timer3("\nwall %w s, total cpu %t s, utilization %p%\n", 3);
 
-    times_t times;
+    cpu_times times;
     times.clear();
-    nanosecond_t timeout
-      = nanosecond_t(100000000); // default .1 second
+    nanosecond_type timeout
+      = nanosecond_type(100000000); // default .1 second
 
     if ( argc > 1 )
-      timeout = nanosecond_t(std::atol( argv[1] ));
+      timeout = nanosecond_type(std::atol( argv[1] ));
 
     while ( times.wall < timeout )
     {
@@ -67,9 +67,9 @@ int cpp_main( int argc, char * argv[] )
 
 
 
-  times_t start;
+  cpu_times start;
   start.clear();
-  times_t now;
+  cpu_times now;
 
   {
     std::cout << "measure resolution - boost::timer::high_resolution_timer"

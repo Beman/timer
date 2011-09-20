@@ -37,13 +37,13 @@ namespace boost
 {
   namespace timer
   {
-    typedef boost::int_least64_t nanosecond_t;
+    typedef boost::int_least64_t nanosecond_type;
 
-    struct times_t
+    struct cpu_times
     {
-      nanosecond_t wall;
-      nanosecond_t user;
-      nanosecond_t system;
+      nanosecond_type wall;
+      nanosecond_type user;
+      nanosecond_type system;
 
       void clear() { wall = user = system = 0LL; }
     };
@@ -77,7 +77,7 @@ namespace boost
           (boost::chrono::high_resolution_clock::now().time_since_epoch());
         m_time = now.count();
       }
-      nanosecond_t    stop()
+      nanosecond_type    stop()
       {
         boost::chrono::duration<boost::int_least64_t, boost::nano> now
           (boost::chrono::high_resolution_clock::now().time_since_epoch());
@@ -86,7 +86,7 @@ namespace boost
         return m_time;
       }
       bool            stopped() const               { return m_flags & m_stopped; }
-      nanosecond_t    elapsed()                     // does not stop()
+      nanosecond_type    elapsed()                     // does not stop()
       {
         if (stopped())
           return m_time;
@@ -95,7 +95,7 @@ namespace boost
         return now.count() - m_time;
       }
     private:
-      nanosecond_t    m_time;
+      nanosecond_type    m_time;
       enum            m_flags_t                     { m_stopped=1, m_nothrow=2 };
       m_flags_t       m_flags;
     };
@@ -148,12 +148,12 @@ namespace boost
      ~cpu_timer()                                   {}  // never throws
 
       void            start();
-      const times_t&  stop();
+      const cpu_times&  stop();
       bool            stopped() const               { return m_flags& m_stopped; }
-      void            elapsed(times_t& result);     // does not stop()
+      void            elapsed(cpu_times& result);     // does not stop()
 
     private:
-      times_t         m_times;
+      cpu_times         m_times;
       enum            m_flags_t                     { m_stopped=1, m_nothrow=2 };
       m_flags_t       m_flags;
     };

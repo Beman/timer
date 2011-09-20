@@ -19,8 +19,8 @@
 #include <cstring>
 #include <cassert>
 
-using boost::timer::nanosecond_t;
-using boost::timer::times_t;
+using boost::timer::nanosecond_type;
+using boost::timer::cpu_times;
 using boost::system::error_code;
 
 # if defined(BOOST_WINDOWS_API)
@@ -39,11 +39,11 @@ namespace
     " %ws wall, %us user + %ss timer = %ts cpu (%p%)\n";
 
   void show_time(const char * format, int places, std::ostream& os,
-    const times_t& times)
+    const cpu_times& times)
   //  NOTE WELL: Will truncate least-significant digits to LDBL_DIG, which may
   //  be as low as 10, although will be 15 for many common platforms.
   {
-    if (times.wall < nanosecond_t(0))
+    if (times.wall < nanosecond_type(0))
       return;
     if (places > 6)
       places = 6;
@@ -56,7 +56,7 @@ namespace
     os.precision(places);
 
     const long double sec = 1000000000.0L;
-    nanosecond_t total = times.system + times.user;
+    nanosecond_type total = times.system + times.user;
     long double wall_sec = times.wall / sec;
     long double total_sec = total / sec;
 
@@ -104,11 +104,11 @@ namespace
     " %ws elapsed wall clock time\n";
 
   void show_time(const char * format, int places, std::ostream& os,
-    boost::timer::nanosecond_t time)
+    boost::timer::nanosecond_type time)
   //  NOTE WELL: Will truncate least-significant digits to LDBL_DIG, which may
   //  be as low as 10, although will be 15 for many common platforms.
   {
-    if (time < nanosecond_t(0))
+    if (time < nanosecond_type(0))
       return;
     if (places > 9)
       places = 9;
