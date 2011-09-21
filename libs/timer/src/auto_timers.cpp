@@ -148,15 +148,23 @@ namespace boost
 {
   namespace timer
   {
-    //  high_resolution_timer  ---------------------------------------------------------//
+    //  format  ------------------------------------------------------------------------//
 
-    std::string high_resolution_timer::format(nanosecond_type time,
-      const std::string& fmt, int places)
+    std::string format(nanosecond_type time, const std::string& fmt, int places)
     {
       std::stringstream ss;
       show_time(time, ss, fmt, places);
       return ss.str();
     }
+
+    std::string format(const cpu_times& times, const std::string& fmt, int places)
+    {
+      std::stringstream ss;
+      show_time(times, ss, fmt, places);
+      return ss.str();
+    }
+
+    //  high_resolution_timer  ---------------------------------------------------------//
 
     void auto_high_resolution_timer::report()
     {
@@ -164,14 +172,6 @@ namespace boost
     }
 
     //  cpu_timer  ---------------------------------------------------------------------//
-
-    std::string cpu_timer::format(const cpu_times& times,
-      const std::string& fmt, int places)
-    {
-      std::stringstream ss;
-      show_time(times, ss, fmt, places);
-      return ss.str();
-    }
 
     void auto_cpu_timer::report()
     {

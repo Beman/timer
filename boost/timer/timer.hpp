@@ -12,7 +12,6 @@
 
 #include <boost/timer/config.hpp>
 #include <boost/chrono/chrono.hpp>
-#include <boost/system/error_code.hpp>
 #include <boost/cstdint.hpp>
 #include <string>
 #include <cstring>
@@ -35,196 +34,207 @@
 
 namespace boost
 {
-  namespace timer
-  {
-    typedef boost::int_least64_t nanosecond_type;
+namespace timer
+{
 
-    struct cpu_times
-    {
-      nanosecond_type wall;
-      nanosecond_type user;
-      nanosecond_type system;
+class high_resolution_timer;
+class auto_high_resolution_timer;
+class cpu_timer;
+class auto_cpu_timer;
 
-      void clear() { wall = user = system = 0LL; }
-    };
+typedef boost::int_least64_t nanosecond_type;
 
-    class high_resolution_timer;
-    class auto_high_resolution_timer;
-    class cpu_timer;
-    class auto_cpu_timer;
+struct cpu_times
+{
+  nanosecond_type wall;
+  nanosecond_type user;
+  nanosecond_type system;
 
-    //  high_resolution_timer  ---------------------------------------------------------//
-    //
-    //  provides the same resolution but lower latency than using cpu_timer for
-    //  wall-clock timings
-    //
-    //  all functions are noexcept unless otherwise specified 
-
-    class BOOST_TIMER_DECL high_resolution_timer
-    {
-    public:
+  void clear() { wall = user = system = 0LL; }
+};
       
-      static const std::string   default_format;
-      static const int           default_places = 6;
+static const std::string   default_format;
+static const int           default_places = 6;
 
-      high_resolution_timer()                { start(); }
-     ~high_resolution_timer()                {}
+std::string  format(nanosecond_type time,
+                    const std::string& fmt = default_format, int places = default_places);
 
-      void             start()
-      {
-        m_is_stopped = false;
-        boost::chrono::duration<boost::int_least64_t, boost::nano> now
-          (boost::chrono::high_resolution_clock::now().time_since_epoch());
-        m_time = now.count();
-      }
-      nanosecond_type  stop()
-      {
-        boost::chrono::duration<boost::int_least64_t, boost::nano> now
-          (boost::chrono::high_resolution_clock::now().time_since_epoch());
-        m_time = now.count() - m_time;
-        m_is_stopped = true;
-        return m_time;
-      }
-      bool             is_stopped() const    { return m_is_stopped; }
-      nanosecond_type  elapsed() const // does not stop()
-      {
-        if (is_stopped())
-          return m_time;
-        boost::chrono::duration<boost::int_least64_t, boost::nano> now
-          (boost::chrono::high_resolution_clock::now().time_since_epoch());
-        return now.count() - m_time;
-      }
-      std::string format(const std::string& fmt = default_format,
-        int places = default_places) const      { return format(elapsed(), fmt, places); }
+std::string format(const cpu_times& times,
+                   const std::string& fmt = default_format, int places = default_places); 
 
-      static
-      std::string format(nanosecond_type time, const std::string& fmt = default_format,
-                           int places = default_places);
-    private:
-      nanosecond_type  m_time;
-      bool             m_is_stopped;
-    };
+//  high_resolution_timer  -------------------------------------------------------------//
+//
+//  provides the same resolution but lower latency than using cpu_timer for
+//  wall-clock timings
+//
+//  all functions are noexcept unless otherwise specified 
 
-    //  auto_high_resolution_timer  ----------------------------------------------------//
-    //
-    //  all functions are noexcept unless otherwise specified 
+class BOOST_TIMER_DECL high_resolution_timer
+{
+public:
 
-    class BOOST_TIMER_DECL auto_high_resolution_timer : public high_resolution_timer
+  high_resolution_timer()                { start(); }
+ ~high_resolution_timer()                {}
+
+  void             start();
+  nanosecond_type  stop();
+  bool             is_stopped() const    { return m_is_stopped; }
+  nanosecond_type  elapsed() const; // does not stop()
+  std::string      format(const std::string& fmt = default_format,
+                            int places = default_places) const
+                                         { return timer::format(elapsed(), fmt, places); }
+private:
+  nanosecond_type  m_time;
+  bool             m_is_stopped;
+};
+
+//  auto_high_resolution_timer  --------------------------------------------------------//
+//
+//  all functions are noexcept unless otherwise specified 
+
+class BOOST_TIMER_DECL auto_high_resolution_timer : public high_resolution_timer
+{
+public:
+
+  // Each constructor has two overloads to avoid an explicit default to std::cout.
+  // Such a default would require including <iostream>, with its high costs, even
+  // when the standard streams are not used.
+
+  explicit auto_high_resolution_timer(int places = 6);
+
+  auto_high_resolution_timer(int places, std::ostream& os)  : m_places(places),
+                                                  m_os(os) {}
+
+  explicit auto_high_resolution_timer(const std::string& format, int places = 6);
+    // may throw
+  auto_high_resolution_timer(const std::string& format, int places, std::ostream& os)
+          : m_places(places), m_os(os), m_format(format) {}
+    // may throw
+
+  void report();  // calls stop(), may throw
+
+  ~auto_high_resolution_timer()
+  { 
+    if (!is_stopped())
     {
-    public:
-
-      // Each constructor has two overloads to avoid an explicit default to std::cout.
-      // Such a default would require including <iostream>, with its high costs, even
-      // when the standard streams are not used.
-
-      explicit auto_high_resolution_timer(int places = 6);
-
-      auto_high_resolution_timer(int places, std::ostream& os)  : m_places(places),
-                                                      m_os(os) {}
-
-      explicit auto_high_resolution_timer(const std::string& format, int places = 6);
-        // may throw
-      auto_high_resolution_timer(const std::string& format, int places, std::ostream& os)
-             : m_places(places), m_os(os), m_format(format) {}
-        // may throw
-
-      void report();  // calls stop(), may throw
-
-     ~auto_high_resolution_timer()
-      { 
-        if (!is_stopped())
-        {
-          try
-          {
-            report();
-          }
-          catch (...) // eat any exceptions
-          {
-          }
-        }
+      try
+      {
+        report();
       }
+      catch (...) // eat any exceptions
+      {
+      }
+    }
+  }
 
-    private:
-      int             m_places;
-      std::ostream&   m_os;
-      std::string     m_format;  
-    };
+private:
+  int             m_places;
+  std::ostream&   m_os;
+  std::string     m_format;  
+};
 
-    //  cpu_timer  ---------------------------------------------------------------------//
-    //
-    //  all functions are noexcept unless otherwise specified 
+//  cpu_timer  ---------------------------------------------------------------------//
+//
+//  all functions are noexcept unless otherwise specified 
 
-    class BOOST_TIMER_DECL cpu_timer
-    {
-    public:
+class BOOST_TIMER_DECL cpu_timer
+{
+public:
       
-      static const std::string   default_format;
-      static const int           default_places = 3;
+  static const std::string   default_format;
+  static const int           default_places = 3;
 
-      cpu_timer()                                    { start(); }
-     ~cpu_timer()                                    {}
+  cpu_timer()                                    { start(); }
+  ~cpu_timer()                                    {}
 
-      void              start();
-      const cpu_times&  stop();
-      bool              is_stopped() const           { return m_is_stopped; }
-      cpu_times         elapsed() const;  // does not stop()
-      std::string       format(const std::string& fmt = default_format,
-                                 int places = default_places) const
-                                                { return format(elapsed(), fmt, places); }
-      static
-      std::string format(const cpu_times& times, const std::string& fmt = default_format,
-                           int places = default_places);
+  void              start();
+  const cpu_times&  stop();
+  bool              is_stopped() const           { return m_is_stopped; }
+  cpu_times         elapsed() const;  // does not stop()
+  std::string       format(const std::string& fmt = default_format,
+                              int places = default_places) const
+                                            { return timer::format(elapsed(), fmt, places); }
+private:
+  cpu_times         m_times;
+  bool              m_is_stopped;
+};
 
-    private:
-      cpu_times         m_times;
-      bool              m_is_stopped;
-    };
+//  auto_cpu_timer  ----------------------------------------------------------------//
+//
+//  all functions are noexcept unless otherwise specified 
 
-    //  auto_cpu_timer  ----------------------------------------------------------------//
-    //
-    //  all functions are noexcept unless otherwise specified 
+class BOOST_TIMER_DECL auto_cpu_timer : public cpu_timer
+{
+public:
 
-    class BOOST_TIMER_DECL auto_cpu_timer : public cpu_timer
-    {
-    public:
+  // Each constructor has two overloads to avoid an explicit default to std::cout.
+  // Such a default would require including <iostream>, with its high costs, even
+  // when the standard streams are not used.
 
-      // Each constructor has two overloads to avoid an explicit default to std::cout.
-      // Such a default would require including <iostream>, with its high costs, even
-      // when the standard streams are not used.
+  explicit auto_cpu_timer(int places = 3);
 
-      explicit auto_cpu_timer(int places = 3);
+  auto_cpu_timer(int places, std::ostream& os)  : m_places(places),
+                                                  m_os(os) {}
 
-      auto_cpu_timer(int places, std::ostream& os)  : m_places(places),
-                                                      m_os(os) {}
-
-      explicit auto_cpu_timer(const std::string& format, int places = 3);   // may throw
+  explicit auto_cpu_timer(const std::string& format, int places = 3);   // may throw
        
-      auto_cpu_timer(const std::string& format, int places, std::ostream& os) // may throw
-                                               : m_places(places), m_os(os),
-                                                 m_format(format) {}
+  auto_cpu_timer(const std::string& format, int places, std::ostream& os) // may throw
+                                            : m_places(places), m_os(os),
+                                              m_format(format) {}
 
-     ~auto_cpu_timer()
-      { 
-        if (!is_stopped())
-        {
-          try
-          {
-            report();
-          }
-          catch (...) // eat any exceptions
-          {
-          }
-        }
+  ~auto_cpu_timer()
+  { 
+    if (!is_stopped())
+    {
+      try
+      {
+        report();
       }
+      catch (...) // eat any exceptions
+      {
+      }
+    }
+  }
 
-      void            report();    // throws iff I/O throws
+  void            report();    // throws iff I/O throws
 
-    private:
-      int             m_places;
-      std::ostream&   m_os;
-      std::string     m_format;  
-    };
-    
+private:
+  int             m_places;
+  std::ostream&   m_os;
+  std::string     m_format;  
+};
+
+//  implementation  ----------------------------------------------------------------//
+ 
+  inline
+  void high_resolution_timer::start()
+  {
+    m_is_stopped = false;
+    boost::chrono::duration<boost::int_least64_t, boost::nano> now
+      (boost::chrono::high_resolution_clock::now().time_since_epoch());
+    m_time = now.count();
+  }
+ 
+  inline
+  nanosecond_type high_resolution_timer::stop()
+  {
+    boost::chrono::duration<boost::int_least64_t, boost::nano> now
+      (boost::chrono::high_resolution_clock::now().time_since_epoch());
+    m_time = now.count() - m_time;
+    m_is_stopped = true;
+    return m_time;
+  }
+ 
+  inline
+  nanosecond_type high_resolution_timer::elapsed() const // does not stop()
+  {
+    if (is_stopped())
+      return m_time;
+    boost::chrono::duration<boost::int_least64_t, boost::nano> now
+      (boost::chrono::high_resolution_clock::now().time_since_epoch());
+    return now.count() - m_time;
+  }
+   
   } // namespace timer
 } // namespace boost
 
