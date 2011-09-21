@@ -12,29 +12,49 @@
 
 <body>
 
-<h1><img border="0" src="../../../boost.png" align="center" width="277" height="86">
-Boost System Timers<br>
+<h1><img border="0" src="../../../boost.png" align="center" width="277" height="86"> 
+Boost Timer Library Version 2<br>
 &nbsp;</h1>
 <div align="center">
   <center>
   <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="70%" bgcolor="#CCFFFF">
     <tr>
       <td width="100%">
-      <p align="center"><b><font size="6">Heads ups!</font></b></p>
+      <p align="center"><font size="6"><b>This is a major revision of the 
+      Version 2 draft</b></font><b><font size="6">!</font></b></p>
       <ul>
         <li>
-        <p align="left">The unit of time just been changed from microseconds to 
-        nanoseconds. Only limited testing has been performed, so be very 
-        skeptical of results until more experience develops.<br>
-&nbsp;</li>
+        <p align="left">The original content of the Boost.Timer library is now 
+        deprecated.</li>
         <li>
-        <p align="left">The specs are in process of being changed to emphasize 
-        that higher resolution / lower granularity timers will be used if 
-        available on the specific platform.<br>
-&nbsp;</li>
+        <p align="left">The new headers for Boost.Timer are in <code>
+        &lt;boost/timer/...&gt;</code></li>
         <li>
-        <p align="left">Implementation is in process of being updated 
-        accordingly.</li>
+        <p align="left">All new content is in namespace <code>boost::timer</code>. </li>
+        <li>
+        <p align="left">The unit of time has been changed from microseconds to 
+        nanoseconds.</li>
+        <li>
+        <p align="left">The implementation has been changed to use Boost.Chrono. 
+        This has resulted in much improved resolution (1 microsecond on my 
+        development machine) for wall clock time.</li>
+        <li>
+        <p align="left">There are now four classes:</li>
+      </ul>
+      <blockquote>
+        <blockquote>
+          <div align="left">
+            <pre>class high_resolution_timer;       // wall clock time only
+class auto_high_resolution_timer;  // automatic reporting
+class cpu_timer;                   // wall, user, system time
+class auto_cpu_timer;              // automatic reporting</pre>
+          </div>
+        </blockquote>
+      </blockquote>
+      <ul>
+        <li>
+        <p align="left">Formatting is now based on free function <code>format()</code> 
+        with two overloads.</li>
       </ul>
       </td>
     </tr>
@@ -60,7 +80,8 @@ Boost System Timers<br>
       <a href="#timer">Class <code>timer</code></a><br>
 &nbsp;&nbsp;&nbsp; <a href="#timer_members">Members</a><br>
       <a href="#run_timer">Class <code>run_timer</code></a><br>
-&nbsp;&nbsp;&nbsp; <a href="#run_timer_members">Members</a></td>
+&nbsp;&nbsp;&nbsp; <a href="#run_timer_members">Members</a><br>
+      <a href="#Acknowledgements">Acknowledgements</a></td>
   </tr>
 </table>
 
@@ -480,11 +501,16 @@ timer</a></code>. For the description of inherited functions, see
   <p><i>Throws:</i> Never.</p>
 </blockquote>
 
+  <h2><a name="Acknowledgements">Acknowledgements</a></h2>
+  <p>Rob Stewart contributed many corrections, comments, and suggestions. In 
+  particular, he suggested the <code>resume()</code> and <code>format()</code> 
+  functions, resulting in easier to use functionality for several use cases.</p>
+
 <hr>
 <p><font size="2">Last revised:
-<!--webbot bot="Timestamp" s-type="EDITED" s-format="%d %B, %Y" startspan -->14 September, 2011<!--webbot bot="Timestamp" endspan i-checksum="39337" --></font></p>
+<!--webbot bot="Timestamp" s-type="EDITED" s-format="%d %B, %Y" startspan -->21 September, 2011<!--webbot bot="Timestamp" endspan i-checksum="39332" --></font></p>
 <p><font size="2">© Copyright Beman Dawes, 2006, 2011</font></p>
-<p><font size="2">Distributed under the Boost Software License, Version 1.0. (See<a href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/ LICENSE_1_0.txt</a>)</font></p>
+<p><font size="2">Distributed under the Boost Software License, Version 1.0.  See <a href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/ LICENSE_1_0.txt</a></font></p>
 
 </body>
 
