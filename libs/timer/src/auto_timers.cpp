@@ -32,20 +32,20 @@ using boost::system::error_code;
 
 namespace
 {
-  //  auto_cpu_timer helpers  ----------------------------------------------------------//
+  //  cpu_timer helpers  ---------------------------------------------------------------//
 
   const char * default_format =
-    " %ws wall, %us user + %ss timer = %ts cpu (%p%)\n";
+    " %ws wall, %us user + %ss system = %ts cpu (%p%)\n";
 
-  void show_time(const char * format, int places, std::ostream& os,
-    const cpu_times& times)
+  void show_time(const cpu_times& times,
+    std::ostream& os, const std::string& fmt, int places)
   //  NOTE WELL: Will truncate least-significant digits to LDBL_DIG, which may
   //  be as low as 10, although will be 15 for many common platforms.
   {
-    if (times.wall < nanosecond_type(0))
-      return;
-    if (places > 6)
-      places = 6;
+    const char* format (fmt.empty() ? default_format : fmt.c_str());
+
+    if (places > 9)
+      places = 9;
     else if (places < 0)
       places = 0;
 
@@ -97,6 +97,8 @@ namespace
     }
   }
 
+  //  high_resolution_timer helpers  ---------------------------------------------------//
+
   const char* default_hi_res_format =
     " %ws elapsed wall clock time\n";
 
@@ -106,8 +108,7 @@ namespace
   //  be as low as 10, although will be 15 for many common platforms.
   {
     const char* format (fmt.empty() ? default_hi_res_format : fmt.c_str());
-    if (time < nanosecond_type(0))
-      return;
+
     if (places > 9)
       places = 9;
     else if (places < 0)
@@ -147,15 +148,7 @@ namespace boost
 {
   namespace timer
   {
-    //  auto_cpu_timer::report  --------------------------------------------------------//
-
-     void auto_cpu_timer::report()
-    {
-      show_time(m_format.empty()
-          ? default_format
-          : m_format.c_str(),
-        m_places, m_os, this->stop());
-    }
+    //  high_resolution_timer  ---------------------------------------------------------//
 
     std::string high_resolution_timer::format(nanosecond_type time,
       const std::string& fmt, int places)
@@ -167,8 +160,22 @@ namespace boost
 
     void auto_high_resolution_timer::report()
     {
-      stop();
-      show_time(elapsed(), m_os, m_format, m_places);
+      show_time(stop(), m_os, m_format, m_places);
+    }
+
+    //  cpu_timer  ---------------------------------------------------------------------//
+
+    std::string cpu_timer::format(const cpu_times& times,
+      const std::string& fmt, int places)
+    {
+      std::stringstream ss;
+      show_time(times, ss, fmt, places);
+      return ss.str();
+    }
+
+    void auto_cpu_timer::report()
+    {
+      show_time(stop(), m_os, m_format, m_places);
     }
 
   } // namespace timer

@@ -94,16 +94,12 @@ namespace boost
           (boost::chrono::high_resolution_clock::now().time_since_epoch());
         return now.count() - m_time;
       }
+      std::string format(const std::string& fmt = default_format,
+        int places = default_places) const      { return format(elapsed(), fmt, places); }
 
       static
       std::string format(nanosecond_type time, const std::string& fmt = default_format,
                            int places = default_places);
-
-      std::string format(const std::string& fmt = default_format,
-        int places = default_places) const
-      {
-        return format(elapsed(), fmt, places);
-      }
     private:
       nanosecond_type  m_time;
       bool             m_is_stopped;
@@ -161,6 +157,9 @@ namespace boost
     class BOOST_TIMER_DECL cpu_timer
     {
     public:
+      
+      static const std::string   default_format;
+      static const int           default_places = 3;
 
       cpu_timer()                                    { start(); }
      ~cpu_timer()                                    {}
@@ -169,6 +168,12 @@ namespace boost
       const cpu_times&  stop();
       bool              is_stopped() const           { return m_is_stopped; }
       cpu_times         elapsed() const;  // does not stop()
+      std::string       format(const std::string& fmt = default_format,
+                                 int places = default_places) const
+                                                { return format(elapsed(), fmt, places); }
+      static
+      std::string format(const cpu_times& times, const std::string& fmt = default_format,
+                           int places = default_places);
 
     private:
       cpu_times         m_times;
