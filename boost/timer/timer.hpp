@@ -73,16 +73,21 @@ class BOOST_TIMER_DECL high_resolution_timer
 {
 public:
 
+  //  constructors, destructor
   high_resolution_timer()                { start(); }
  ~high_resolution_timer()                {}
 
-  void             start();
-  nanosecond_type  stop();
+  //  observers
   bool             is_stopped() const    { return m_is_stopped; }
   nanosecond_type  elapsed() const; // does not stop()
   std::string      format(const std::string& fmt = default_format,
                             int places = default_places) const
                                          { return timer::format(elapsed(), fmt, places); }
+  //  actions
+  void             start();
+  nanosecond_type  stop();
+  void             resume();        // requires: is_stopped()
+
 private:
   nanosecond_type  m_time;
   bool             m_is_stopped;
@@ -100,12 +105,13 @@ public:
   // Such a default would require including <iostream>, with its high costs, even
   // when the standard streams are not used.
 
-  explicit auto_high_resolution_timer(int places = 6);
+  explicit
+  auto_high_resolution_timer(int places = default_places);
 
-  auto_high_resolution_timer(int places, std::ostream& os)  : m_places(places),
-                                                  m_os(os) {}
-
-  explicit auto_high_resolution_timer(const std::string& format, int places = 6);
+  auto_high_resolution_timer(int places, std::ostream& os) : m_places(places),
+                                                             m_os(os) {}
+  explicit
+  auto_high_resolution_timer(const std::string& format, int places = default_places);
     // may throw
   auto_high_resolution_timer(const std::string& format, int places, std::ostream& os)
           : m_places(places), m_os(os), m_format(format) {}
@@ -140,20 +146,22 @@ private:
 class BOOST_TIMER_DECL cpu_timer
 {
 public:
-      
-  static const std::string   default_format;
-  static const int           default_places = 3;
 
+  //  constructors, destructor
   cpu_timer()                                    { start(); }
-  ~cpu_timer()                                    {}
+ ~cpu_timer()                                    {}
 
-  void              start();
-  const cpu_times&  stop();
+  //  observers
   bool              is_stopped() const           { return m_is_stopped; }
   cpu_times         elapsed() const;  // does not stop()
   std::string       format(const std::string& fmt = default_format,
                               int places = default_places) const
                                             { return timer::format(elapsed(), fmt, places); }
+  //  actions
+  void              start();
+  const cpu_times&  stop();
+  void              resume();         // requires: is_stopped()
+
 private:
   cpu_times         m_times;
   bool              m_is_stopped;
@@ -171,12 +179,13 @@ public:
   // Such a default would require including <iostream>, with its high costs, even
   // when the standard streams are not used.
 
-  explicit auto_cpu_timer(int places = 3);
+  explicit
+  auto_cpu_timer(int places = default_places);
 
   auto_cpu_timer(int places, std::ostream& os)  : m_places(places),
                                                   m_os(os) {}
-
-  explicit auto_cpu_timer(const std::string& format, int places = 3);   // may throw
+  explicit
+  auto_cpu_timer(const std::string& format, int places = default_places);   // may throw
        
   auto_cpu_timer(const std::string& format, int places, std::ostream& os) // may throw
                                             : m_places(places), m_os(os),
@@ -233,6 +242,18 @@ private:
     boost::chrono::duration<boost::int_least64_t, boost::nano> now
       (boost::chrono::high_resolution_clock::now().time_since_epoch());
     return now.count() - m_time;
+  }
+
+  inline
+  void high_resolution_timer::resume()
+  {
+    BOOST_ASSERT(is_stopped());
+    if (is_stopped())
+    {
+      nanosecond_type current (m_time);
+      start();
+      m_time -= current;
+    }
   }
    
   } // namespace timer

@@ -141,5 +141,17 @@ namespace boost
       return current;
     }
 
+    void cpu_timer::resume()
+    {
+      BOOST_ASSERT(is_stopped());
+      if (is_stopped())
+      {
+        cpu_times current (m_times);
+        start();
+        m_times.wall   -= current.wall;
+        m_times.user   -= current.user;
+        m_times.system -= current.system;
+      }
+    }
   } // namespace timer
 } // namespace boost
