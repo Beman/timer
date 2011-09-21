@@ -116,7 +116,7 @@ int cpp_main( int argc, char * argv[] )
     now = cpu.elapsed();
   }
   std::cout << now.user - start.user
-            << "ns measured resolution - boost::timer::cpu_timer resolution for user time\n";
+            << " ns measured resolution - boost::timer::cpu_timer resolution for user time\n";
 
   cpu.start();
   start = cpu.elapsed();
@@ -126,7 +126,7 @@ int cpp_main( int argc, char * argv[] )
     now = cpu.elapsed();
   }
   std::cout << now.system - start.system
-            << "nsns measured resolution - boost::timer::cpu_timer resolution for system time\n";
+            << " ns measured resolution - boost::timer::cpu_timer resolution for system time\n";
 
   return 0;
 }

@@ -58,11 +58,14 @@ namespace boost
     //  provides the same resolution but lower latency than using cpu_timer for
     //  wall-clock timings
     //
-    //  all functions are noexcept 
+    //  all functions are noexcept unless otherwise specified 
 
     class BOOST_TIMER_DECL high_resolution_timer
     {
     public:
+      
+      static const std::string   default_format;
+      static const int           default_places = 6;
 
       high_resolution_timer()                { start(); }
      ~high_resolution_timer()                {}
@@ -91,6 +94,16 @@ namespace boost
           (boost::chrono::high_resolution_clock::now().time_since_epoch());
         return now.count() - m_time;
       }
+
+      static
+      std::string format(nanosecond_type time, const std::string& fmt = default_format,
+                           int places = default_places);
+
+      std::string format(const std::string& fmt = default_format,
+        int places = default_places) const
+      {
+        return format(elapsed(), fmt, places);
+      }
     private:
       nanosecond_type  m_time;
       bool             m_is_stopped;
@@ -98,7 +111,7 @@ namespace boost
 
     //  auto_high_resolution_timer  ----------------------------------------------------//
     //
-    //  all functions except report() are noexcept 
+    //  all functions are noexcept unless otherwise specified 
 
     class BOOST_TIMER_DECL auto_high_resolution_timer : public high_resolution_timer
     {
@@ -114,10 +127,12 @@ namespace boost
                                                       m_os(os) {}
 
       explicit auto_high_resolution_timer(const std::string& format, int places = 6);
-
+        // may throw
       auto_high_resolution_timer(const std::string& format, int places, std::ostream& os)
-                                               : m_places(places), m_os(os),
-                                                 m_format(format) {}
+             : m_places(places), m_os(os), m_format(format) {}
+        // may throw
+
+      void report();  // calls stop(), may throw
 
      ~auto_high_resolution_timer()
       { 
@@ -133,8 +148,6 @@ namespace boost
         }
       }
 
-      void            report();  // throws iff I/O throws
-
     private:
       int             m_places;
       std::ostream&   m_os;
@@ -143,7 +156,7 @@ namespace boost
 
     //  cpu_timer  ---------------------------------------------------------------------//
     //
-    //  all functions are noexcept 
+    //  all functions are noexcept unless otherwise specified 
 
     class BOOST_TIMER_DECL cpu_timer
     {
@@ -164,7 +177,7 @@ namespace boost
 
     //  auto_cpu_timer  ----------------------------------------------------------------//
     //
-    //  all functions except report() are noexcept 
+    //  all functions are noexcept unless otherwise specified 
 
     class BOOST_TIMER_DECL auto_cpu_timer : public cpu_timer
     {
@@ -179,9 +192,9 @@ namespace boost
       auto_cpu_timer(int places, std::ostream& os)  : m_places(places),
                                                       m_os(os) {}
 
-      explicit auto_cpu_timer(const std::string& format, int places = 3);
-
-      auto_cpu_timer(const std::string& format, int places, std::ostream& os)
+      explicit auto_cpu_timer(const std::string& format, int places = 3);   // may throw
+       
+      auto_cpu_timer(const std::string& format, int places, std::ostream& os) // may throw
                                                : m_places(places), m_os(os),
                                                  m_format(format) {}
 

@@ -12,10 +12,9 @@
 #define BOOST_TIMER_SOURCE 
 
 #include <boost/timer/timer.hpp>
-#include <boost/system/system_error.hpp>
 #include <boost/io/ios_state.hpp>
-#include <boost/throw_exception.hpp>
-#include <boost/cerrno.hpp>
+#include <string>
+#include <sstream>
 #include <cstring>
 #include <cassert>
 
@@ -98,16 +97,15 @@ namespace
     }
   }
 
-  //  auto_high_resolution_timer helpers  ----------------------------------------------//
-
-  const char * default_hi_res_format =
+  const char* default_hi_res_format =
     " %ws elapsed wall clock time\n";
 
-  void show_time(const char * format, int places, std::ostream& os,
-    boost::timer::nanosecond_type time)
+  void show_time(boost::timer::nanosecond_type time,
+    std::ostream& os, const std::string& fmt, int places)
   //  NOTE WELL: Will truncate least-significant digits to LDBL_DIG, which may
   //  be as low as 10, although will be 15 for many common platforms.
   {
+    const char* format (fmt.empty() ? default_hi_res_format : fmt.c_str());
     if (time < nanosecond_type(0))
       return;
     if (places > 9)
@@ -159,14 +157,18 @@ namespace boost
         m_places, m_os, this->stop());
     }
 
-    //  auto_high_resolution_timer::report  --------------------------------------------//
-
-     void auto_high_resolution_timer::report()
+    std::string high_resolution_timer::format(nanosecond_type time,
+      const std::string& fmt, int places)
     {
-      show_time(m_format.empty()
-          ? default_hi_res_format
-          : m_format.c_str(),
-        m_places, m_os, this->stop());
+      std::stringstream ss;
+      show_time(time, ss, fmt, places);
+      return ss.str();
+    }
+
+    void auto_high_resolution_timer::report()
+    {
+      stop();
+      show_time(elapsed(), m_os, m_format, m_places);
     }
 
   } // namespace timer
