@@ -633,6 +633,74 @@ on destruction.</p>
 <p>Each constructor has two overloads to avoid an explicit default to <code>
 std::cout</code>. Such a default would require including <code>&lt;iostream&gt;</code>, 
 with its high costs, even when the standard streams are not used.</p>
+<h3 dir="ltr"><code>auto_cpu_timer</code> constructors</h3>
+<pre dir="ltr">explicit auto_cpu_timer(int places = default_places) noexcept;</pre>
+<blockquote>
+  <p dir="ltr"><i>Effects:</i> Constructs an object of type <code>
+  auto_cpu_timer</code>.</p>
+  <p><i>Postconditions:<br>
+  </i><code>&nbsp; m_places == places,<br>
+&nbsp; m_os == std::cout,<br>
+&nbsp; m_format == default_format</code></p>
+</blockquote>
+<pre dir="ltr">auto_cpu_timer(int places, std::ostream& os) noexcept;</pre>
+<blockquote>
+  <p dir="ltr"><i>Effects:</i> Constructs an object of type <code>
+  auto_cpu_timer</code>.</p>
+  <p><i>Postconditions:<br>
+  </i><code>&nbsp; m_places == places,<br>
+&nbsp; m_os == os,<br>
+&nbsp; m_format == default_format</code></p>
+</blockquote>
+<pre dir="ltr">explicit auto_cpu_timer(const std::string& format,
+                                    int places = default_places);</pre>
+<blockquote>
+  <p dir="ltr"><i>Effects:</i> Constructs an object of type <code>
+  auto_cpu_timer</code>.</p>
+  <p><i>Postconditions:<br>
+  </i><code>&nbsp; m_places == places,<br>
+&nbsp; m_os == std::cout,<br>
+&nbsp; m_format == format</code></p>
+</blockquote>
+<pre dir="ltr">auto_cpu_timer(const std::string& format,
+                           int places, std::ostream& os);</pre>
+<blockquote>
+  <p dir="ltr"><i>Effects:</i> Constructs an object of type <code>
+  auto_cpu_timer</code>.</p>
+  <p><i>Postconditions:<br>
+  </i><code>&nbsp; m_places == places,<br>
+&nbsp; m_os == os,<br>
+&nbsp; m_format == format</code></p>
+</blockquote>
+<h3 dir="ltr"><code>auto_cpu_timer</code> destructor</h3>
+<pre dir="ltr">~auto_cpu_timer() noexcept;</pre>
+<blockquote>
+<p dir="ltr"><i>Effects: </i>As if:</p>
+  <blockquote>
+    <pre dir="ltr">if (!is_stopped())
+{
+  try
+  {
+    report();
+  }
+  catch (...)
+  {
+  }
+}</pre>
+  </blockquote>
+</blockquote>
+<h3 dir="ltr"><code>auto_cpu_timer</code> actions</h3>
+<pre dir="ltr">void report();</pre>
+<blockquote>
+  <p dir="ltr"><i>Effects: </i>As if:</p>
+  <blockquote>
+    <pre dir="ltr">m_os &lt;&lt; timer::report(stop(),
+                      m_format.empty()
+                        ? &quot; %ws wall, %us user + %ss system = %ts cpu (%p%)\n&quot;
+                        : m_format,
+                      m_places</pre>
+  </blockquote>
+</blockquote>
 
   <h2><a name="FAQ">FAQ</a></h2>
 
