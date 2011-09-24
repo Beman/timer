@@ -143,7 +143,6 @@ namespace boost
 
     void cpu_timer::resume()
     {
-      BOOST_ASSERT(is_stopped());
       if (is_stopped())
       {
         cpu_times current (m_times);

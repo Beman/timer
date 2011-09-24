@@ -307,7 +307,7 @@ how operating systems measure various times. <i>--end note</i>]</p>
 <p> <code>high_resolution_timer_timer</code> objects measure wall-clock elapsed time, process elapsed 
 time charged to the user, and process elapsed time charged to the system.</p>
 
-<h3 dir="ltr"><a name="high_resolution_timer-synopsis">high_resolution_timer 
+<h3><a name="high_resolution_timer-synopsis"><code>high_resolution_timer</code> 
 synopsis</a></h3>
 
 <pre dir="ltr">    class <a name="high_resolution_timer">high_resolution_timer</a>
@@ -331,13 +331,14 @@ synopsis</a></h3>
       nanosecond_type  m_time;         // <b><i>exposition only</i></b>
       bool             m_is_stopped;   // <b><i>exposition only</i></b>
     };</pre>
-<h3><a name="high_resolution_timer-constructors">high_resolution_timer 
+<h3><a name="high_resolution_timer-constructors"><code>high_resolution_timer</code> 
 constructors</a></h3>
 <pre>high_resolution_timer() noexcept;</pre>
 <blockquote>
   <p><i>Effects:</i> <code>start()</code>.</p>
 </blockquote>
-<h3><a name="high_resolution_timer-observers">high_resolution_timer observers</a></h3>
+<h3><a name="high_resolution_timer-observers"><code>high_resolution_timer</code> 
+observers</a></h3>
 <pre>bool is_stopped() const noexcept;</pre>
 <blockquote>
   <p dir="ltr"><i>Returns:</i> <code>m_is_stopped</code>.</p>
@@ -357,7 +358,8 @@ high_resolution_clock</code>.</p>
 <blockquote>
   <p><i>Returns:</i> <code>format(elapsed(), format, places)</code>.</p>
 </blockquote>
-<h3><a name="high_resolution_timer-actions">high_resolution_timer actions</a></h3>
+<h3><a name="high_resolution_timer-actions"><code>high_resolution_timer</code> 
+actions</a></h3>
 <pre>void start() noexcept;</pre>
 <blockquote>
 
@@ -402,24 +404,25 @@ function to <code>class high_resolution_timer</code>, and automatically calls
 
 <h3 dir="ltr"> <code>auto_high_resolution_timer</code> synopsis</h3>
 
-<pre dir="ltr">
-    class <a name="auto_high_resolution_timer">auto_high_resolution_timer</a> : public high_resolution_timer
+<pre dir="ltr">    class <a name="auto_high_resolution_timer">auto_high_resolution_timer</a> : public high_resolution_timer
     {
     public:
 
-      explicit
-      auto_high_resolution_timer(int places = default_places) noexcept;
+      //  constructors
+      explicit auto_high_resolution_timer(int places = default_places) noexcept;
 
       auto_high_resolution_timer(int places, std::ostream& os) noexcept;
 
-      explicit
-      auto_high_resolution_timer(const std::string& format,
-                                 int places = default_places);
+      explicit auto_high_resolution_timer(const std::string& format,
+                                          int places = default_places);
       
       auto_high_resolution_timer(const std::string& format,
                                  int places, std::ostream& os);
+
+      //  destructor
      ~auto_high_resolution_timer() noexcept; 
 
+      //  actions
       void report();
 
     private:
@@ -427,9 +430,77 @@ function to <code>class high_resolution_timer</code>, and automatically calls
       std::ostream&   m_os;           // <b><i>exposition only</i></b>
       std::string     m_format;       // <b><i>exposition only</i></b>
     };</pre>
-<p dir="ltr">Each constructor has two overloads to avoid an explicit default to
-<code>std::cout</code>. Such a default would require including <code>&lt;iostream&gt;</code>, 
-with its high costs, even when the standard streams are not used.</p>
+<p dir="ltr">Constructors without a <code>std::ostream&</code> argument assume
+<code>std::cout</code>. An explicit default argument is not provided because it would require 
+a high-cost include of <code>&lt;iostream&gt;</code>, even when the standard streams are not used.</p>
+<h3 dir="ltr"><code>auto_high_resolution_timer</code> constructors</h3>
+<pre dir="ltr">explicit auto_high_resolution_timer(int places = default_places) noexcept;</pre>
+<blockquote>
+  <p dir="ltr"><i>Effects:</i> Constructs an object of type <code>
+  auto_high_resolution_timer</code>.</p>
+  <p><i>Postconditions:<br>
+  </i><code>&nbsp; m_places == places,<br>
+&nbsp; m_os == std::cout,<br>
+&nbsp; m_format == default_format</code></p>
+</blockquote>
+<pre dir="ltr">auto_high_resolution_timer(int places, std::ostream& os) noexcept;</pre>
+<blockquote>
+  <p dir="ltr"><i>Effects:</i> Constructs an object of type <code>
+  auto_high_resolution_timer</code>.</p>
+  <p><i>Postconditions:<br>
+  </i><code>&nbsp; m_places == places,<br>
+&nbsp; m_os == os,<br>
+&nbsp; m_format == default_format</code></p>
+</blockquote>
+<pre dir="ltr">explicit auto_high_resolution_timer(const std::string& format,
+                                    int places = default_places);</pre>
+<blockquote>
+  <p dir="ltr"><i>Effects:</i> Constructs an object of type <code>
+  auto_high_resolution_timer</code>.</p>
+  <p><i>Postconditions:<br>
+  </i><code>&nbsp; m_places == places,<br>
+&nbsp; m_os == std::cout,<br>
+&nbsp; m_format == format</code></p>
+</blockquote>
+<pre dir="ltr">auto_high_resolution_timer(const std::string& format,
+                           int places, std::ostream& os);</pre>
+<blockquote>
+  <p dir="ltr"><i>Effects:</i> Constructs an object of type <code>
+  auto_high_resolution_timer</code>.</p>
+  <p><i>Postconditions:<br>
+  </i><code>&nbsp; m_places == places,<br>
+&nbsp; m_os == os,<br>
+&nbsp; m_format == format</code></p>
+</blockquote>
+<h3 dir="ltr"><code>auto_high_resolution_timer</code> destructor</h3>
+<pre dir="ltr">~auto_high_resolution_timer() noexcept;</pre>
+<blockquote>
+<p dir="ltr"><i>Effects: </i>As if:</p>
+  <blockquote>
+    <pre dir="ltr">if (!is_stopped())
+{
+  try
+  {
+    report();
+  }
+  catch (...)
+  {
+  }
+}</pre>
+  </blockquote>
+</blockquote>
+<h3 dir="ltr"><code>auto_high_resolution_timer</code> actions</h3>
+<pre dir="ltr">void report();</pre>
+<blockquote>
+  <p dir="ltr"><i>Effects: </i>As if:</p>
+  <blockquote>
+    <pre dir="ltr">m_os &lt;&lt; timer::report(stop(),
+                      m_format.empty()
+                        ? &quot; %ws elapsed wall clock time\n&quot;
+                        : m_format,
+                      m_places</pre>
+  </blockquote>
+</blockquote>
 <h3><a name="Class-cpu_timer">Class <code>cpu_timer</code></a></h3>
 
 <p> <code>cpu_timer</code> objects measure wall-clock elapsed time, process elapsed 
@@ -463,6 +534,70 @@ GetProcessTimes()</code> on Windows.</p>
       cpu_times         m_times;          // <b><i>exposition only</i></b>
       bool              m_is_stopped;     // <b><i>exposition only</i></b>
     };</pre>
+<h3><a name="cpu_timer-constructors"><code>cpu_timer</code> 
+constructors</a></h3>
+<pre>cpu_timer() noexcept;</pre>
+<blockquote>
+  <p><i>Effects:</i> <code>start()</code>.</p>
+</blockquote>
+<h3><a name="cpu_timer-observers"><code>cpu_timer</code> 
+observers</a></h3>
+<pre>bool is_stopped() const noexcept;</pre>
+<blockquote>
+  <p dir="ltr"><i>Returns:</i> <code>m_is_stopped</code>.</p>
+</blockquote>
+<pre>nanosecond_type elapsed() const noexcept;</pre>
+<blockquote>
+  <p dir="ltr"><i>Returns:</i> If <code>is_stopped()</code>, <code>m_time</code>. 
+  Otherwise, the difference between <code>m_time</code> and current wall-clock 
+  time.</p>
+
+<p><i>Remarks:</i> Current wall-clock time is obtained from the Boost.Chrono <code>
+cpu_clock</code>.</p>
+
+</blockquote>
+<pre>std::string format(const std::string&amp; format = default_format,
+                   int places = default_places) const;</pre>
+<blockquote>
+  <p><i>Returns:</i> <code>format(elapsed(), format, places)</code>.</p>
+</blockquote>
+<h3><a name="cpu_timer-actions"><code>cpu_timer</code> 
+actions</a></h3>
+<pre>void start() noexcept;</pre>
+<blockquote>
+
+<p><i>Postconditions:</i> <code>!is_stopped()</code> and <code>m_time</code> is 
+set to the current wall-clock time.</p>
+
+<p><i>Remarks:</i> Current wall-clock time is obtained from the Boost.Chrono <code>
+cpu_clock</code>.</p>
+
+</blockquote>
+<pre>nanosecond_type stop() noexcept;</pre>
+<blockquote>
+
+<p><i>Postconditions:</i> <code>is_stopped()</code> and <code>m_time</code> is 
+set to the difference between <code>m_time</code> and current wall-clock time.</p>
+
+<p><i>Returns:</i> <code>m_time,</code> after the establishment of the <i>
+Postconditions</i>.</p>
+
+<p><i>Remarks:</i> Current wall-clock time is obtained from the Boost.Chrono <code>
+cpu_clock</code>.</p>
+
+</blockquote>
+<pre>void resume() noexcept;</pre>
+<blockquote>
+  <p><i>Effects:</i> As if:</p>
+  <blockquote>
+    <pre>if (is_stopped())
+{
+  nanosecond_type current (m_time);
+  start();
+  m_time -= current;
+}</pre>
+  </blockquote>
+</blockquote>
 <h3 dir="ltr"><a name="Class-auto_cpu_timer">Class <code>auto_cpu_timer</code></a></h3>
 
 <p dir="ltr">Class <code>auto_cpu_timer</code> adds a <code>report()</code> 
@@ -498,155 +633,6 @@ on destruction.</p>
 <p>Each constructor has two overloads to avoid an explicit default to <code>
 std::cout</code>. Such a default would require including <code>&lt;iostream&gt;</code>, 
 with its high costs, even when the standard streams are not used.</p>
-<p><code>void start();</code></p>
-
-<blockquote>
-<p><i>Effects:</i> Begins measuring 
-wall-clock, user process, and system process elapsed time.</p>
-
-<p><i>Postconditions:</i> <code>stopped() == false</code>.</p>
-
-</blockquote>
-<p><code>const cpu_times&amp; stop();</code></p>
-
-<blockquote>
-<p><i>Effects:</i> If <code>!stopped()</code>, stops measuring wall-clock, user 
-CPU, and system CPU elapsed time, and stores in a <code>time_t</code> struct the time 
-elapsed since the 
-preceding invocation of <code>start()</code>. Otherwise, has no effect.</p>
-
-<p><i>Returns:</i> A reference to the <code>time_t</code> struct.</p>
-
-<p><i>Postconditions:</i> <code>stopped() == true</code>.</p>
-
-</blockquote>
-
-<p><code>bool stopped() const;</code></p>
-
-<blockquote>
-
-<p><i>Returns:</i> true if <code>stop()</code> has been called subsequent to a call to
-<code>start()</code>, else <code>false</code>.</p>
-
-</blockquote>
-
-<p><code>void elapsed(cpu_times&amp; result);</code></p>
-
-<blockquote>
-
-<p><i>Effects:</i> Stores wall-clock, process user CPU, and process system CPU elapsed times 
-in r<code>esult</code>. 
-If <code>stopped() == false,</code> the times are those measured since the 
-preceding invocation of <code>start()</code>, otherwise the times are those 
-stored by the preceding invocation of <code>stop()</code>.</p>
-
-<p><i>Remark:</i> Does not call <code>stop()</code>.</p>
-
-</blockquote>
-
-<h3>Class <a name="run_timer">run_timer</a></h3>
-
-<p>Class <code>run_timer</code> inherits publicly from <code><a href="#timer">
-timer</a></code>. For the description of inherited functions, see
-<a href="#timer">Class <code>timer</code>.</a></p>
-
-<h3>Class <a name="run_timer_members">run_timer members</a></h3>
-
-<pre>explicit run_timer(int places = 2);</pre>
-<blockquote>
-  <p><i>Effects:</i> Constructs an object of type <code>run_timer</code>.</p>
-  <p><i>Postconditions:<br>
-  </i><code>&nbsp; m_places == places,<br>
-&nbsp; m_os == std::cout,<br>
-&nbsp; m_format == &quot; %ws wall, %us user + %ss system = %ts cpu (%p%)\n&quot;</code></p>
-</blockquote>
-<pre>run_timer(int places, std::ostream&amp; os);</pre>
-<blockquote>
-  <p><i>Effects:</i> Constructs an object of type <code>run_timer</code>.</p>
-  <p><i>Postconditions:<br>
-  </i><code>&nbsp; m_places == places,<br>
-&nbsp; m_os == os,<br>
-&nbsp; m_format == &quot; %ws wall, %us user + %ss system = %ts cpu (%p%)\n&quot;</code></p>
-</blockquote>
-<pre>explicit run_timer(const std::string&amp; format, int places = 2);</pre>
-<blockquote>
-  <p><i>Effects:</i> Constructs an object of type <code>run_timer</code>.</p>
-  <p><i>Postconditions:<br>
-  </i><code>&nbsp; m_format == format,<br>
-&nbsp; m_places == places,<br>
-&nbsp; m_os == std::cout&nbsp; </code></p>
-</blockquote>
-<pre>run_timer(const std::string&amp; format, int places, std::ostream &amp; os);</pre>
-<blockquote>
-  <p><i>Effects:</i> Constructs an object of type <code>run_timer</code>.</p>
-  <p><i>Postconditions:<br>
-  </i><code>&nbsp; m_format == format,<br>
-&nbsp; m_places == places,<br>
-&nbsp; m_os == os&nbsp; </code></p>
-</blockquote>
-<pre>~run_timer();</pre>
-<blockquote>
-  <p><i>Effects:</i> <br>
-  <code>&nbsp; error_code ed;<br>
-&nbsp; if (!stopped()) report(ec);</code></p>
-<p><i>Throws:</i> Never.</p>
-
-</blockquote>
-<pre>void report();</pre>
-<blockquote>
-  <p><i>Effects:</i> Same as <code>report(error_code &amp; ec)</code>. See below.</p>
-  <p><i>Note: </i>Does throw on errors.</p>
-</blockquote>
-<pre>error_code report(error_code &amp; ec);</pre>
-<blockquote>
-
-<p><i>Effects: </i>Displays times on <code>m_os</code>:</p>
-
-  <ul>
-    <li><code>stop()</code>.</li>
-    <li>Saves <code>m_os</code> <code>ios</code> flags and precision.</li>
-    <li>Sets <code>m_os</code>&nbsp; <code>ios</code> flags and precision as if by:<ul>
-      <li><code>m_os.setf(std::ios_base::fixed, std::ios_base::floatfield)</code></li>
-      <li><code>m_os.precision(m_places)</code></li>
-    </ul>
-    </li>
-    <li>Outputs <code>m_format</code> to <code>m_os</code>, replacing the character 
-    sequences shown in the table below with the indicated values.</li>
-    <li>Restores saved <code>iso</code> flags and precision.</li>
-    <li>If an error occurs during output, sets <code>ec</code> to the 
-    corresponding error condition. Otherwise, calls <code>ec.clear()</code>.</li>
-</ul>
-
-  <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="39%">
-    <tr>
-      <td width="25%"><b><i>Sequence</i></b></td>
-      <td width="75%"><b><i>Replacement value</i></b></td>
-    </tr>
-    <tr>
-      <td width="25%" align="center"><code>%w</code></td>
-      <td width="75%"><code>wall()</code></td>
-    </tr>
-    <tr>
-      <td width="25%" align="center"><code>%u</code></td>
-      <td width="75%"><code>user()</code></td>
-    </tr>
-    <tr>
-      <td width="25%" align="center"><code>%s</code></td>
-      <td width="75%"><code>system()</code></td>
-    </tr>
-    <tr>
-      <td width="25%" align="center"><code>%t</code></td>
-      <td width="75%"><code>user()+system()</code></td>
-    </tr>
-    <tr>
-      <td width="25%" align="center"><code>%p</code></td>
-      <td width="75%">The percentage of <code>wall()</code> represented by by <code>
-      user()+system()</code></td>
-    </tr>
-  </table>
-  <p><i>Returns:</i> <code>ec</code></p>
-  <p><i>Throws:</i> Never.</p>
-</blockquote>
 
   <h2><a name="FAQ">FAQ</a></h2>
 
@@ -660,7 +646,7 @@ timer</a></code>. For the description of inherited functions, see
 <hr>
 <p><font size="2">Last revised:
 <!--webbot bot="Timestamp" s-type="EDITED" s-format="%d %B, %Y" startspan -->24 September, 2011<!--webbot bot="Timestamp" endspan i-checksum="39338" --></font></p>
-<p><font size="2">© Copyright Beman Dawes, 2006, 2011</font></p>
+<p><font size="2">Â© Copyright Beman Dawes, 2006, 2011</font></p>
 <p><font size="2">Distributed under the Boost Software License, Version 1.0.  See <a href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/ LICENSE_1_0.txt</a></font></p>
 
 </body>
