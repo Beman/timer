@@ -75,7 +75,7 @@ int cpp_main( int argc, char * argv[] )
     std::cout << "measure resolution - boost::timer::high_resolution_timer"
                  " resolution for wall-clock time..." << std::endl;
 
-    auto_high_resolution_timer auto_hi_res(9);
+    high_resolution_timer auto_hi_res(9);
     high_resolution_timer hi_res;
 
     for (int i = 0; i < 10; ++i)
@@ -94,7 +94,7 @@ int cpp_main( int argc, char * argv[] )
   {
     std::cout << "measure resolution - boost::timer::cpu_timer"
                  " resolution for wall-clock time..." << std::endl;
-    auto_high_resolution_timer auto_hi_res(9);
+    high_resolution_timer auto_hi_res(9);
     for (int i = 0; i < 10; ++i)
     {
       cpu.start();

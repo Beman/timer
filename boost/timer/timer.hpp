@@ -54,13 +54,15 @@ struct cpu_times
 };
       
 static const std::string   default_format;
-static const int           default_places = 6;
+static const short         default_places = 6;
 
 std::string  format(nanosecond_type time,
-                    const std::string& fmt = default_format, int places = default_places);
+                    short places = default_places,
+                    const std::string& fmt = default_format);
 
 std::string format(const cpu_times& times,
-                   const std::string& fmt = default_format, int places = default_places); 
+                   short places = default_places,
+                   const std::string& fmt = default_format); 
 
 //  high_resolution_timer  -------------------------------------------------------------//
 //
@@ -74,70 +76,92 @@ class BOOST_TIMER_DECL high_resolution_timer
 public:
 
   //  constructors, destructor
-  high_resolution_timer()                { start(); }
- ~high_resolution_timer()                {}
+  high_resolution_timer()                : m_os(0) { start(); }
+
+  //  these 4 constructors imply automatic reporting on destruction
+  explicit high_resolution_timer(std::ostream& os,
+                                 short places = default_places,
+                                 const std::string& format = default_format)
+                                 : m_places(places), m_os(&os), m_format(format)
+                                 { start(); }
+  high_resolution_timer(std::ostream& os, const std::string& format)
+                                 : m_places(default_places), m_os(&os), m_format(format)
+                                 { start(); }
+  explicit high_resolution_timer(short places, const std::string& format = default_format);
+  explicit high_resolution_timer(const std::string& format);
+
+ ~high_resolution_timer();
 
   //  observers
   bool             is_stopped() const    { return m_is_stopped; }
   nanosecond_type  elapsed() const; // does not stop()
   std::string      format(const std::string& fmt = default_format,
                             int places = default_places) const
-                                         { return timer::format(elapsed(), fmt, places); }
+                                         { return timer::format(elapsed(), places, fmt); }
   //  actions
   void             start();
   nanosecond_type  stop();
-  void             resume();        // requires: is_stopped()
+  void             resume();
+  void             report();  // requires: automatic reporting
 
 private:
   nanosecond_type  m_time;
   bool             m_is_stopped;
+
+  //  These variables implement automatic reporting on destruction and are not otherwise
+  //  used. They could be replaced by a pointer to an implementation object, and it could
+  //  be zero when automatic reporting is not active. The space savings doesn't appear
+  //  worth the trouble.
+  short            m_places;
+  std::ostream*    m_os;        // 0 unless automatic reporting is active
+  std::string      m_format;
 };
 
-//  auto_high_resolution_timer  --------------------------------------------------------//
+////  auto_high_resolution_timer  --------------------------------------------------------//
+////
+////  all functions are noexcept unless otherwise specified 
 //
-//  all functions are noexcept unless otherwise specified 
-
-class BOOST_TIMER_DECL auto_high_resolution_timer : public high_resolution_timer
-{
-public:
-
-  // Each constructor has two overloads to avoid an explicit default to std::cout.
-  // Such a default would require including <iostream>, with its high costs, even
-  // when the standard streams are not used.
-
-  explicit
-  auto_high_resolution_timer(int places = default_places);
-
-  auto_high_resolution_timer(int places, std::ostream& os) : m_places(places),
-                                                             m_os(os) {}
-  explicit
-  auto_high_resolution_timer(const std::string& format, int places = default_places);
-    // may throw
-  auto_high_resolution_timer(const std::string& format, int places, std::ostream& os)
-          : m_places(places), m_os(os), m_format(format) {}
-    // may throw
-
-  std::ostream& report();  // calls stop(), may throw
-
-  ~auto_high_resolution_timer()
-  { 
-    if (!is_stopped())
-    {
-      try
-      {
-        report();
-      }
-      catch (...) // eat any exceptions
-      {
-      }
-    }
-  }
-
-private:
-  int             m_places;
-  std::ostream&   m_os;
-  std::string     m_format;  
-};
+//class BOOST_TIMER_DECL auto_high_resolution_timer : public high_resolution_timer
+//{
+//public:
+//
+//  // Each constructor has two overloads to avoid an explicit default to std::cout.
+//  // Such a default would require including <iostream>, with its high costs, even
+//  // when the standard streams are not used.
+//
+//  explicit
+//  auto_high_resolution_timer(int places = default_places);
+//
+//  auto_high_resolution_timer(int places, std::ostream& os) : m_places(places),
+//                                                             m_os(os) {}
+//  explicit
+//  auto_high_resolution_timer(const std::string& format, int places = default_places);
+//    // may throw
+//  auto_high_resolution_timer(const std::string& format, int places, std::ostream& os)
+//          : m_places(places), m_os(os), m_format(format) {}
+//    // may throw
+//
+//  std::ostream& report();  // calls stop(), may throw
+//
+//  ~auto_high_resolution_timer()
+//  { 
+//    if (!is_stopped())
+//    {
+//      try
+//      {
+//        report();
+//      }
+//      catch (...) // eat any exceptions
+//      {
+//      }
+//    }
+//  }
+//
+//private:
+//  int             m_places;
+//  std::ostream&   m_os;
+//  std::string     m_format;  
+//};
 
 //  cpu_timer  ---------------------------------------------------------------------//
 //
@@ -156,11 +180,11 @@ public:
   cpu_times         elapsed() const;  // does not stop()
   std::string       format(const std::string& fmt = default_format,
                               int places = default_places) const
-                                            { return timer::format(elapsed(), fmt, places); }
+                                            { return timer::format(elapsed(), places, fmt); }
   //  actions
   void              start();
   const cpu_times&  stop();
-  void              resume();         // requires: is_stopped()
+  void              resume(); 
 
 private:
   cpu_times         m_times;
@@ -205,7 +229,7 @@ public:
     }
   }
 
-  std::ostream&   report();    // throws iff I/O throws
+  void   report();
 
 private:
   int             m_places;

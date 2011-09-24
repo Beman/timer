@@ -13,6 +13,7 @@
 
 #include <boost/timer/timer.hpp>
 #include <boost/io/ios_state.hpp>
+#include <boost/assert.hpp>
 #include <string>
 #include <sstream>
 #include <cstring>
@@ -150,14 +151,14 @@ namespace boost
   {
     //  format  ------------------------------------------------------------------------//
 
-    std::string format(nanosecond_type time, const std::string& fmt, int places)
+    std::string format(nanosecond_type time, short places, const std::string& fmt)
     {
       std::stringstream ss;
       show_time(time, ss, fmt, places);
       return ss.str();
     }
 
-    std::string format(const cpu_times& times, const std::string& fmt, int places)
+    std::string format(const cpu_times& times, short places, const std::string& fmt)
     {
       std::stringstream ss;
       show_time(times, ss, fmt, places);
@@ -166,18 +167,18 @@ namespace boost
 
     //  high_resolution_timer  ---------------------------------------------------------//
 
-    std::ostream& auto_high_resolution_timer::report()
+    void high_resolution_timer::report()
     {
-      show_time(stop(), m_os, m_format, m_places);
-      return m_os;
-    }
+      BOOST_ASSERT_MSG(m_os,
+        "high_resolution_timer::report() requires automatic reporting");
+      show_time(stop(), *m_os, m_format, m_places);
+     }
 
     //  cpu_timer  ---------------------------------------------------------------------//
 
-    std::ostream& auto_cpu_timer::report()
+    void auto_cpu_timer::report()
     {
       show_time(stop(), m_os, m_format, m_places);
-      return m_os;
     }
 
   } // namespace timer
