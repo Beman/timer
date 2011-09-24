@@ -107,7 +107,7 @@ program supplied with the Boost Timer library:</p>
 
 int main()
 {
-  boost::timer::run_timer t;
+  boost::timer::cpu_timer t(-1);
 
   for (long i = 0; i &lt; 10000000; ++i)
     std::sqrt(123.456L); // burn some time
@@ -118,7 +118,7 @@ int main()
 <p dir="ltr">When the <code>run_timer t</code> object is created, it starts timing. When 
 it is destroyed at the end of the program, its destructor stops the timer and 
 displays timing information on an output stream that defaults to <code>std::cout</code>.</p>
-<p>The output of this program run on a circa 2006 processor looks was this:</p>
+<p>The output of this program run on a circa 2006 desktop processor was:</p>
 <p><code>&nbsp;&nbsp; wall 0.42 s, user 0.41 s + system 0.00 s = total cpu 0.41 s, 
 (96.3%)</code></p>
 <p>In other words, this program ran in 0.42 seconds as would be measured by a 
@@ -236,6 +236,11 @@ POSIX.</p>
                    const std::string&amp; format = default_format);</pre>
 <blockquote>
 
+<p><i>Effects:</i> If <code>places</code> is less than 0 or more than 9, <code>
+places</code> is set to <code>default_places</code>. if the <code>format</code> 
+argument is <code>empty()</code>, <code>format</code> is set to <code>
+default_format</code>.</p>
+
 <p><i>Returns:</i> A string that is a copy of <code>format</code>, except that any 
 instances of <code>'%w'</code> are replaced by <code>time</code> in seconds, 
 shown to <code>places</code> decimal places.</p>
@@ -246,6 +251,11 @@ shown to <code>places</code> decimal places.</p>
                    short places = default_places,
                    const std::string&amp; format = default_format); </pre>
 <blockquote>
+
+<p><i>Effects:</i> If <code>places</code> is less than 0 or more than 9, <code>
+places</code> is set to <code>default_places</code>. if the <code>format</code> 
+argument is <code>empty()</code>, <code>format</code> is set to <code>
+default_format</code>.</p>
 
 <p><i>Returns:</i> A string that is a copy of <code>format</code>, except that any 
 instances of the sequences shown below are replaced by the indicated value. 
@@ -338,8 +348,7 @@ constructors</a>, destructor</h3>
   <p><i>Effects:</i> <code>start()</code>.</p>
 <p><i>Postconditions:</i></p>
   <blockquote>
-    <pre>m_os == 0;
-</pre>
+    <pre>m_os == 0;</pre>
   </blockquote>
 </blockquote>
 <pre>explicit high_resolution_timer(std::ostream&amp; os,
@@ -464,7 +473,7 @@ high_resolution_clock</code>.</p>
   <blockquote>
     <pre>if (m_os)
 {
-  m_os &lt;&lt; format(stop(),*m_os, m_places, m_format);
+  m_os &lt;&lt; timer::format(stop(),*m_os, m_places, m_format);
 }</pre>
   </blockquote>
 </blockquote>
@@ -486,8 +495,18 @@ GetProcessTimes()</code> on Windows.</p>
     {
     public:
 
-      //  constructors
+      //  constructors, destructor
       cpu_timer() noexcept;
+
+      // these 4 constructors enable automatic report() on destruction
+      explicit cpu_timer(std::ostream&amp; os,
+                         short places = default_places,
+                         const std::string&amp; format = default_format);
+      cpu_timer(std::ostream&amp; os, const std::string&amp; format);
+      explicit cpu_timer(short places, const std::string&amp; format = default_format);
+      explicit cpu_timer(const std::string&amp; format);
+
+     ~cpu_timer() noexcept;
 
       //  observers
       bool              is_stopped() const noexcept;
@@ -498,16 +517,79 @@ GetProcessTimes()</code> on Windows.</p>
       void              start() noexcept;
       const cpu_times&  stop() noexcept;
       void              resume() noexcept;
+      void              report();
 
     private:
       cpu_times         m_times;          // <b><i>exposition only</i></b>
       bool              m_is_stopped;     // <b><i>exposition only</i></b>
     };</pre>
 <h3><a name="cpu_timer-constructors"><code>cpu_timer</code> 
-constructors</a></h3>
+constructors</a>, destructor</h3>
 <pre>cpu_timer() noexcept;</pre>
 <blockquote>
   <p><i>Effects:</i> <code>start()</code>.</p>
+<p><i>Postconditions:</i></p>
+  <blockquote>
+    <pre>m_os == 0;</pre>
+  </blockquote>
+</blockquote>
+<pre>explicit cpu_timer(std::ostream&amp; os,
+                   short places = default_places,
+                   const std::string&amp; format = default_format);</pre>
+<blockquote>
+<p><i>Effects:</i> <code>start()</code>.</p>
+<p><i>Postconditions:</i></p>
+  <blockquote>
+    <pre>m_os == &amp;os;
+m_places == places;
+m_format == format;</pre>
+  </blockquote>
+</blockquote>
+<pre>cpu_timer(std::ostream&amp; os, const std::string&amp; format);</pre>
+<blockquote>
+<p><i>Effects:</i> <code>start()</code>.</p>
+<p><i>Postconditions:</i></p>
+  <blockquote>
+    <pre>m_os == &amp;os;
+m_places == default_places;
+m_format == format;</pre>
+  </blockquote>
+</blockquote>
+<pre>explicit cpu_timer(short places, const std::string&amp; format = default_format);</pre>
+<blockquote>
+<p><i>Effects:</i> <code>start()</code>.</p>
+<p><i>Postconditions:</i></p>
+  <blockquote>
+    <pre>m_os == &amp;std::cout;
+m_places == places;
+m_format == format;</pre>
+  </blockquote>
+</blockquote>
+<pre>explicit cpu_timer(const std::string&amp; format);</pre>
+<blockquote>
+<p><i>Effects:</i> <code>start()</code>.</p>
+<p><i>Postconditions:</i></p>
+  <blockquote>
+    <pre>m_os == &amp;std::cout;
+m_places == default_places;
+m_format == format;</pre>
+  </blockquote>
+</blockquote>
+<pre>~cpu_timer() noexcept;</pre>
+<blockquote>
+  <p><i>Effects:</i> As if:</p>
+  <blockquote>
+    <pre>if (m_os &amp;&amp; !is_stopped())
+{
+  try
+  {
+    report();
+  }
+  catch (...)
+  {
+  }
+}</pre>
+  </blockquote>
 </blockquote>
 <h3><a name="cpu_timer-observers"><code>cpu_timer</code> 
 observers</a></h3>
@@ -561,110 +643,15 @@ Postconditions</i>.</p>
 }</pre>
   </blockquote>
 </blockquote>
-<h3 dir="ltr"><a name="Class-auto_cpu_timer">Class <code>auto_cpu_timer</code></a></h3>
-
-<p dir="ltr">Class <code>auto_cpu_timer</code> adds a <code>report()</code> 
-function to <code>class cpu_timer</code>, and automatically calls <code>report()</code> 
-on destruction.</p>
-
-<h3 dir="ltr"> <code>auto_cpu_timer</code> synopsis</h3>
-
-<pre dir="ltr">    class <a name="auto_cpu_timer">auto_cpu_timer</a> : public cpu_timer
-    {
-    public:
-      explicit
-      auto_cpu_timer(int places = default_places) noexcept;
-
-      auto_cpu_timer(int places, std::ostream& os) noexcept;
-
-      explicit
-      auto_cpu_timer(const std::string& format,
-                     int places = default_places);
-
-      auto_cpu_timer(const std::string& format,
-                     int places, std::ostream& os);
-
-     ~auto_cpu_timer() noexcept;
-
-      void            report();
-
-    private:
-      int             m_places;           // <b><i>exposition only</i></b>
-      std::ostream&   m_os;               // <b><i>exposition only</i></b>
-      std::string     m_format;           // <b><i>exposition only</i></b>
-    };</pre>
-<p>Each constructor has two overloads to avoid an explicit default to <code>
-std::cout</code>. Such a default would require including <code>&lt;iostream&gt;</code>, 
-with its high costs, even when the standard streams are not used.</p>
-<h3 dir="ltr"><code>auto_cpu_timer</code> constructors</h3>
-<pre dir="ltr">explicit auto_cpu_timer(int places = default_places) noexcept;</pre>
+<pre>void report();</pre>
 <blockquote>
-  <p dir="ltr"><i>Effects:</i> Constructs an object of type <code>
-  auto_cpu_timer</code>.</p>
-  <p><i>Postconditions:<br>
-  </i><code>&nbsp; m_places == places,<br>
-&nbsp; m_os == std::cout,<br>
-&nbsp; m_format == default_format</code></p>
-</blockquote>
-<pre dir="ltr">auto_cpu_timer(int places, std::ostream& os) noexcept;</pre>
-<blockquote>
-  <p dir="ltr"><i>Effects:</i> Constructs an object of type <code>
-  auto_cpu_timer</code>.</p>
-  <p><i>Postconditions:<br>
-  </i><code>&nbsp; m_places == places,<br>
-&nbsp; m_os == os,<br>
-&nbsp; m_format == default_format</code></p>
-</blockquote>
-<pre dir="ltr">explicit auto_cpu_timer(const std::string& format,
-                                    int places = default_places);</pre>
-<blockquote>
-  <p dir="ltr"><i>Effects:</i> Constructs an object of type <code>
-  auto_cpu_timer</code>.</p>
-  <p><i>Postconditions:<br>
-  </i><code>&nbsp; m_places == places,<br>
-&nbsp; m_os == std::cout,<br>
-&nbsp; m_format == format</code></p>
-</blockquote>
-<pre dir="ltr">auto_cpu_timer(const std::string& format,
-                           int places, std::ostream& os);</pre>
-<blockquote>
-  <p dir="ltr"><i>Effects:</i> Constructs an object of type <code>
-  auto_cpu_timer</code>.</p>
-  <p><i>Postconditions:<br>
-  </i><code>&nbsp; m_places == places,<br>
-&nbsp; m_os == os,<br>
-&nbsp; m_format == format</code></p>
-</blockquote>
-<h3 dir="ltr"><code>auto_cpu_timer</code> destructor</h3>
-<pre dir="ltr">~auto_cpu_timer() noexcept;</pre>
-<blockquote>
-<p dir="ltr"><i>Effects: </i>As if:</p>
+  <p><i>Effects:</i> As if:</p>
   <blockquote>
-    <pre dir="ltr">if (!is_stopped())
+    <pre>if (m_os)
 {
-  try
-  {
-    report();
-  }
-  catch (...)
-  {
-  }
+  m_os &lt;&lt; timer::format(stop(),*m_os, m_places, m_format);
 }</pre>
   </blockquote>
-</blockquote>
-<h3 dir="ltr"><code>auto_cpu_timer</code> actions</h3>
-<pre dir="ltr">std::ostream& report();</pre>
-<blockquote>
-  <p dir="ltr"><i>Effects: </i>As if:</p>
-  <blockquote>
-    <pre dir="ltr">m_os &lt;&lt; timer::report(
-          stop(),
-          m_format.empty()
-            ? &quot; %ws wall, %us user + %ss system = %ts cpu (%p%)\n&quot;
-            : m_format,
-          m_places);</pre>
-  </blockquote>
-    <p dir="ltr"><i>Returns: </i><code>m_os</code>.</p>
 </blockquote>
 
   <h2><a name="FAQ">FAQ</a></h2>
@@ -679,7 +666,7 @@ with its high costs, even when the standard streams are not used.</p>
 <hr>
 <p><font size="2">Last revised:
 <!--webbot bot="Timestamp" s-type="EDITED" s-format="%d %B, %Y" startspan -->24 September, 2011<!--webbot bot="Timestamp" endspan i-checksum="39338" --></font></p>
-<p><font size="2">Â© Copyright Beman Dawes, 2006, 2011</font></p>
+<p><font size="2">© Copyright Beman Dawes, 2006, 2011</font></p>
 <p><font size="2">Distributed under the Boost Software License, Version 1.0.  See <a href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/ LICENSE_1_0.txt</a></font></p>
 
 </body>
