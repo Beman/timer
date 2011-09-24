@@ -75,7 +75,7 @@ class auto_cpu_timer;              // automatic reporting</pre>
       <a href="#Example">Examples</a><br>
       <a href="#Synopsis">Synopsis</a><br>
       <a href="#nanosecond_t">Typedef <code>nanosecond_type</code></a><br>
-      <a href="#times_t">Struct <code>times_t</code></a><br>
+      <a href="#times_t">Struct <code>cpu_times</code></a><br>
       <a href="#Non-member-functions">Non-member functions</a><br>
       <a href="#timer">Class <code>timer</code></a><br>
 &nbsp;&nbsp;&nbsp; <a href="#timer_members">Members</a><br>
@@ -178,18 +178,18 @@ run_timer_example2 &quot;%w wall clock seconds\n&quot; 6
 run_timer_example2 &quot;%t total CPU seconds\n&quot; 3
 0.422 total CPU seconds</pre>
 </blockquote>
-<h2><a href="../../../boost/system/timer.hpp" name="Synopsis">Header
-<font size="5">boost/timer/timer.hpp 
-synopsis</font></a></h2>
+<h2><code>&lt;boost/timer/timer.hpp&gt;</code> <a name="Reference">Reference</a></h2>
+<h3>
+<font size="5"><a name="Synopsis">Synopsis</a></font></h3>
 <div align="left">
 <pre>namespace boost
 {
   namespace timer
   {
-    class <a href="#high_resolution_timer">high_resolution_timer</a>;       // wall clock (AKA real) time  
-    class <a href="#auto_high_resolution_timer">auto_high_resolution_timer</a>;  // automatic reporting on destruction
-    class <a href="#cpu_timer">cpu_timer</a>;                   // wall, user, system time
-    class <a href="#auto_cpu_timer">auto_cpu_timer</a>;              // automatic reporting on destruction 
+    class <a href="#Class-high_resolution_timer">high_resolution_timer</a>;       // wall clock (AKA real) time  
+    class <a href="#Class-auto_high_resolution_timer">auto_high_resolution_timer</a>;  // automatic reporting on destruction
+    class <a href="#Class-cpu_timer">cpu_timer</a>;                   // wall, user, system time
+    class <a href="#Class-auto_cpu_timer">auto_cpu_timer</a>;              // automatic reporting on destruction 
 
     typedef boost::int_least64_t nanosecond_type;
 
@@ -205,17 +205,114 @@ synopsis</font></a></h2>
     static const std::string   default_format;
     static const int           default_places = 6;
 
-    std::string format(nanosecond_type time,
+    std::string <a href="#format-time">format</a>(nanosecond_type time,
                        const std::string& fmt = default_format,
                        int places = default_places);
 
-    std::string format(const cpu_times& times,
-                       const std::string& fmt = default_format,
+    std::string <a href="#format-times">format</a>(const cpu_times& times,
+                       const std::string& format = default_format,
                        int places = default_places); 
+  } // namespace timer
+} // namespace boost
+</pre>
 
-    //----------  high_resolution_timer  ----------//
+</div>
 
-    class <a name="high_resolution_timer">high_resolution_timer</a>
+<h3>Typedef <a name="nanosecond_type"><code>nanosecond_type</code></a></h3>
+
+<p>The typedef <code>nanosecond_type</code> provides an implementation defined type capable 
+of representing nanoseconds. For POSIX and Windows systems, <code>
+nanoseconds_t</code> is <code>boost::int_least64_</code>t.</p>
+
+<p>The underlying type is not based on the Boost Date-Time or Chrono library to avoid a 
+dependency on a large library. This design choice may change at some future 
+date.</p>
+
+<p>Although <code>nanosecond_type</code> is capable of representing one <b>
+nanosecond</b>, the actual resolution of common operating system timers may be 
+much lower. For wall clock time on desktop systems circa 2011, resolution is 
+often a bit less than one <b>microsecond</b>. For user and system time, typical 
+resolutions is 15 <b>milliseconds</b> on Windows and 10 <b>milliseconds</b> on 
+POSIX.</p>
+
+<h3>Struct <a name="times_t"><code>cpu_times</code></a></h3>
+
+<p>Struct <code>cpu_times</code> packages three elapsed times:</p>
+
+<ul>
+  <li>Wall clock elapsed time, equivalent to the time that would be recorded by 
+  a stopwatch.</li>
+  <li>User central processing unit (CPU) time used by the process, as charged by 
+  the operating system.</li>
+  <li>System central processing unit (CPU) time used by the process, as charged 
+  by the operating system.</li>
+</ul>
+
+<h3><a name="Non-member-functions">Non-member functions</a></h3>
+
+<pre>std::string <a name="format-time">format</a>(nanosecond_type time,
+                   const std::string&amp; format = default_format,
+                   int places = default_places);</pre>
+<blockquote>
+
+<p><i>Returns:</i> A string that is a copy of <code>format</code>, except that any 
+instances of <code>'%w'</code> are replaced by <code>time</code> in seconds, 
+shown to <code>places</code> decimal places.</p>
+
+</blockquote>
+
+<pre>std::string <a name="format-times">format</a>(const cpu_times& times,
+                   const std::string&amp; format = default_format,
+                   int places = default_places);</pre>
+<blockquote>
+
+<p><i>Returns:</i> A string that is a copy of <code>format</code>, except that any 
+instances of the sequences shown below are replaced by the indicated value. 
+Times are reported in seconds, 
+shown to <code>places</code> decimal places. Percentage is reported to one 
+decimal place. [<i>Note:</i> percentage may exceed 100% due to differences in 
+how operating systems measure various times. <i>--end note</i>]</p>
+
+  <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="39%">
+    <tr>
+      <td width="25%"><b><i>Sequence</i></b></td>
+      <td width="75%"><b><i>Replacement value</i></b></td>
+    </tr>
+    <tr>
+      <td width="25%" align="center"><code>%w</code></td>
+      <td width="75%"><code>times.wall</code></td>
+    </tr>
+    <tr>
+      <td width="25%" align="center"><code>%u</code></td>
+      <td width="75%"><code>times.user</code></td>
+    </tr>
+    <tr>
+      <td width="25%" align="center"><code>%s</code></td>
+      <td width="75%"><code>times.system</code></td>
+    </tr>
+    <tr>
+      <td width="25%" align="center"><code>%t</code></td>
+      <td width="75%"><code>times.user + times.system</code></td>
+    </tr>
+    <tr>
+      <td width="25%" align="center"><code>%p</code></td>
+      <td width="75%">The percentage of <code>times.wall</code> represented by by <code>
+      times.user + times.system</code></td>
+    </tr>
+  </table>
+  </blockquote>
+
+<h3><a name="Class-high_resolution_timer">Class <code>high_resolution_timer</code></a></h3>
+
+<p> <code>high_resolution_timer_timer</code> objects measure wall-clock elapsed time, process elapsed 
+time charged to the user, and process elapsed time charged to the system.</p>
+
+<p dir="ltr">Wall-clock elapsed time is measured by the Boost.Chrono <code>
+high_resolution_clock</code>.</p>
+
+<h3 dir="ltr">high_resolution_timer synopsis</h3>
+
+<pre dir="ltr">    class <a name="high_resolution_timer">high_resolution_timer</a>
     {
     public:
 
@@ -237,16 +334,20 @@ synopsis</font></a></h2>
       nanosecond_type  m_time;         // <b><i>exposition only</i></b>
       bool             m_is_stopped;   // <b><i>exposition only</i></b>
     };
+ </pre>
+<h3><a name="Class-auto_high_resolution_timer">Class <code>
+auto_high_resolution_timer</code></a></h3>
 
-    //-----------  auto_high_resolution_timer  -----------//
+<p>Class <code>auto_high_resolution_timer</code> adds a <code>report()</code> 
+function to <code>class high_resolution_timer</code>, and automatically calls
+<code>report()</code> on destruction.</p>
 
+<h3 dir="ltr"> <code>auto_high_resolution_timer</code> synopsis</h3>
+
+<pre dir="ltr">
     class <a name="auto_high_resolution_timer">auto_high_resolution_timer</a> : public high_resolution_timer
     {
     public:
-
-      // Each constructor has two overloads to avoid an explicit default to std::cout.
-      // Such a default would require including &lt;iostream&gt;<iostream>, with its high costs, even
-      // when the standard streams are not used.
 
       explicit
       auto_high_resolution_timer(int places = default_places);
@@ -268,11 +369,23 @@ synopsis</font></a></h2>
       int             m_places;       // <b><i>exposition only</i></b>
       std::ostream&   m_os;           // <b><i>exposition only</i></b>
       std::string     m_format;       // <b><i>exposition only</i></b>
-    };
+    };</pre>
+<p dir="ltr">Each constructor has two overloads to avoid an explicit default to
+<code>std::cout</code>. Such a default would require including <code>&lt;iostream&gt;</code>, 
+with its high costs, even when the standard streams are not used.</p>
+<h3><a name="Class-cpu_timer">Class <code>cpu_timer</code></a></h3>
 
-    //------------  cpu_timer  ----------//
+<p> <code>cpu_timer</code> objects measure wall-clock elapsed time, process elapsed 
+time charged to the user, and process elapsed time charged to the system.</p>
 
-    class <a name="cpu_timer">cpu_timer</a>
+<p dir="ltr">Wall-clock elapsed time is measured by the Boost.Chrono <code>
+high_resolution_clock</code>. User and system times are measured by operating 
+system API functions such as <code>times()</code> on POSIX and <code>
+GetProcessTimes()</code> on Windows.</p>
+
+<h3 dir="ltr"> <code>cpu_timer</code> synopsis</h3>
+
+<pre dir="ltr">    class <a name="cpu_timer">cpu_timer</a>
     {
     public:
 
@@ -293,18 +406,18 @@ synopsis</font></a></h2>
     private:
       cpu_times         m_times;          // <b><i>exposition only</i></b>
       bool              m_is_stopped;     // <b><i>exposition only</i></b>
-    };
+    };</pre>
+<h3 dir="ltr"><a name="Class-auto_cpu_timer">Class <code>auto_cpu_timer</code></a></h3>
 
-    //-----------  auto_cpu_timer  ----------//
+<p dir="ltr">Class <code>auto_cpu_timer</code> adds a <code>report()</code> 
+function to <code>class cpu_timer</code>, and automatically calls <code>report()</code> 
+on destruction.</p>
 
-    class <a name="auto_cpu_timer">auto_cpu_timer</a> : public cpu_timer
+<h3 dir="ltr"> <code>auto_cpu_timer</code> synopsis</h3>
+
+<pre dir="ltr">    class <a name="auto_cpu_timer">auto_cpu_timer</a> : public cpu_timer
     {
     public:
-
-      // Each constructor has two overloads to avoid an explicit default to std::cout.
-      // Such a default would require including &lt;iostream&gt;<iostream></iostream>, with its high costs, even
-      // when the standard streams are not used.
-
       explicit
       auto_cpu_timer(int places = default_places);
 
@@ -325,82 +438,10 @@ synopsis</font></a></h2>
       int             m_places;           // <b><i>exposition only</i></b>
       std::ostream&   m_os;               // <b><i>exposition only</i></b>
       std::string     m_format;           // <b><i>exposition only</i></b>
-    };
-
-  } // namespace timer
-} // namespace boost
-</pre>
-
-</div>
-
-<h3>Typedef <a name="nanosecond_t"><code>nanosecond_type</code></a></h3>
-
-<p>The typedef <code>nanosecond_type</code> provides an implementation defined type capable 
-of representing nanoseconds. For POSIX and Windows systems, <code>
-nanoseconds_t</code> is <code>boost::int_least64_</code>t.</p>
-
-<p>The underlying type is not based on the Boost Date-Time or Chrono library to avoid a 
-dependency on a large library. This design choice may change at some future 
-date.</p>
-
-<p>Although <code>nanosecond_type</code> is capable of representing one <b>
-nanosecond</b>, the actual resolution of common operating system timers may be 
-much lower. For wall clock time on desktop systems circa 2011, resolution is 
-often a bit less than one <b>microsecond</b>. For user and system time, typical 
-resolutions is 15 <b>milliseconds</b> on Windows and 10 <b>milliseconds</b> on 
-POSIX.</p>
-
-<h3>Struct <a name="times_t"><code>times_t</code></a></h3>
-
-<p>The struct <code>times_t</code> packages three elapsed times:</p>
-
-<ul>
-  <li>Wall clock elapsed time, equivalent to the time that would be recorded by 
-  a stopwatch.</li>
-  <li>User central processing unit (CPU) time used by the process, as charged by 
-  the operating system.</li>
-  <li>System central processing unit (CPU) time used by the process, as charged 
-  by the operating system.</li>
-</ul>
-
-<h3><a name="Non-member-functions">Non-member functions</a></h3>
-
-<p>&nbsp;</p>
-
-<pre>std::string format(nanosecond_type time,
-                   const std::string&amp; fmt = default_format,
-                   int places = default_places);</pre>
-<blockquote>
-
-<p><i>Returns:</i> A string that is a copy of <code>fmt</code>, except that any 
-instances of <code>'%t'</code> are replaced by <code>time</code> in seconds, 
-shown to <code>places</code> decimal places.</p>
-
-</blockquote>
-
-<p><code>error_code&amp; times(times_t&amp; result, error_code&amp; ec);</code></p>
-
-<blockquote>
-
-<p><i>Effects:</i> Stores wall-clock, process user CPU, and process system CPU times, 
-as reported by the operating system's API process timing function, in r<code>esult</code>. 
-If the API call reports an error, sets <code>ec</code> accordingly. Otherwise, 
-calls <code>ec.clear()</code>.</p>
-
-</blockquote>
-
-<h3>Class <code><a name="timer">timer</a></code></h3>
-
-<p>A <code>timer</code> object measures wall-clock elapsed time, process elapsed 
-time charged to the user, and process elapsed time charged to the system.</p>
-
-<p>Unless otherwise specified, all member functions report errors by throwing <code>system_error</code> 
-exceptions. If an error occurs and an exception is not thrown, errors are 
-reported by setting time values to -1.</p>
-
-<p>The semantics of member functions are achieved by calling the <code>
-<a href="#Non-member-functions">times()</a></code> function.</p>
-
+    };</pre>
+<p>Each constructor has two overloads to avoid an explicit default to <code>
+std::cout</code>. Such a default would require including <code>&lt;iostream&gt;</code>, 
+with its high costs, even when the standard streams are not used.</p>
 <h3>Class <a name="timer_members"><code>timer</code> members</a></h3>
 
 <p><code>timer();</code></p>
@@ -444,7 +485,7 @@ wall-clock, user process, and system process elapsed time.</p>
 <p><i>Postconditions:</i> <code>stopped() == false</code>.</p>
 
 </blockquote>
-<p><code>const times_t&amp; stop();</code></p>
+<p><code>const cpu_times&amp; stop();</code></p>
 
 <blockquote>
 <p><i>Effects:</i> If <code>!stopped()</code>, stops measuring wall-clock, user 
@@ -467,7 +508,7 @@ preceding invocation of <code>start()</code>. Otherwise, has no effect.</p>
 
 </blockquote>
 
-<p><code>void elapsed(times_t&amp; result);</code></p>
+<p><code>void elapsed(cpu_times&amp; result);</code></p>
 
 <blockquote>
 
@@ -585,14 +626,18 @@ timer</a></code>. For the description of inherited functions, see
   <p><i>Throws:</i> Never.</p>
 </blockquote>
 
+  <h2><a name="FAQ">FAQ</a></h2>
+
+  <p>&nbsp;</p>
+
   <h2><a name="Acknowledgements">Acknowledgements</a></h2>
   <p>Rob Stewart contributed many corrections, comments, and suggestions. In 
   particular, he suggested the <code>resume()</code> and <code>format()</code> 
-  functions, resulting in easier to use functionality for several use cases.</p>
+  functions, resulting in improved ease-of-use for several use cases.</p>
 
 <hr>
 <p><font size="2">Last revised:
-<!--webbot bot="Timestamp" s-type="EDITED" s-format="%d %B, %Y" startspan -->22 September, 2011<!--webbot bot="Timestamp" endspan i-checksum="39334" --></font></p>
+<!--webbot bot="Timestamp" s-type="EDITED" s-format="%d %B, %Y" startspan -->24 September, 2011<!--webbot bot="Timestamp" endspan i-checksum="39338" --></font></p>
 <p><font size="2">© Copyright Beman Dawes, 2006, 2011</font></p>
 <p><font size="2">Distributed under the Boost Software License, Version 1.0.  See <a href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/ LICENSE_1_0.txt</a></font></p>
 
