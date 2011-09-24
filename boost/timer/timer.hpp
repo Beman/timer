@@ -247,7 +247,6 @@ private:
   inline
   void high_resolution_timer::resume()
   {
-    BOOST_ASSERT(is_stopped());
     if (is_stopped())
     {
       nanosecond_type current (m_time);

@@ -307,34 +307,92 @@ how operating systems measure various times. <i>--end note</i>]</p>
 <p> <code>high_resolution_timer_timer</code> objects measure wall-clock elapsed time, process elapsed 
 time charged to the user, and process elapsed time charged to the system.</p>
 
-<p dir="ltr">Wall-clock elapsed time is measured by the Boost.Chrono <code>
-high_resolution_clock</code>.</p>
-
-<h3 dir="ltr">high_resolution_timer synopsis</h3>
+<h3 dir="ltr"><a name="high_resolution_timer-synopsis">high_resolution_timer 
+synopsis</a></h3>
 
 <pre dir="ltr">    class <a name="high_resolution_timer">high_resolution_timer</a>
     {
     public:
 
-      //  constructors, destructor
-      high_resolution_timer();
-     ~high_resolution_timer();
+      //  constructors
+      high_resolution_timer() noexcept;
 
       //  observers
-      bool             is_stopped() const;
-      nanosecond_type  elapsed() const;
-      std::string      format(const std::string& fmt = default_format,
+      bool             is_stopped() const noexcept;
+      nanosecond_type  elapsed() const noexcept;
+      std::string      format(const std::string& format = default_format,
                               int places = default_places) const;
       //  actions
-      void             start();
-      nanosecond_type  stop();
-      void             resume();
+      void             start() noexcept;
+      nanosecond_type  stop() noexcept;
+      void             resume() noexcept;
 
     private:
       nanosecond_type  m_time;         // <b><i>exposition only</i></b>
       bool             m_is_stopped;   // <b><i>exposition only</i></b>
-    };
- </pre>
+    };</pre>
+<h3><a name="high_resolution_timer-constructors">high_resolution_timer 
+constructors</a></h3>
+<pre>high_resolution_timer() noexcept;</pre>
+<blockquote>
+  <p><i>Effects:</i> <code>start()</code>.</p>
+</blockquote>
+<h3><a name="high_resolution_timer-observers">high_resolution_timer observers</a></h3>
+<pre>bool is_stopped() const noexcept;</pre>
+<blockquote>
+  <p dir="ltr"><i>Returns:</i> <code>m_is_stopped</code>.</p>
+</blockquote>
+<pre>nanosecond_type elapsed() const noexcept;</pre>
+<blockquote>
+  <p dir="ltr"><i>Returns:</i> If <code>is_stopped()</code>, <code>m_time</code>. 
+  Otherwise, the difference between <code>m_time</code> and current wall-clock 
+  time.</p>
+
+<p><i>Remarks:</i> Current wall-clock time is obtained from the Boost.Chrono <code>
+high_resolution_clock</code>.</p>
+
+</blockquote>
+<pre>std::string format(const std::string&amp; format = default_format,
+                   int places = default_places) const;</pre>
+<blockquote>
+  <p><i>Returns:</i> <code>format(elapsed(), format, places)</code>.</p>
+</blockquote>
+<h3><a name="high_resolution_timer-actions">high_resolution_timer actions</a></h3>
+<pre>void start() noexcept;</pre>
+<blockquote>
+
+<p><i>Postconditions:</i> <code>!is_stopped()</code> and <code>m_time</code> is 
+set to the current wall-clock time.</p>
+
+<p><i>Remarks:</i> Current wall-clock time is obtained from the Boost.Chrono <code>
+high_resolution_clock</code>.</p>
+
+</blockquote>
+<pre>nanosecond_type stop() noexcept;</pre>
+<blockquote>
+
+<p><i>Postconditions:</i> <code>is_stopped()</code> and <code>m_time</code> is 
+set to the difference between <code>m_time</code> and current wall-clock time.</p>
+
+<p><i>Returns:</i> <code>m_time,</code> after the establishment of the <i>
+Postconditions</i>.</p>
+
+<p><i>Remarks:</i> Current wall-clock time is obtained from the Boost.Chrono <code>
+high_resolution_clock</code>.</p>
+
+</blockquote>
+<pre>void resume() noexcept;</pre>
+<blockquote>
+  <p><i>Effects:</i> As if:</p>
+  <blockquote>
+    <pre>if (is_stopped())
+{
+  nanosecond_type current (m_time);
+  start();
+  m_time -= current;
+}</pre>
+  </blockquote>
+</blockquote>
 <h3><a name="Class-auto_high_resolution_timer">Class <code>
 auto_high_resolution_timer</code></a></h3>
 
@@ -350,9 +408,9 @@ function to <code>class high_resolution_timer</code>, and automatically calls
     public:
 
       explicit
-      auto_high_resolution_timer(int places = default_places);
+      auto_high_resolution_timer(int places = default_places) noexcept;
 
-      auto_high_resolution_timer(int places, std::ostream& os);
+      auto_high_resolution_timer(int places, std::ostream& os) noexcept;
 
       explicit
       auto_high_resolution_timer(const std::string& format,
@@ -360,8 +418,7 @@ function to <code>class high_resolution_timer</code>, and automatically calls
       
       auto_high_resolution_timer(const std::string& format,
                                  int places, std::ostream& os);
- 
-     ~auto_high_resolution_timer();  // if !is_stopped(), report()
+     ~auto_high_resolution_timer() noexcept; 
 
       void report();
 
@@ -389,19 +446,18 @@ GetProcessTimes()</code> on Windows.</p>
     {
     public:
 
-      //  constructors, destructor
-      cpu_timer();
-     ~cpu_timer();
+      //  constructors
+      cpu_timer() noexcept;
 
       //  observers
-      bool              is_stopped() const;
-      cpu_times         elapsed() const;
-      std::string       format(const std::string& fmt = default_format,
+      bool              is_stopped() const noexcept;
+      cpu_times         elapsed() const noexcept;
+      std::string       format(const std::string& format = default_format,
                                int places = default_places) const;
       //  actions
-      void              start();
-      const cpu_times&  stop();
-      void              resume();
+      void              start() noexcept;
+      const cpu_times&  stop() noexcept;
+      void              resume() noexcept;
 
     private:
       cpu_times         m_times;          // <b><i>exposition only</i></b>
@@ -419,9 +475,9 @@ on destruction.</p>
     {
     public:
       explicit
-      auto_cpu_timer(int places = default_places);
+      auto_cpu_timer(int places = default_places) noexcept;
 
-      auto_cpu_timer(int places, std::ostream& os);
+      auto_cpu_timer(int places, std::ostream& os) noexcept;
 
       explicit
       auto_cpu_timer(const std::string& format,
@@ -430,7 +486,7 @@ on destruction.</p>
       auto_cpu_timer(const std::string& format,
                      int places, std::ostream& os);
 
-     ~auto_cpu_timer();  // if !is_stopped(), report()
+     ~auto_cpu_timer() noexcept;
 
       void            report();
 
@@ -442,40 +498,6 @@ on destruction.</p>
 <p>Each constructor has two overloads to avoid an explicit default to <code>
 std::cout</code>. Such a default would require including <code>&lt;iostream&gt;</code>, 
 with its high costs, even when the standard streams are not used.</p>
-<h3>Class <a name="timer_members"><code>timer</code> members</a></h3>
-
-<p><code>timer();</code></p>
-
-<blockquote>
-<p><i>Effects:</i> <code>start()</code>.</p>
-
-</blockquote>
-
-<p><code>timer(const std::nothrow_t&amp;);</code></p>
-
-<blockquote>
-<p><i>Effects:</i> <code>start()</code>.</p>
-
-<p><i>Remarks:</i> Member functions for this object will not throw exceptions.</p>
-
-<p><i>Note: </i>On popular operating systems, such as POSIX and Windows,  the question of how to handle errors is moot 
-since timer errors do no occur. For programs which may 
-run on systems that may possibly report timer errors, the <code>nothrow</code> 
-constructor allows suppression of exceptions without the interface thickening 
-that would be required if all functions had <code>error_code</code> returning 
-variations. In the rare cases where exceptions are undesirable yet the <code>
-error_code</code> must be captured,&nbsp; the non-member <code>times</code> 
-function's overload returning an <code>error_code</code> can be used.</p>
-
-</blockquote>
-<p><code>~timer();</code></p>
-
-<blockquote>
-<p><i>Effects:</i> None.</p>
-
-<p><i>Throws:</i> Never.</p>
-
-</blockquote>
 <p><code>void start();</code></p>
 
 <blockquote>
