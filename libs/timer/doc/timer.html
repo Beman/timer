@@ -60,8 +60,7 @@ class cpu_timer;                   // wall, user, system time</pre>
   </center>
 </div>
 
-<h1>
-<a name="Introduction">Introduction</a></h1>
+<h2><a name="Introduction">Introduction</a></h2>
 <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" align="right">
   <tr>
     <td width="100%" bgcolor="#D7EEFF" align="center">
@@ -69,17 +68,28 @@ class cpu_timer;                   // wall, user, system time</pre>
   </tr>
   <tr>
     <td width="100%" bgcolor="#E8F5FF">
-      <p dir="ltr"><a href="#Introduction">Introduction</a><br>
+      <a href="#Introduction">Introduction</a><br>
       <a href="#Example">Examples</a><br>
-      <a href="#Synopsis">Synopsis</a><br>
-      <a href="#nanosecond_t">Typedef <code>nanosecond_type</code></a><br>
-      <a href="#times_t">Struct <code>cpu_times</code></a><br>
       <a href="#Non-member-functions">Non-member functions</a><br>
-      <a href="#timer">Class <code>timer</code></a><br>
-&nbsp;&nbsp;&nbsp; <a href="#timer_members">Members</a><br>
-      <a href="#run_timer">Class <code>run_timer</code></a><br>
-&nbsp;&nbsp;&nbsp; <a href="#run_timer_members">Members</a><br>
-      <a href="#Acknowledgements">Acknowledgements</a></td>
+      <a href="#Class-high_resolution_timer">Class <code>high_resolution_timer</code></a><br>
+      <code>&nbsp; <a href="#high_resolution_timer-synopsis">high_resolution_timer</a></code><a href="#high_resolution_timer-synopsis"> 
+synopsis</a><br>
+      <code>&nbsp; <a href="#high_resolution_timer-constructors">high_resolution_timer</a></code><a href="#high_resolution_timer-constructors"> 
+constructors,</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#high_resolution_timer-constructors">destructor</a><br>
+      &nbsp;&nbsp;<code> <a href="#high_resolution_timer-observers">high_resolution_timer</a></code><a href="#high_resolution_timer-observers"> 
+observers</a><br>
+      &nbsp;&nbsp; &nbsp;<a href="#high_resolution_timer-actions"><code>high_resolution_timer</code> 
+actions</a><br>
+      <a href="#Class-cpu_timer">Class <code>cpu_timer</code></a><br>
+      &nbsp;&nbsp;<code> <a href="#cpu_timer-constructors">cpu_timer</a></code><a href="#cpu_timer-constructors"> 
+constructors, destructor</a><br>
+      &nbsp;&nbsp;<code> <a href="#cpu_timer-observers">cpu_timer</a></code><a href="#cpu_timer-observers"> 
+observers</a><br>
+      &nbsp;&nbsp;<code> <a href="#cpu_timer-actions">cpu_timer</a></code><a href="#cpu_timer-actions"> 
+actions</a><br>
+      <a href="#FAQ">FAQ</a><br>
+      <a href="#Acknowledgements">Acknowledgements</a><br>
   </tr>
 </table>
 
@@ -91,16 +101,15 @@ operating system servicing user requests.</p>
 <p>Boost.Timer provides four classes to provide these times:</p>
 
 <blockquote>
-            <pre>class <a href="#Class-high_resolution_timer">high_resolution_timer</a>;       // wall-clock time-
+            <pre>class <a href="#Class-high_resolution_timer">high_resolution_timer</a>;       // wall-clock time
 class <a href="#Class-cpu_timer">cpu_timer</a>;                   // wall, user, system time</pre>
           </blockquote>
 
 <p>Since high-resolution timers are sub-sets</p>
 
-<h2><a name="Example">Example</a>s</h2>
+<h2><a name="Example">Examples</a></h2>
 
-<p>Here is the <a href="../example/run_timer_example.cpp">run_timer_example.cpp</a> 
-program supplied with the Boost Timer library:</p>
+<p>Here is <a href="../example/cpu_timer_example.cpp">cpu_timer_example.cpp</a>, supplied with the Boost Timer library:</p>
 <blockquote>
   <pre>#include &lt;boost/timer/timer.hpp&gt;
 #include &lt;cmath&gt;
@@ -109,22 +118,22 @@ int main()
 {
   boost::timer::cpu_timer t(-1);
 
-  for (long i = 0; i &lt; 10000000; ++i)
+  for (long i = 0; i &lt; 100000000; ++i)
     std::sqrt(123.456L); // burn some time
 
   return 0;
 }</pre>
 </blockquote>
-<p dir="ltr">When the <code>run_timer t</code> object is created, it starts timing. When 
+<p dir="ltr">When the <code>cpu_timer t</code> object is created, it starts timing. When 
 it is destroyed at the end of the program, its destructor stops the timer and 
 displays timing information on an output stream that defaults to <code>std::cout</code>.</p>
-<p>The output of this program run on a circa 2006 desktop processor was:</p>
-<p><code>&nbsp;&nbsp; wall 0.42 s, user 0.41 s + system 0.00 s = total cpu 0.41 s, 
-(96.3%)</code></p>
-<p>In other words, this program ran in 0.42 seconds as would be measured by a 
-clock on the wall, the operating system charged it for 0.41 seconds of user CPU 
-time and 0 seconds of system CPU time, the total of these two was 0.41, and that 
-represented 96.3 percent of the wall clock time.</p>
+<p>The output of this program, run with a debug build on a circa 2006 desktop processor:</p>
+<p><code>&nbsp;&nbsp;&nbsp; 5.713010s wall, 5.709637s user + 0.000000s system = 
+5.709637s cpu (99.9%)</code></p>
+<p>In other words, this program ran in  <code>5.713010</code> seconds as would be measured by a 
+clock on the wall, the operating system charged it for  <code>5.709637</code> seconds of user CPU 
+time and 0 seconds of system CPU time, the total of these two was  <code>5.709637</code>, and that 
+represented  <code>99.9</code> percent of the wall clock time.</p>
 
 <p>The <a href="../example/run_timer_example2.cpp">run_timer_example2.cpp</a> 
 program is the same, except that it supplies additional constructor arguments 
@@ -236,9 +245,9 @@ POSIX.</p>
                    const std::string&amp; format = default_format);</pre>
 <blockquote>
 
-<p><i>Effects:</i> If <code>places</code> is less than 0 or more than 9, <code>
-places</code> is set to <code>default_places</code>. if the <code>format</code> 
-argument is <code>empty()</code>, <code>format</code> is set to <code>
+<p><i>Effects:</i> If <code>places</code> is less than 0,&nbsp; it is set to <code>default_places</code>. If <code>places</code> is 
+more than 9, it is set to 9. if the <code>format</code> 
+argument is <code>empty()</code>, it is set to <code>
 default_format</code>.</p>
 
 <p><i>Returns:</i> A string that is a copy of <code>format</code>, except that any 
@@ -252,9 +261,9 @@ shown to <code>places</code> decimal places.</p>
                    const std::string&amp; format = default_format); </pre>
 <blockquote>
 
-<p><i>Effects:</i> If <code>places</code> is less than 0 or more than 9, <code>
-places</code> is set to <code>default_places</code>. if the <code>format</code> 
-argument is <code>empty()</code>, <code>format</code> is set to <code>
+<p><i>Effects:</i> If <code>places</code> is less than 0,&nbsp; it is set to <code>default_places</code>. If <code>places</code> is 
+more than 9, it is set to 9. if the <code>format</code> 
+argument is <code>empty()</code>, it is set to <code>
 default_format</code>.</p>
 
 <p><i>Returns:</i> A string that is a copy of <code>format</code>, except that any 

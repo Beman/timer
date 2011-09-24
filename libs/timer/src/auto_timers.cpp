@@ -44,8 +44,10 @@ namespace
   {
     const char* format (fmt.empty() ? default_format : fmt.c_str());
 
-    if (places > 9 || places < 0)
+    if (places > 9)
       places = 9;
+    else if (places < 0)
+      places = boost::timer::default_places;
  
     boost::io::ios_flags_saver ifs(os);
     boost::io::ios_precision_saver ips(os);
@@ -107,8 +109,10 @@ namespace
   {
     const char* format (fmt.empty() ? default_hi_res_format : fmt.c_str());
 
-    if (places > 9 || places < 0)
+    if (places > 9)
       places = 9;
+    else if (places < 0)
+      places = boost::timer::default_places;
 
     boost::io::ios_flags_saver ifs(os);
     boost::io::ios_precision_saver ips(os);
