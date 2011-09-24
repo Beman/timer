@@ -44,10 +44,8 @@ Boost Timer Library Version 2<br>
       <blockquote>
         <blockquote>
           <div align="left">
-            <pre>class high_resolution_timer;       // wall clock time only
-class auto_high_resolution_timer;  // automatic reporting on destruction
-class cpu_timer;                   // wall, user, system time
-class auto_cpu_timer;              // automatic reporting on destruction</pre>
+            <pre>class high_resolution_timer;       // wall-clock time
+class cpu_timer;                   // wall, user, system time</pre>
           </div>
         </blockquote>
       </blockquote>
@@ -93,13 +91,11 @@ operating system servicing user requests.</p>
 <p>Boost.Timer provides four classes to provide these times:</p>
 
 <blockquote>
-            <pre>class <a href="#Class-high_resolution_timer">high_resolution_timer</a>;       // wall clock time only
-class <a href="#Class-auto_high_resolution_timer">auto_high_resolution_timer</a>;  // automatic reporting on destruction
-class <a href="#Class-cpu_timer">cpu_timer</a>;                   // wall, user, system time
-class <a href="#auto_high_resolution_timer">auto_cpu_timer</a>;              // automatic reporting on destruction</pre>
+            <pre>class <a href="#Class-high_resolution_timer">high_resolution_timer</a>;       // wall-clock time-
+class <a href="#Class-cpu_timer">cpu_timer</a>;                   // wall, user, system time</pre>
           </blockquote>
 
-<p>Since the two high resolution timers are sub-sets</p>
+<p>Since high-resolution timers are sub-sets</p>
 
 <h2><a name="Example">Example</a>s</h2>
 
@@ -174,9 +170,7 @@ run_timer_example2 &quot;%t total CPU seconds\n&quot; 3
   namespace timer
   {
     class <a href="#Class-high_resolution_timer">high_resolution_timer</a>;       // wall clock (AKA real) time  
-    class <a href="#Class-auto_high_resolution_timer">auto_high_resolution_timer</a>;  // automatic reporting on destruction
     class <a href="#Class-cpu_timer">cpu_timer</a>;                   // wall, user, system time
-    class <a href="#Class-auto_cpu_timer">auto_cpu_timer</a>;              // automatic reporting on destruction 
 
     typedef boost::int_least64_t nanosecond_type;
 
@@ -192,13 +186,13 @@ run_timer_example2 &quot;%t total CPU seconds\n&quot; 3
     static const std::string   default_format;
     static const int           default_places = 6;
 
-    std::string <a href="#format-time">format</a>(nanosecond_type time,
-                       const std::string& fmt = default_format,
-                       int places = default_places);
+    std::string format(nanosecond_type time,
+                       short places = default_places,
+                       const std::string&amp; format = default_format);
 
-    std::string <a href="#format-times">format</a>(const cpu_times& times,
-                       const std::string& format = default_format,
-                       int places = default_places); 
+    std::string format(const cpu_times&amp; times,
+                       short places = default_places,
+                       const std::string&amp; format = default_format); 
   } // namespace timer
 } // namespace boost
 </pre>
@@ -237,9 +231,9 @@ POSIX.</p>
 
 <h3><a name="Non-member-functions">Non-member functions</a></h3>
 
-<pre>std::string <a name="format-time">format</a>(nanosecond_type time,
-                   const std::string&amp; format = default_format,
-                   int places = default_places);</pre>
+<pre>std::string format(nanosecond_type time,
+                   short places = default_places,
+                   const std::string&amp; format = default_format);</pre>
 <blockquote>
 
 <p><i>Returns:</i> A string that is a copy of <code>format</code>, except that any 
@@ -248,9 +242,9 @@ shown to <code>places</code> decimal places.</p>
 
 </blockquote>
 
-<pre>std::string <a name="format-times">format</a>(const cpu_times& times,
-                   const std::string&amp; format = default_format,
-                   int places = default_places);</pre>
+<pre>std::string format(const cpu_times&amp; times,
+                   short places = default_places,
+                   const std::string&amp; format = default_format); </pre>
 <blockquote>
 
 <p><i>Returns:</i> A string that is a copy of <code>format</code>, except that any 
@@ -301,28 +295,110 @@ synopsis</a></h3>
     {
     public:
 
-      //  constructors
+      //  constructors, destructor
       high_resolution_timer() noexcept;
+
+      // these 4 constructors enable automatic report() on destruction
+      explicit high_resolution_timer(std::ostream&amp; os,
+                                     short places = default_places,
+                                     const std::string&amp; format = default_format);
+      high_resolution_timer(std::ostream&amp; os, const std::string&amp; format);
+      explicit high_resolution_timer(short places, const std::string&amp; format = default_format);
+      explicit high_resolution_timer(const std::string&amp; format);
+
+     ~high_resolution_timer();
 
       //  observers
       bool             is_stopped() const noexcept;
       nanosecond_type  elapsed() const noexcept;
-      std::string      format(const std::string& format = default_format,
-                              int places = default_places) const;
+      std::string      format(int places = default_places,
+                                           const std::string&amp; fmt = default_format) const;
       //  actions
       void             start() noexcept;
       nanosecond_type  stop() noexcept;
       void             resume() noexcept;
+      void             report();
 
     private:
       nanosecond_type  m_time;         // <b><i>exposition only</i></b>
       bool             m_is_stopped;   // <b><i>exposition only</i></b>
+      short            m_places;       // <b><i>exposition only</i></b> 
+      std::ostream*    m_os;           // <b><i>exposition only</i></b>
+      std::string      m_format;       // <b><i>exposition only</i></b>
     };</pre>
+<p>Constructors with arguments enable automatic <code>report()</code> on 
+destruction.</p>
+<p>Constructors with arguments but without a <code>std::ostream&</code> argument assume
+<code>std::cout</code>. An explicit default argument is not provided because it would require 
+a high-cost include of <code>&lt;iostream&gt;</code>, even when the standard streams are not used.</p>
 <h3><a name="high_resolution_timer-constructors"><code>high_resolution_timer</code> 
-constructors</a></h3>
+constructors</a>, destructor</h3>
 <pre>high_resolution_timer() noexcept;</pre>
 <blockquote>
   <p><i>Effects:</i> <code>start()</code>.</p>
+<p><i>Postconditions:</i></p>
+  <blockquote>
+    <pre>m_os == 0;
+</pre>
+  </blockquote>
+</blockquote>
+<pre>explicit high_resolution_timer(std::ostream&amp; os,
+                               short places = default_places,
+                               const std::string&amp; format = default_format);</pre>
+<blockquote>
+<p><i>Effects:</i> <code>start()</code>.</p>
+<p><i>Postconditions:</i></p>
+  <blockquote>
+    <pre>m_os == &amp;os;
+m_places == places;
+m_format == format;</pre>
+  </blockquote>
+</blockquote>
+<pre>high_resolution_timer(std::ostream&amp; os, const std::string&amp; format);</pre>
+<blockquote>
+<p><i>Effects:</i> <code>start()</code>.</p>
+<p><i>Postconditions:</i></p>
+  <blockquote>
+    <pre>m_os == &amp;os;
+m_places == default_places;
+m_format == format;</pre>
+  </blockquote>
+</blockquote>
+<pre>explicit high_resolution_timer(short places, const std::string&amp; format = default_format);</pre>
+<blockquote>
+<p><i>Effects:</i> <code>start()</code>.</p>
+<p><i>Postconditions:</i></p>
+  <blockquote>
+    <pre>m_os == &amp;std::cout;
+m_places == places;
+m_format == format;</pre>
+  </blockquote>
+</blockquote>
+<pre>explicit high_resolution_timer(const std::string&amp; format);</pre>
+<blockquote>
+<p><i>Effects:</i> <code>start()</code>.</p>
+<p><i>Postconditions:</i></p>
+  <blockquote>
+    <pre>m_os == &amp;std::cout;
+m_places == default_places;
+m_format == format;</pre>
+  </blockquote>
+</blockquote>
+<pre>~high_resolution_timer() noexcept;</pre>
+<blockquote>
+  <p><i>Effects:</i> As if:</p>
+  <blockquote>
+    <pre>if (m_os &amp;&amp; !is_stopped())
+{
+  try
+  {
+    report();
+  }
+  catch (...)
+  {
+  }
+}</pre>
+  </blockquote>
 </blockquote>
 <h3><a name="high_resolution_timer-observers"><code>high_resolution_timer</code> 
 observers</a></h3>
@@ -340,10 +416,10 @@ observers</a></h3>
 high_resolution_clock</code>.</p>
 
 </blockquote>
-<pre>std::string format(const std::string&amp; format = default_format,
-                   int places = default_places) const;</pre>
+<pre>std::string format(int places = default_places,
+                   const std::string&amp; fmt = default_format) const;</pre>
 <blockquote>
-  <p><i>Returns:</i> <code>format(elapsed(), format, places)</code>.</p>
+  <p><i>Returns:</i> <code>format(elapsed(), places, format)</code>.</p>
 </blockquote>
 <h3><a name="high_resolution_timer-actions"><code>high_resolution_timer</code> 
 actions</a></h3>
@@ -382,112 +458,15 @@ high_resolution_clock</code>.</p>
 }</pre>
   </blockquote>
 </blockquote>
-<h3><a name="Class-auto_high_resolution_timer">Class <code>
-auto_high_resolution_timer</code></a></h3>
-
-<p>Class <code>auto_high_resolution_timer</code> adds a <code>report()</code> 
-function to <code>class high_resolution_timer</code>, and automatically calls
-<code>report()</code> on destruction.</p>
-
-<h3 dir="ltr"> <code>auto_high_resolution_timer</code> synopsis</h3>
-
-<pre dir="ltr">    class <a name="auto_high_resolution_timer">auto_high_resolution_timer</a> : public high_resolution_timer
-    {
-    public:
-
-      //  constructors
-      explicit auto_high_resolution_timer(int places = default_places) noexcept;
-
-      auto_high_resolution_timer(int places, std::ostream& os) noexcept;
-
-      explicit auto_high_resolution_timer(const std::string& format,
-                                          int places = default_places);
-      
-      auto_high_resolution_timer(const std::string& format,
-                                 int places, std::ostream& os);
-
-      //  destructor
-     ~auto_high_resolution_timer() noexcept; 
-
-      //  actions
-      std::ostream& report();
-
-    private:
-      int             m_places;       // <b><i>exposition only</i></b>
-      std::ostream&   m_os;           // <b><i>exposition only</i></b>
-      std::string     m_format;       // <b><i>exposition only</i></b>
-    };</pre>
-<p dir="ltr">Constructors without a <code>std::ostream&</code> argument assume
-<code>std::cout</code>. An explicit default argument is not provided because it would require 
-a high-cost include of <code>&lt;iostream&gt;</code>, even when the standard streams are not used.</p>
-<h3 dir="ltr"><code>auto_high_resolution_timer</code> constructors</h3>
-<pre dir="ltr">explicit auto_high_resolution_timer(int places = default_places) noexcept;</pre>
+<pre>void report();</pre>
 <blockquote>
-  <p dir="ltr"><i>Effects:</i> Constructs an object of type <code>
-  auto_high_resolution_timer</code>.</p>
-  <p><i>Postconditions:<br>
-  </i><code>&nbsp; m_places == places,<br>
-&nbsp; m_os == std::cout,<br>
-&nbsp; m_format == default_format</code></p>
-</blockquote>
-<pre dir="ltr">auto_high_resolution_timer(int places, std::ostream& os) noexcept;</pre>
-<blockquote>
-  <p dir="ltr"><i>Effects:</i> Constructs an object of type <code>
-  auto_high_resolution_timer</code>.</p>
-  <p><i>Postconditions:<br>
-  </i><code>&nbsp; m_places == places,<br>
-&nbsp; m_os == os,<br>
-&nbsp; m_format == default_format</code></p>
-</blockquote>
-<pre dir="ltr">explicit auto_high_resolution_timer(const std::string& format,
-                                    int places = default_places);</pre>
-<blockquote>
-  <p dir="ltr"><i>Effects:</i> Constructs an object of type <code>
-  auto_high_resolution_timer</code>.</p>
-  <p><i>Postconditions:<br>
-  </i><code>&nbsp; m_places == places,<br>
-&nbsp; m_os == std::cout,<br>
-&nbsp; m_format == format</code></p>
-</blockquote>
-<pre dir="ltr">auto_high_resolution_timer(const std::string& format,
-                           int places, std::ostream& os);</pre>
-<blockquote>
-  <p dir="ltr"><i>Effects:</i> Constructs an object of type <code>
-  auto_high_resolution_timer</code>.</p>
-  <p><i>Postconditions:<br>
-  </i><code>&nbsp; m_places == places,<br>
-&nbsp; m_os == os,<br>
-&nbsp; m_format == format</code></p>
-</blockquote>
-<h3 dir="ltr"><code>auto_high_resolution_timer</code> destructor</h3>
-<pre dir="ltr">~auto_high_resolution_timer() noexcept;</pre>
-<blockquote>
-<p dir="ltr"><i>Effects: </i>As if:</p>
+  <p><i>Effects:</i> As if:</p>
   <blockquote>
-    <pre dir="ltr">if (!is_stopped())
+    <pre>if (m_os)
 {
-  try
-  {
-    report();
-  }
-  catch (...)
-  {
-  }
+  m_os &lt;&lt; format(stop(),*m_os, m_places, m_format);
 }</pre>
   </blockquote>
-</blockquote>
-<h3 dir="ltr"><code>auto_high_resolution_timer</code> actions</h3>
-<pre dir="ltr">std::ostream& report();</pre>
-<blockquote>
-  <p dir="ltr"><i>Effects: </i>As if:</p>
-  <blockquote>
-    <pre dir="ltr">m_os &lt;&lt; timer::report(stop(),
-                      m_format.empty()
-                        ? &quot; %ws elapsed wall clock time\n&quot;
-                        : m_format,
-                      m_places);</pre>
-  </blockquote>
-    <p dir="ltr"><i>Returns: </i><code>m_os</code>.</p>
 </blockquote>
 <h3><a name="Class-cpu_timer">Class <code>cpu_timer</code></a></h3>
 

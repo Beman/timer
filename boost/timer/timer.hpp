@@ -38,9 +38,7 @@ namespace timer
 {
 
 class high_resolution_timer;
-class auto_high_resolution_timer;
 class cpu_timer;
-class auto_cpu_timer;
 
 typedef boost::int_least64_t nanosecond_type;
 
@@ -66,10 +64,7 @@ std::string format(const cpu_times& times,
 
 //  high_resolution_timer  -------------------------------------------------------------//
 //
-//  provides the same resolution but lower latency than using cpu_timer for
-//  wall-clock timings
-//
-//  all functions are noexcept unless otherwise specified 
+//  provides lower latency than using cpu_timer for wall-clock
 
 class BOOST_TIMER_DECL high_resolution_timer
 {
@@ -95,9 +90,9 @@ public:
   //  observers
   bool             is_stopped() const    { return m_is_stopped; }
   nanosecond_type  elapsed() const; // does not stop()
-  std::string      format(const std::string& fmt = default_format,
-                            int places = default_places) const
-                                         { return timer::format(elapsed(), places, fmt); }
+  std::string      format(int places = default_places,
+                          const std::string& fmt = default_format) const
+                          { return timer::format(elapsed(), places, fmt); }
   //  actions
   void             start();
   nanosecond_type  stop();
