@@ -16,9 +16,7 @@
 using boost::timer::nanosecond_type;
 using boost::timer::cpu_times;
 using boost::timer::high_resolution_timer;
-using boost::timer::auto_high_resolution_timer;
 using boost::timer::cpu_timer;
-using boost::timer::auto_cpu_timer;
 
 //----------------------------------------------------------------------------//
 //
@@ -38,9 +36,9 @@ int cpp_main( int argc, char * argv[] )
   long count = 0;
   
   {
-    auto_cpu_timer timer(6);
-    auto_cpu_timer timer2("\nwall %w s, utilization %p%\n");
-    auto_cpu_timer timer3("\nwall %w s, total cpu %t s, utilization %p%\n", 3);
+    cpu_timer timer(6);
+    cpu_timer timer2("\nwall %w s, utilization %p%\n");
+    cpu_timer timer3(3, "\nwall %w s, total cpu %t s, utilization %p%\n");
 
     cpu_times times;
     times.clear();

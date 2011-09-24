@@ -33,26 +33,12 @@ namespace boost
     high_resolution_timer::high_resolution_timer(const std::string& format)
       : m_places(default_places), m_os(&std::cout), m_format(format) { start(); }
 
-    high_resolution_timer::~high_resolution_timer()
-    { 
-      if (m_os && !is_stopped())
-      {
-        try
-        {
-          report();
-        }
-        catch (...) // eat any exceptions
-        {
-        }
-      }
-    }
+    cpu_timer::cpu_timer(short places, const std::string& format)
+      : m_places(places), m_os(&std::cout), m_format(format) { start(); }
 
+    cpu_timer::cpu_timer(const std::string& format)
+      : m_places(default_places), m_os(&std::cout), m_format(format) { start(); }
 
-    auto_cpu_timer::auto_cpu_timer(int places)
-      : m_places(places), m_os(std::cout) {}
-
-    auto_cpu_timer::auto_cpu_timer(const std::string& format, int places)
-      : m_places(places), m_os(std::cout), m_format(format) {}
-
+ 
   } // namespace timer
 } // namespace boost

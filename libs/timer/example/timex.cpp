@@ -41,7 +41,7 @@ int main( int argc, char * argv[] )
   if ( verbose )
     { std::cout << "command: \"" << s.c_str() << "\"\n"; }
 
-  boost::timer::auto_high_resolution_timer t;
+  boost::timer::high_resolution_timer t(;
 
   return std::system( s.c_str() );
 }

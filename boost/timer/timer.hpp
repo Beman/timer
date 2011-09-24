@@ -76,9 +76,9 @@ class BOOST_TIMER_DECL high_resolution_timer
 public:
 
   //  constructors, destructor
-  high_resolution_timer()                : m_os(0) { start(); }
+  high_resolution_timer()        : m_os(0) { start(); }
 
-  //  these 4 constructors imply automatic reporting on destruction
+  //  these 4 constructors enable automatic report() on destruction
   explicit high_resolution_timer(std::ostream& os,
                                  short places = default_places,
                                  const std::string& format = default_format)
@@ -102,7 +102,7 @@ public:
   void             start();
   nanosecond_type  stop();
   void             resume();
-  void             report();  // requires: automatic reporting
+  void             report();
 
 private:
   nanosecond_type  m_time;
@@ -117,63 +117,28 @@ private:
   std::string      m_format;
 };
 
-////  auto_high_resolution_timer  --------------------------------------------------------//
-////
-////  all functions are noexcept unless otherwise specified 
-//
-//class BOOST_TIMER_DECL auto_high_resolution_timer : public high_resolution_timer
-//{
-//public:
-//
-//  // Each constructor has two overloads to avoid an explicit default to std::cout.
-//  // Such a default would require including <iostream>, with its high costs, even
-//  // when the standard streams are not used.
-//
-//  explicit
-//  auto_high_resolution_timer(int places = default_places);
-//
-//  auto_high_resolution_timer(int places, std::ostream& os) : m_places(places),
-//                                                             m_os(os) {}
-//  explicit
-//  auto_high_resolution_timer(const std::string& format, int places = default_places);
-//    // may throw
-//  auto_high_resolution_timer(const std::string& format, int places, std::ostream& os)
-//          : m_places(places), m_os(os), m_format(format) {}
-//    // may throw
-//
-//  std::ostream& report();  // calls stop(), may throw
-//
-//  ~auto_high_resolution_timer()
-//  { 
-//    if (!is_stopped())
-//    {
-//      try
-//      {
-//        report();
-//      }
-//      catch (...) // eat any exceptions
-//      {
-//      }
-//    }
-//  }
-//
-//private:
-//  int             m_places;
-//  std::ostream&   m_os;
-//  std::string     m_format;  
-//};
 
 //  cpu_timer  ---------------------------------------------------------------------//
-//
-//  all functions are noexcept unless otherwise specified 
 
 class BOOST_TIMER_DECL cpu_timer
 {
 public:
 
   //  constructors, destructor
-  cpu_timer()                                    { start(); }
- ~cpu_timer()                                    {}
+  cpu_timer()                                    : m_os(0) { start(); }
+
+  //  these 4 constructors enable automatic report() on destruction
+  explicit cpu_timer(std::ostream& os,
+                     short places = default_places,
+                     const std::string& format = default_format)
+                               : m_places(places), m_os(&os), m_format(format){ start(); }
+  cpu_timer(std::ostream& os, const std::string& format)
+                                : m_places(default_places), m_os(&os), m_format(format)
+                                { start(); }
+  explicit cpu_timer(short places, const std::string& format = default_format);
+  explicit cpu_timer(const std::string& format);
+
+ ~cpu_timer();
 
   //  observers
   bool              is_stopped() const           { return m_is_stopped; }
@@ -185,56 +150,16 @@ public:
   void              start();
   const cpu_times&  stop();
   void              resume(); 
+  void              report();
 
 private:
   cpu_times         m_times;
   bool              m_is_stopped;
-};
 
-//  auto_cpu_timer  ----------------------------------------------------------------//
-//
-//  all functions are noexcept unless otherwise specified 
-
-class BOOST_TIMER_DECL auto_cpu_timer : public cpu_timer
-{
-public:
-
-  // Each constructor has two overloads to avoid an explicit default to std::cout.
-  // Such a default would require including <iostream>, with its high costs, even
-  // when the standard streams are not used.
-
-  explicit
-  auto_cpu_timer(int places = default_places);
-
-  auto_cpu_timer(int places, std::ostream& os)  : m_places(places),
-                                                  m_os(os) {}
-  explicit
-  auto_cpu_timer(const std::string& format, int places = default_places);   // may throw
-       
-  auto_cpu_timer(const std::string& format, int places, std::ostream& os) // may throw
-                                            : m_places(places), m_os(os),
-                                              m_format(format) {}
-
-  ~auto_cpu_timer()
-  { 
-    if (!is_stopped())
-    {
-      try
-      {
-        report();
-      }
-      catch (...) // eat any exceptions
-      {
-      }
-    }
-  }
-
-  void   report();
-
-private:
-  int             m_places;
-  std::ostream&   m_os;
-  std::string     m_format;  
+  //  see high_resolution_timer private: comment above
+  short             m_places;
+  std::ostream*     m_os;        // 0 unless automatic reporting is active
+  std::string       m_format;
 };
 
 //  implementation  ----------------------------------------------------------------//

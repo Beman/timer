@@ -13,7 +13,6 @@
 
 #include <boost/timer/timer.hpp>
 #include <boost/io/ios_state.hpp>
-#include <boost/assert.hpp>
 #include <string>
 #include <sstream>
 #include <cstring>
@@ -39,17 +38,15 @@ namespace
     " %ws wall, %us user + %ss system = %ts cpu (%p%)\n";
 
   void show_time(const cpu_times& times,
-    std::ostream& os, const std::string& fmt, int places)
+    std::ostream& os, const std::string& fmt, short places)
   //  NOTE WELL: Will truncate least-significant digits to LDBL_DIG, which may
   //  be as low as 10, although will be 15 for many common platforms.
   {
     const char* format (fmt.empty() ? default_format : fmt.c_str());
 
-    if (places > 9)
+    if (places > 9 || places < 0)
       places = 9;
-    else if (places < 0)
-      places = 0;
-
+ 
     boost::io::ios_flags_saver ifs(os);
     boost::io::ios_precision_saver ips(os);
     os.setf(std::ios_base::fixed, std::ios_base::floatfield);
@@ -104,16 +101,14 @@ namespace
     " %ws elapsed wall clock time\n";
 
   void show_time(boost::timer::nanosecond_type time,
-    std::ostream& os, const std::string& fmt, int places)
+    std::ostream& os, const std::string& fmt, short places)
   //  NOTE WELL: Will truncate least-significant digits to LDBL_DIG, which may
   //  be as low as 10, although will be 15 for many common platforms.
   {
     const char* format (fmt.empty() ? default_hi_res_format : fmt.c_str());
 
-    if (places > 9)
+    if (places > 9 || places < 0)
       places = 9;
-    else if (places < 0)
-      places = 0;
 
     boost::io::ios_flags_saver ifs(os);
     boost::io::ios_precision_saver ips(os);
@@ -169,16 +164,44 @@ namespace boost
 
     void high_resolution_timer::report()
     {
-      BOOST_ASSERT_MSG(m_os,
-        "high_resolution_timer::report() requires automatic reporting");
-      show_time(stop(), *m_os, m_format, m_places);
+      if (m_os)
+        show_time(stop(), *m_os, m_format, m_places);
      }
+
+    high_resolution_timer::~high_resolution_timer()
+    { 
+      if (m_os && !is_stopped())
+      {
+        try
+        {
+          report();
+        }
+        catch (...) // eat any exceptions
+        {
+        }
+      }
+    }
 
     //  cpu_timer  ---------------------------------------------------------------------//
 
-    void auto_cpu_timer::report()
+    void cpu_timer::report()
     {
-      show_time(stop(), m_os, m_format, m_places);
+      if (m_os)
+        show_time(stop(), *m_os, m_format, m_places);
+    }
+
+    cpu_timer::~cpu_timer()
+    { 
+      if (m_os && !is_stopped())
+      {
+        try
+        {
+          report();
+        }
+        catch (...) // eat any exceptions
+        {
+        }
+      }
     }
 
   } // namespace timer
