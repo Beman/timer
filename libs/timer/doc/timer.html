@@ -423,7 +423,7 @@ function to <code>class high_resolution_timer</code>, and automatically calls
      ~auto_high_resolution_timer() noexcept; 
 
       //  actions
-      void report();
+      std::ostream& report();
 
     private:
       int             m_places;       // <b><i>exposition only</i></b>
@@ -490,7 +490,7 @@ a high-cost include of <code>&lt;iostream&gt;</code>, even when the standard str
   </blockquote>
 </blockquote>
 <h3 dir="ltr"><code>auto_high_resolution_timer</code> actions</h3>
-<pre dir="ltr">void report();</pre>
+<pre dir="ltr">std::ostream& report();</pre>
 <blockquote>
   <p dir="ltr"><i>Effects: </i>As if:</p>
   <blockquote>
@@ -498,17 +498,20 @@ a high-cost include of <code>&lt;iostream&gt;</code>, even when the standard str
                       m_format.empty()
                         ? &quot; %ws elapsed wall clock time\n&quot;
                         : m_format,
-                      m_places</pre>
+                      m_places);</pre>
   </blockquote>
+    <p dir="ltr"><i>Returns: </i><code>m_os</code>.</p>
 </blockquote>
 <h3><a name="Class-cpu_timer">Class <code>cpu_timer</code></a></h3>
 
 <p> <code>cpu_timer</code> objects measure wall-clock elapsed time, process elapsed 
 time charged to the user, and process elapsed time charged to the system.</p>
 
-<p dir="ltr">Wall-clock elapsed time is measured by the Boost.Chrono <code>
-high_resolution_clock</code>. User and system times are measured by operating 
-system API functions such as <code>times()</code> on POSIX and <code>
+<p><i><b><a name="Current-time-values">Current time values</a></b></i> are 
+obtained as follows: Current wall-clock time is obtained from the Boost.Chrono <code>
+high_resolution_clock</code>. Current user and system time values are obtained 
+from the appropriate operating system API functions such as <code>times()</code> 
+on POSIX or <code>
 GetProcessTimes()</code> on Windows.</p>
 
 <h3 dir="ltr"> <code>cpu_timer</code> synopsis</h3>
@@ -546,14 +549,11 @@ observers</a></h3>
 <blockquote>
   <p dir="ltr"><i>Returns:</i> <code>m_is_stopped</code>.</p>
 </blockquote>
-<pre>nanosecond_type elapsed() const noexcept;</pre>
+<pre>cpu_times elapsed() const noexcept;</pre>
 <blockquote>
-  <p dir="ltr"><i>Returns:</i> If <code>is_stopped()</code>, <code>m_time</code>. 
-  Otherwise, the difference between <code>m_time</code> and current wall-clock 
-  time.</p>
-
-<p><i>Remarks:</i> Current wall-clock time is obtained from the Boost.Chrono <code>
-cpu_clock</code>.</p>
+  <p dir="ltr"><i>Returns:</i> If <code>is_stopped()</code>, <code>m_times</code>. 
+  Otherwise, the difference between <code>m_times</code> values and 
+  <a href="#Current-time-values">current time values</a>.</p>
 
 </blockquote>
 <pre>std::string format(const std::string&amp; format = default_format,
@@ -566,24 +566,19 @@ actions</a></h3>
 <pre>void start() noexcept;</pre>
 <blockquote>
 
-<p><i>Postconditions:</i> <code>!is_stopped()</code> and <code>m_time</code> is 
-set to the current wall-clock time.</p>
-
-<p><i>Remarks:</i> Current wall-clock time is obtained from the Boost.Chrono <code>
-cpu_clock</code>.</p>
+<p><i>Postconditions:</i> <code>!is_stopped()</code> and <code>m_times</code> 
+values are set to the <a href="#Current-time-values">current time values</a>.</p>
 
 </blockquote>
-<pre>nanosecond_type stop() noexcept;</pre>
+<pre>cpu_times stop() noexcept;</pre>
 <blockquote>
 
-<p><i>Postconditions:</i> <code>is_stopped()</code> and <code>m_time</code> is 
-set to the difference between <code>m_time</code> and current wall-clock time.</p>
+<p><i>Postconditions:</i> <code>is_stopped()</code> and <code>m_times</code> is 
+set to the difference between <code>m_times</code> values and
+<a href="#Current-time-values">current time values</a>.</p>
 
-<p><i>Returns:</i> <code>m_time,</code> after the establishment of the <i>
+<p><i>Returns:</i> <code>m_times,</code> after the establishment of the <i>
 Postconditions</i>.</p>
-
-<p><i>Remarks:</i> Current wall-clock time is obtained from the Boost.Chrono <code>
-cpu_clock</code>.</p>
 
 </blockquote>
 <pre>void resume() noexcept;</pre>
@@ -592,9 +587,11 @@ cpu_clock</code>.</p>
   <blockquote>
     <pre>if (is_stopped())
 {
-  nanosecond_type current (m_time);
+  cpu_times current (m_times);
   start();
-  m_time -= current;
+  m_times.wall -= current.wall;
+  m_times.user -= current.user;
+  m_times.system -= current.system;
 }</pre>
   </blockquote>
 </blockquote>
@@ -690,16 +687,18 @@ with its high costs, even when the standard streams are not used.</p>
   </blockquote>
 </blockquote>
 <h3 dir="ltr"><code>auto_cpu_timer</code> actions</h3>
-<pre dir="ltr">void report();</pre>
+<pre dir="ltr">std::ostream& report();</pre>
 <blockquote>
   <p dir="ltr"><i>Effects: </i>As if:</p>
   <blockquote>
-    <pre dir="ltr">m_os &lt;&lt; timer::report(stop(),
-                      m_format.empty()
-                        ? &quot; %ws wall, %us user + %ss system = %ts cpu (%p%)\n&quot;
-                        : m_format,
-                      m_places</pre>
+    <pre dir="ltr">m_os &lt;&lt; timer::report(
+          stop(),
+          m_format.empty()
+            ? &quot; %ws wall, %us user + %ss system = %ts cpu (%p%)\n&quot;
+            : m_format,
+          m_places);</pre>
   </blockquote>
+    <p dir="ltr"><i>Returns: </i><code>m_os</code>.</p>
 </blockquote>
 
   <h2><a name="FAQ">FAQ</a></h2>
