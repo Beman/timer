@@ -117,7 +117,7 @@ public:
           : m_places(places), m_os(os), m_format(format) {}
     // may throw
 
-  void report();  // calls stop(), may throw
+  std::ostream& report();  // calls stop(), may throw
 
   ~auto_high_resolution_timer()
   { 
@@ -205,7 +205,7 @@ public:
     }
   }
 
-  void            report();    // throws iff I/O throws
+  std::ostream&   report();    // throws iff I/O throws
 
 private:
   int             m_places;

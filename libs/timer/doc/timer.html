@@ -45,9 +45,9 @@ Boost Timer Library Version 2<br>
         <blockquote>
           <div align="left">
             <pre>class high_resolution_timer;       // wall clock time only
-class auto_high_resolution_timer;  // automatic reporting
+class auto_high_resolution_timer;  // automatic reporting on destruction
 class cpu_timer;                   // wall, user, system time
-class auto_cpu_timer;              // automatic reporting</pre>
+class auto_cpu_timer;              // automatic reporting on destruction</pre>
           </div>
         </blockquote>
       </blockquote>
@@ -86,33 +86,20 @@ class auto_cpu_timer;              // automatic reporting</pre>
 </table>
 
 <p>Knowing how long a program takes to execute is useful in both test and 
-production environments. It is also helpful if such timing information is broken down 
+production environments. It may also be helpful if such timing information is broken down 
 into wall clock time, CPU time spent by the user, and CPU time spent by the 
 operating system servicing user requests.</p>
-<ul>
-  <li>The POSIX API provides that information via the <code>times()</code> 
-  function. <br>
-&nbsp;</li>
-  <li>The Windows API provides that information via the <code>
-  GetSystemTimeAsFileTime()</code> and <code>GetProcessTimes()</code> API's.<br>
-&nbsp;</li>
-  <li>Higher resolution / lower granularity timer functions will be used if 
-  available.</li>
-</ul>
-<p>The Boost Timer Library timer components provide access to those, or 
-similar, system API's with 
-a portable and C++ friendly interface:</p>
-<ul>
-  <li>At the highest level, <a href="#run_timer">class <code><b>run_timer</b></code></a> provides a 
-  complete run time reporting package that can be invoked in a single line of 
-  code.<br>
-&nbsp;</li>
-  <li>At a middle level, <a href="#timer">class <code><b>timer</b></code></a> provides a widely useful timer 
-  object abstraction.<br>
-&nbsp;</li>
-  <li>At the lowest level, two <a href="#Non-member-functions"><b> <code>times</code></b> functions</a> provide  
-  thin wrappers around the operating system's actual API's.</li>
-</ul>
+
+<p>Boost.Timer provides four classes to provide these times:</p>
+
+<blockquote>
+            <pre>class <a href="#Class-high_resolution_timer">high_resolution_timer</a>;       // wall clock time only
+class <a href="#Class-auto_high_resolution_timer">auto_high_resolution_timer</a>;  // automatic reporting on destruction
+class <a href="#Class-cpu_timer">cpu_timer</a>;                   // wall, user, system time
+class <a href="#auto_high_resolution_timer">auto_cpu_timer</a>;              // automatic reporting on destruction</pre>
+          </blockquote>
+
+<p>Since the two high resolution timers are sub-sets</p>
 
 <h2><a name="Example">Example</a>s</h2>
 

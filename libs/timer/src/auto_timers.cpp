@@ -166,16 +166,18 @@ namespace boost
 
     //  high_resolution_timer  ---------------------------------------------------------//
 
-    void auto_high_resolution_timer::report()
+    std::ostream& auto_high_resolution_timer::report()
     {
       show_time(stop(), m_os, m_format, m_places);
+      return m_os;
     }
 
     //  cpu_timer  ---------------------------------------------------------------------//
 
-    void auto_cpu_timer::report()
+    std::ostream& auto_cpu_timer::report()
     {
       show_time(stop(), m_os, m_format, m_places);
+      return m_os;
     }
 
   } // namespace timer
