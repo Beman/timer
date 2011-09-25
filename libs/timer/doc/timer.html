@@ -35,11 +35,11 @@ Boost Timer Library Version 2<br>
         <p align="left">The unit of time has been changed from microseconds to 
         nanoseconds.</li>
         <li>
-        <p align="left">The implementation has been changed to use Boost.Chrono. 
+        <p align="left">The wall-clock time implementation has been changed to use Boost.Chrono. 
         This has resulted in much improved resolution (1 microsecond on my 
         development machine) for wall clock time.</li>
         <li>
-        <p align="left">There are now four classes:</li>
+        <p align="left">There are now two classes:</li>
       </ul>
       <blockquote>
         <blockquote>
@@ -51,8 +51,7 @@ class cpu_timer;                   // wall, user, system time</pre>
       </blockquote>
       <ul>
         <li>
-        <p align="left">Formatting is now based on free function <code>format()</code> 
-        with two overloads.</li>
+        <p align="left">Formatting is now based on free function <code>format()</code>.</li>
       </ul>
       </td>
     </tr>
@@ -98,7 +97,7 @@ production environments. It may also be helpful if such timing information is br
 into wall clock time, CPU time spent by the user, and CPU time spent by the 
 operating system servicing user requests.</p>
 
-<p>Boost.Timer provides four classes to provide these times:</p>
+<p>Boost.Timer provides two classes to provide these times:</p>
 
 <blockquote>
             <pre>class <a href="#Class-high_resolution_timer">high_resolution_timer</a>;       // wall-clock time
@@ -135,7 +134,7 @@ clock on the wall, the operating system charged it for  <code>5.709637</code> se
 time and 0 seconds of system CPU time, the total of these two was  <code>5.709637</code>, and that 
 represented  <code>99.9</code> percent of the wall clock time.</p>
 
-<p>The <a href="../example/run_timer_example2.cpp">run_timer_example2.cpp</a> 
+<p>The <a href="../example/cpu_timer_example2.cpp">cpu_timer_example2.cpp</a> 
 program is the same, except that it supplies additional constructor arguments 
 from the command line:</p>
 <blockquote>
@@ -147,7 +146,7 @@ int main(int argc, char * argv[])
   const char* format = argc &gt; 1 ? argv[1] : &quot;%t cpu seconds\n&quot;;
   int places = argc &gt; 2 ? std::atoi( argv[2] ) : 2;
 
-  boost::timer::run_timer t(format, places);
+  boost::timer::cpu_timer t(format, places);
 
   for (long i = 0; i &lt; 10000000; ++i)
     std::sqrt(123.456L); // burn some time
@@ -331,7 +330,7 @@ synopsis</a></h3>
       bool             is_stopped() const noexcept;
       nanosecond_type  elapsed() const noexcept;
       std::string      format(int places = default_places,
-                                           const std::string&amp; fmt = default_format) const;
+                              const std::string&amp; fmt = default_format) const;
       //  actions
       void             start() noexcept;
       nanosecond_type  stop() noexcept;
@@ -485,6 +484,9 @@ high_resolution_clock</code>.</p>
   m_os &lt;&lt; timer::format(stop(),*m_os, m_places, m_format);
 }</pre>
   </blockquote>
+    <p>[<i>Note:</i> <code>stop()</code> is called because leaving the timer 
+    running while doing I/O seems likely to produce misleading results. <i>--end 
+    note</i>]</p>
 </blockquote>
 <h3><a name="Class-cpu_timer">Class <code>cpu_timer</code></a></h3>
 
@@ -661,6 +663,9 @@ Postconditions</i>.</p>
   m_os &lt;&lt; timer::format(stop(),*m_os, m_places, m_format);
 }</pre>
   </blockquote>
+  <p>[<i>Note:</i> <code>stop()</code> is called because leaving the timer 
+  running while doing I/O seems likely to produce misleading results. <i>--end 
+  note</i>]</p>
 </blockquote>
 
   <h2><a name="FAQ">FAQ</a></h2>
@@ -674,7 +679,7 @@ Postconditions</i>.</p>
 
 <hr>
 <p><font size="2">Last revised:
-<!--webbot bot="Timestamp" s-type="EDITED" s-format="%d %B, %Y" startspan -->24 September, 2011<!--webbot bot="Timestamp" endspan i-checksum="39338" --></font></p>
+<!--webbot bot="Timestamp" s-type="EDITED" s-format="%d %B, %Y" startspan -->25 September, 2011<!--webbot bot="Timestamp" endspan i-checksum="39340" --></font></p>
 <p><font size="2">© Copyright Beman Dawes, 2006, 2011</font></p>
 <p><font size="2">Distributed under the Boost Software License, Version 1.0.  See <a href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/ LICENSE_1_0.txt</a></font></p>
 
