@@ -1,4 +1,4 @@
-//  run_timer_example.cpp  ---------------------------------------------------//
+//  cpu_timer_example.cpp  ---------------------------------------------------//
 
 //  Copyright Beman Dawes 2006
 
@@ -10,7 +10,7 @@
 
 int main()
 {
-  boost::timer::cpu_timer t(-1);
+  boost::timer::auto_cpu_timer t;
 
   for ( long i = 0; i < 100000000; ++i )
     std::sqrt( 123.456L );  // burn some time

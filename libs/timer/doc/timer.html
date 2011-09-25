@@ -15,7 +15,6 @@
 <h1><img border="0" src="../../../boost.png" align="center" width="277" height="86"> 
 Boost Timer Library Version 2<br>
 &nbsp;</h1>
-<div align="center">
   <center>
   <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="70%" bgcolor="#CCFFFF">
     <tr>
@@ -36,16 +35,16 @@ Boost Timer Library Version 2<br>
         nanoseconds.</li>
         <li>
         <p align="left">The wall-clock time implementation has been changed to use Boost.Chrono. 
-        This has resulted in much improved resolution (1 microsecond on my 
+        This has resulted in much improved resolution (1 microsecond or better on my 
         development machine) for wall clock time.</li>
         <li>
-        <p align="left">There are now two classes:</li>
+        <p align="left">The class names have been changed to:</li>
       </ul>
       <blockquote>
         <blockquote>
           <div align="left">
-            <pre>class high_resolution_timer;       // wall-clock time
-class cpu_timer;                   // wall, user, system time</pre>
+            <pre>class cpu_timer;        // wall-clock, user, and system timer
+class auto_cpu_timer;   // inherits cpu_timer, adds automatic report() on destruction</pre>
           </div>
         </blockquote>
       </blockquote>
@@ -57,7 +56,7 @@ class cpu_timer;                   // wall, user, system time</pre>
     </tr>
   </table>
   </center>
-</div>
+
 
 <h2><a name="Introduction">Introduction</a></h2>
 <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" align="right">
@@ -70,16 +69,6 @@ class cpu_timer;                   // wall, user, system time</pre>
       <a href="#Introduction">Introduction</a><br>
       <a href="#Example">Examples</a><br>
       <a href="#Non-member-functions">Non-member functions</a><br>
-      <a href="#Class-high_resolution_timer">Class <code>high_resolution_timer</code></a><br>
-      <code>&nbsp; <a href="#high_resolution_timer-synopsis">high_resolution_timer</a></code><a href="#high_resolution_timer-synopsis"> 
-synopsis</a><br>
-      <code>&nbsp; <a href="#high_resolution_timer-constructors">high_resolution_timer</a></code><a href="#high_resolution_timer-constructors"> 
-constructors,</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#high_resolution_timer-constructors">destructor</a><br>
-      &nbsp;&nbsp;<code> <a href="#high_resolution_timer-observers">high_resolution_timer</a></code><a href="#high_resolution_timer-observers"> 
-observers</a><br>
-      &nbsp;&nbsp; &nbsp;<a href="#high_resolution_timer-actions"><code>high_resolution_timer</code> 
-actions</a><br>
       <a href="#Class-cpu_timer">Class <code>cpu_timer</code></a><br>
       &nbsp;&nbsp;<code> <a href="#cpu_timer-constructors">cpu_timer</a></code><a href="#cpu_timer-constructors"> 
 constructors, destructor</a><br>
@@ -94,28 +83,24 @@ actions</a><br>
 
 <p>Knowing how long a program takes to execute is useful in both test and 
 production environments. It may also be helpful if such timing information is broken down 
-into wall clock time, CPU time spent by the user, and CPU time spent by the 
+into wall-clock time, CPU time spent by the user, and CPU time spent by the 
 operating system servicing user requests.</p>
 
-<p>Boost.Timer provides two classes to provide these times:</p>
-
-<blockquote>
-            <pre>class <a href="#Class-high_resolution_timer">high_resolution_timer</a>;       // wall-clock time
-class <a href="#Class-cpu_timer">cpu_timer</a>;                   // wall, user, system time</pre>
-          </blockquote>
-
-<p>Since high-resolution timers are sub-sets</p>
+<p>Class <code><a href="#Class-cpu_timer">cpu_timer</a></code> measures 
+wall-clock time, user CPU process time, and system CPU process time. These times 
+can be obtained as values for processing by the program, or can optionally be 
+reported automatically when the <code>cpu_timer</code> object is destroyed.</p>
 
 <h2><a name="Example">Examples</a></h2>
 
 <p>Here is <a href="../example/cpu_timer_example.cpp">cpu_timer_example.cpp</a>, supplied with the Boost Timer library:</p>
 <blockquote>
-  <pre>#include &lt;boost/timer/timer.hpp&gt;
+  <pre><span style="background-color: #D7EEFF">#include &lt;boost/timer/</span><span style="background-color: #D7EEFF">timer.hpp</span><span style="background-color: #D7EEFF">&gt;</span>
 #include &lt;cmath&gt;
 
 int main()
 {
-  boost::timer::cpu_timer t(-1);
+  <span style="background-color: #D7EEFF">boost::timer::autocpu_timer</span><span style="background-color: #D7EEFF"> t;</span>
 
   for (long i = 0; i &lt; 100000000; ++i)
     std::sqrt(123.456L); // burn some time
@@ -177,8 +162,8 @@ run_timer_example2 &quot;%t total CPU seconds\n&quot; 3
 {
   namespace timer
   {
-    class <a href="#Class-high_resolution_timer">high_resolution_timer</a>;       // wall clock (AKA real) time  
-    class <a href="#Class-cpu_timer">cpu_timer</a>;                   // wall, user, system time
+    class <a href="#Class-cpu_timer">cpu_timer</a>;       // wall-clock, user, and system timer
+    class <a href="#Class-auto_cpu_timer">auto_cpu_timer</a>;  // automatic report() on destruction 
 
     typedef boost::int_least64_t nanosecond_type;
 
@@ -194,10 +179,6 @@ run_timer_example2 &quot;%t total CPU seconds\n&quot; 3
     static const std::string   default_format;
     static const int           default_places = 6;
 
-    std::string format(nanosecond_type time,
-                       short places = default_places,
-                       const std::string&amp; format = default_format);
-
     std::string format(const cpu_times&amp; times,
                        short places = default_places,
                        const std::string&amp; format = default_format); 
@@ -211,7 +192,7 @@ run_timer_example2 &quot;%t total CPU seconds\n&quot; 3
 
 <p>The typedef <code>nanosecond_type</code> provides an implementation defined type capable 
 of representing nanoseconds. For POSIX and Windows systems, <code>
-nanoseconds_t</code> is <code>boost::int_least64_</code>t.</p>
+nanoseconds_type</code> is <code>boost::int_least64_</code>t.</p>
 
 <p>The underlying type is not based on the Boost Date-Time or Chrono library to avoid a 
 dependency on a large library. This design choice may change at some future 
@@ -238,22 +219,6 @@ POSIX.</p>
 </ul>
 
 <h3><a name="Non-member-functions">Non-member functions</a></h3>
-
-<pre>std::string format(nanosecond_type time,
-                   short places = default_places,
-                   const std::string&amp; format = default_format);</pre>
-<blockquote>
-
-<p><i>Effects:</i> If <code>places</code> is less than 0,&nbsp; it is set to <code>default_places</code>. If <code>places</code> is 
-more than 9, it is set to 9. if the <code>format</code> 
-argument is <code>empty()</code>, it is set to <code>
-default_format</code>.</p>
-
-<p><i>Returns:</i> A string that is a copy of <code>format</code>, except that any 
-instances of <code>'%w'</code> are replaced by <code>time</code> in seconds, 
-shown to <code>places</code> decimal places.</p>
-
-</blockquote>
 
 <pre>std::string format(const cpu_times&amp; times,
                    short places = default_places,
@@ -301,193 +266,6 @@ how operating systems measure various times. <i>--end note</i>]</p>
   </table>
   </blockquote>
 
-<h3><a name="Class-high_resolution_timer">Class <code>high_resolution_timer</code></a></h3>
-
-<p> <code>high_resolution_timer_timer</code> objects measure wall-clock elapsed time, process elapsed 
-time charged to the user, and process elapsed time charged to the system.</p>
-
-<h3><a name="high_resolution_timer-synopsis"><code>high_resolution_timer</code> 
-synopsis</a></h3>
-
-<pre dir="ltr">    class <a name="high_resolution_timer">high_resolution_timer</a>
-    {
-    public:
-
-      //  constructors, destructor
-      high_resolution_timer() noexcept;
-
-      // these 4 constructors enable automatic report() on destruction
-      explicit high_resolution_timer(std::ostream&amp; os,
-                                     short places = default_places,
-                                     const std::string&amp; format = default_format);
-      high_resolution_timer(std::ostream&amp; os, const std::string&amp; format);
-      explicit high_resolution_timer(short places, const std::string&amp; format = default_format);
-      explicit high_resolution_timer(const std::string&amp; format);
-
-     ~high_resolution_timer();
-
-      //  observers
-      bool             is_stopped() const noexcept;
-      nanosecond_type  elapsed() const noexcept;
-      std::string      format(int places = default_places,
-                              const std::string&amp; fmt = default_format) const;
-      //  actions
-      void             start() noexcept;
-      nanosecond_type  stop() noexcept;
-      void             resume() noexcept;
-      void             report();
-
-    private:
-      nanosecond_type  m_time;         // <b><i>exposition only</i></b>
-      bool             m_is_stopped;   // <b><i>exposition only</i></b>
-      short            m_places;       // <b><i>exposition only</i></b> 
-      std::ostream*    m_os;           // <b><i>exposition only</i></b>
-      std::string      m_format;       // <b><i>exposition only</i></b>
-    };</pre>
-<p>Constructors with arguments enable automatic <code>report()</code> on 
-destruction.</p>
-<p>Constructors with arguments but without a <code>std::ostream&</code> argument assume
-<code>std::cout</code>. An explicit default argument is not provided because it would require 
-a high-cost include of <code>&lt;iostream&gt;</code>, even when the standard streams are not used.</p>
-<h3><a name="high_resolution_timer-constructors"><code>high_resolution_timer</code> 
-constructors</a>, destructor</h3>
-<pre>high_resolution_timer() noexcept;</pre>
-<blockquote>
-  <p><i>Effects:</i> <code>start()</code>.</p>
-<p><i>Postconditions:</i></p>
-  <blockquote>
-    <pre>m_os == 0;</pre>
-  </blockquote>
-</blockquote>
-<pre>explicit high_resolution_timer(std::ostream&amp; os,
-                               short places = default_places,
-                               const std::string&amp; format = default_format);</pre>
-<blockquote>
-<p><i>Effects:</i> <code>start()</code>.</p>
-<p><i>Postconditions:</i></p>
-  <blockquote>
-    <pre>m_os == &amp;os;
-m_places == places;
-m_format == format;</pre>
-  </blockquote>
-</blockquote>
-<pre>high_resolution_timer(std::ostream&amp; os, const std::string&amp; format);</pre>
-<blockquote>
-<p><i>Effects:</i> <code>start()</code>.</p>
-<p><i>Postconditions:</i></p>
-  <blockquote>
-    <pre>m_os == &amp;os;
-m_places == default_places;
-m_format == format;</pre>
-  </blockquote>
-</blockquote>
-<pre>explicit high_resolution_timer(short places, const std::string&amp; format = default_format);</pre>
-<blockquote>
-<p><i>Effects:</i> <code>start()</code>.</p>
-<p><i>Postconditions:</i></p>
-  <blockquote>
-    <pre>m_os == &amp;std::cout;
-m_places == places;
-m_format == format;</pre>
-  </blockquote>
-</blockquote>
-<pre>explicit high_resolution_timer(const std::string&amp; format);</pre>
-<blockquote>
-<p><i>Effects:</i> <code>start()</code>.</p>
-<p><i>Postconditions:</i></p>
-  <blockquote>
-    <pre>m_os == &amp;std::cout;
-m_places == default_places;
-m_format == format;</pre>
-  </blockquote>
-</blockquote>
-<pre>~high_resolution_timer() noexcept;</pre>
-<blockquote>
-  <p><i>Effects:</i> As if:</p>
-  <blockquote>
-    <pre>if (m_os &amp;&amp; !is_stopped())
-{
-  try
-  {
-    report();
-  }
-  catch (...)
-  {
-  }
-}</pre>
-  </blockquote>
-</blockquote>
-<h3><a name="high_resolution_timer-observers"><code>high_resolution_timer</code> 
-observers</a></h3>
-<pre>bool is_stopped() const noexcept;</pre>
-<blockquote>
-  <p dir="ltr"><i>Returns:</i> <code>m_is_stopped</code>.</p>
-</blockquote>
-<pre>nanosecond_type elapsed() const noexcept;</pre>
-<blockquote>
-  <p dir="ltr"><i>Returns:</i> If <code>is_stopped()</code>, <code>m_time</code>. 
-  Otherwise, the difference between <code>m_time</code> and current wall-clock 
-  time.</p>
-
-<p><i>Remarks:</i> Current wall-clock time is obtained from the Boost.Chrono <code>
-high_resolution_clock</code>.</p>
-
-</blockquote>
-<pre>std::string format(int places = default_places,
-                   const std::string&amp; fmt = default_format) const;</pre>
-<blockquote>
-  <p><i>Returns:</i> <code>format(elapsed(), places, format)</code>.</p>
-</blockquote>
-<h3><a name="high_resolution_timer-actions"><code>high_resolution_timer</code> 
-actions</a></h3>
-<pre>void start() noexcept;</pre>
-<blockquote>
-
-<p><i>Postconditions:</i> <code>!is_stopped()</code> and <code>m_time</code> is 
-set to the current wall-clock time.</p>
-
-<p><i>Remarks:</i> Current wall-clock time is obtained from the Boost.Chrono <code>
-high_resolution_clock</code>.</p>
-
-</blockquote>
-<pre>nanosecond_type stop() noexcept;</pre>
-<blockquote>
-
-<p><i>Postconditions:</i> <code>is_stopped()</code> and <code>m_time</code> is 
-set to the difference between <code>m_time</code> and current wall-clock time.</p>
-
-<p><i>Returns:</i> <code>m_time,</code> after the establishment of the <i>
-Postconditions</i>.</p>
-
-<p><i>Remarks:</i> Current wall-clock time is obtained from the Boost.Chrono <code>
-high_resolution_clock</code>.</p>
-
-</blockquote>
-<pre>void resume() noexcept;</pre>
-<blockquote>
-  <p><i>Effects:</i> As if:</p>
-  <blockquote>
-    <pre>if (is_stopped())
-{
-  nanosecond_type current (m_time);
-  start();
-  m_time -= current;
-}</pre>
-  </blockquote>
-</blockquote>
-<pre>void report();</pre>
-<blockquote>
-  <p><i>Effects:</i> As if:</p>
-  <blockquote>
-    <pre>if (m_os)
-{
-  m_os &lt;&lt; timer::format(stop(),*m_os, m_places, m_format);
-}</pre>
-  </blockquote>
-    <p>[<i>Note:</i> <code>stop()</code> is called because leaving the timer 
-    running while doing I/O seems likely to produce misleading results. <i>--end 
-    note</i>]</p>
-</blockquote>
 <h3><a name="Class-cpu_timer">Class <code>cpu_timer</code></a></h3>
 
 <p> <code>cpu_timer</code> objects measure wall-clock elapsed time, process elapsed 
@@ -528,7 +306,6 @@ GetProcessTimes()</code> on Windows.</p>
       void              start() noexcept;
       const cpu_times&  stop() noexcept;
       void              resume() noexcept;
-      void              report();
 
     private:
       cpu_times         m_times;          // <b><i>exposition only</i></b>
@@ -548,7 +325,8 @@ constructors</a>, destructor</h3>
                    short places = default_places,
                    const std::string&amp; format = default_format);</pre>
 <blockquote>
-<p><i>Effects:</i> <code>start()</code>.</p>
+<p><i>Effects:</i> <code>start()</code>, enable automatic <code>report()</code> 
+on destruction.</p>
 <p><i>Postconditions:</i></p>
   <blockquote>
     <pre>m_os == &amp;os;
@@ -558,7 +336,8 @@ m_format == format;</pre>
 </blockquote>
 <pre>cpu_timer(std::ostream&amp; os, const std::string&amp; format);</pre>
 <blockquote>
-<p><i>Effects:</i> <code>start()</code>.</p>
+<p><i>Effects:</i> <code>start()</code>, enable automatic <code>report()</code> 
+on destruction.</p>
 <p><i>Postconditions:</i></p>
   <blockquote>
     <pre>m_os == &amp;os;
@@ -568,7 +347,8 @@ m_format == format;</pre>
 </blockquote>
 <pre>explicit cpu_timer(short places, const std::string&amp; format = default_format);</pre>
 <blockquote>
-<p><i>Effects:</i> <code>start()</code>.</p>
+<p><i>Effects:</i> <code>start()</code>, enable automatic <code>report()</code> 
+on destruction.</p>
 <p><i>Postconditions:</i></p>
   <blockquote>
     <pre>m_os == &amp;std::cout;
@@ -578,7 +358,8 @@ m_format == format;</pre>
 </blockquote>
 <pre>explicit cpu_timer(const std::string&amp; format);</pre>
 <blockquote>
-<p><i>Effects:</i> <code>start()</code>.</p>
+<p><i>Effects:</i> <code>start()</code>, enable automatic <code>report()</code> 
+on destruction.</p>
 <p><i>Postconditions:</i></p>
   <blockquote>
     <pre>m_os == &amp;std::cout;
@@ -590,7 +371,7 @@ m_format == format;</pre>
 <blockquote>
   <p><i>Effects:</i> As if:</p>
   <blockquote>
-    <pre>if (m_os &amp;&amp; !is_stopped())
+    <pre>if (<i><b>automatic-report()-on-destruction-enabled</b></i> &amp;&amp; !is_stopped())
 {
   try
   {
@@ -654,18 +435,110 @@ Postconditions</i>.</p>
 }</pre>
   </blockquote>
 </blockquote>
-<pre>void report();</pre>
+<h3 dir="ltr"><a name="Class-auto_cpu_timer">Class <code>auto_cpu_timer</code></a></h3>
+
+<p dir="ltr">Class <code>auto_cpu_timer</code> adds a <code>report()</code> 
+function to <code>class cpu_timer</code>, and automatically calls <code>report()</code> 
+on destruction.</p>
+
+<h3 dir="ltr"> <code>auto_cpu_timer</code> synopsis</h3>
+
+<pre dir="ltr">    class <a name="auto_cpu_timer">auto_cpu_timer</a> : public cpu_timer
+    {
+    public:
+      explicit
+      auto_cpu_timer(int places = default_places) noexcept;
+
+      auto_cpu_timer(int places, std::ostream& os) noexcept;
+
+      explicit
+      auto_cpu_timer(const std::string& format,
+                     int places = default_places);
+
+      auto_cpu_timer(const std::string& format,
+                     int places, std::ostream& os);
+
+     ~auto_cpu_timer() noexcept;
+
+      void            report();
+
+    private:
+      int             m_places;           // <b><i>exposition only</i></b>
+      std::ostream&   m_os;               // <b><i>exposition only</i></b>
+      std::string     m_format;           // <b><i>exposition only</i></b>
+    };</pre>
+<p>Each constructor has two overloads to avoid an explicit default to <code>
+std::cout</code>. Such a default would require including <code>&lt;iostream&gt;</code>, 
+with its high costs, even when the standard streams are not used.</p>
+<h3 dir="ltr"><code>auto_cpu_timer</code> constructors</h3>
+<pre dir="ltr">explicit auto_cpu_timer(int places = default_places) noexcept;</pre>
 <blockquote>
-  <p><i>Effects:</i> As if:</p>
+  <p dir="ltr"><i>Effects:</i> Constructs an object of type <code>
+  auto_cpu_timer</code>.</p>
+  <p><i>Postconditions:<br>
+  </i><code>&nbsp; m_places == places,<br>
+&nbsp; m_os == std::cout,<br>
+&nbsp; m_format == default_format</code></p>
+</blockquote>
+<pre dir="ltr">auto_cpu_timer(int places, std::ostream& os) noexcept;</pre>
+<blockquote>
+  <p dir="ltr"><i>Effects:</i> Constructs an object of type <code>
+  auto_cpu_timer</code>.</p>
+  <p><i>Postconditions:<br>
+  </i><code>&nbsp; m_places == places,<br>
+&nbsp; m_os == os,<br>
+&nbsp; m_format == default_format</code></p>
+</blockquote>
+<pre dir="ltr">explicit auto_cpu_timer(const std::string& format,
+                                    int places = default_places);</pre>
+<blockquote>
+  <p dir="ltr"><i>Effects:</i> Constructs an object of type <code>
+  auto_cpu_timer</code>.</p>
+  <p><i>Postconditions:<br>
+  </i><code>&nbsp; m_places == places,<br>
+&nbsp; m_os == std::cout,<br>
+&nbsp; m_format == format</code></p>
+</blockquote>
+<pre dir="ltr">auto_cpu_timer(const std::string& format,
+                           int places, std::ostream& os);</pre>
+<blockquote>
+  <p dir="ltr"><i>Effects:</i> Constructs an object of type <code>
+  auto_cpu_timer</code>.</p>
+  <p><i>Postconditions:<br>
+  </i><code>&nbsp; m_places == places,<br>
+&nbsp; m_os == os,<br>
+&nbsp; m_format == format</code></p>
+</blockquote>
+<h3 dir="ltr"><code>auto_cpu_timer</code> destructor</h3>
+<pre dir="ltr">~auto_cpu_timer() noexcept;</pre>
+<blockquote>
+<p dir="ltr"><i>Effects: </i>As if:</p>
   <blockquote>
-    <pre>if (m_os)
+    <pre dir="ltr">if (!is_stopped())
 {
-  m_os &lt;&lt; timer::format(stop(),*m_os, m_places, m_format);
+  try
+  {
+    report();
+  }
+  catch (...)
+  {
+  }
 }</pre>
   </blockquote>
-  <p>[<i>Note:</i> <code>stop()</code> is called because leaving the timer 
-  running while doing I/O seems likely to produce misleading results. <i>--end 
-  note</i>]</p>
+</blockquote>
+<h3 dir="ltr"><code>auto_cpu_timer</code> actions</h3>
+<pre dir="ltr">std::ostream& report();</pre>
+<blockquote>
+  <p dir="ltr"><i>Effects: </i>As if:</p>
+  <blockquote>
+    <pre dir="ltr">m_os &lt;&lt; timer::report(
+          stop(),
+          m_format.empty()
+            ? &quot; %ws wall, %us user + %ss system = %ts cpu (%p%)\n&quot;
+            : m_format,
+          m_places);</pre>
+  </blockquote>
+    <p dir="ltr"><i>Returns: </i><code>m_os</code>.</p>
 </blockquote>
 
   <h2><a name="FAQ">FAQ</a></h2>

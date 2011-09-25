@@ -15,8 +15,8 @@
 
 using boost::timer::nanosecond_type;
 using boost::timer::cpu_times;
-using boost::timer::high_resolution_timer;
 using boost::timer::cpu_timer;
+using boost::timer::auto_cpu_timer;
 
 //----------------------------------------------------------------------------//
 //
@@ -36,9 +36,9 @@ int cpp_main( int argc, char * argv[] )
   long count = 0;
   
   {
-    cpu_timer timer(6);
-    cpu_timer timer2("\nwall %w s, utilization %p%\n");
-    cpu_timer timer3(3, "\nwall %w s, total cpu %t s, utilization %p%\n");
+    auto_cpu_timer timer(6);
+    auto_cpu_timer timer2("\nwall %w s, utilization %p%\n");
+    auto_cpu_timer timer3(3, "\nwall %w s, total cpu %t s, utilization %p%\n");
 
     cpu_times times;
     times.clear();
@@ -69,30 +69,12 @@ int cpp_main( int argc, char * argv[] )
   start.clear();
   cpu_times now;
 
-  {
-    std::cout << "measure resolution - boost::timer::high_resolution_timer"
-                 " resolution for wall-clock time..." << std::endl;
-
-    high_resolution_timer auto_hi_res(9);
-    high_resolution_timer hi_res;
-
-    for (int i = 0; i < 10; ++i)
-    {
-      now.wall = start.wall = hi_res.elapsed();
-      while (now.wall == start.wall)
-      {
-        now.wall = hi_res.elapsed();
-      }
-      std::cout << now.wall - start.wall << "ns\n";
-    }
-  }
-
   cpu_timer cpu;
 
   {
-    std::cout << "measure resolution - boost::timer::cpu_timer"
+    std::cout << "measure resolution - boost::timer::auto_cpu_timer"
                  " resolution for wall-clock time..." << std::endl;
-    high_resolution_timer auto_hi_res(9);
+    auto_cpu_timer auto_cpu(9);
     for (int i = 0; i < 10; ++i)
     {
       cpu.start();

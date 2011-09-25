@@ -27,18 +27,11 @@ namespace boost
 {
   namespace timer
   {
-    high_resolution_timer::high_resolution_timer(short places, const std::string& format)
-      : m_places(places), m_os(&std::cout), m_format(format) { start(); }
+    auto_cpu_timer::auto_cpu_timer(short places, const std::string& format)
+      : m_places(places), m_os(std::cout), m_format(format) { start(); }
 
-    high_resolution_timer::high_resolution_timer(const std::string& format)
-      : m_places(default_places), m_os(&std::cout), m_format(format) { start(); }
+    auto_cpu_timer::auto_cpu_timer(const std::string& format)
+      : m_places(default_places), m_os(std::cout), m_format(format) { start(); }
 
-    cpu_timer::cpu_timer(short places, const std::string& format)
-      : m_places(places), m_os(&std::cout), m_format(format) { start(); }
-
-    cpu_timer::cpu_timer(const std::string& format)
-      : m_places(default_places), m_os(&std::cout), m_format(format) { start(); }
-
- 
   } // namespace timer
 } // namespace boost

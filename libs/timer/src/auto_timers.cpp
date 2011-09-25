@@ -97,51 +97,6 @@ namespace
     }
   }
 
-  //  high_resolution_timer helpers  ---------------------------------------------------//
-
-  const char* default_hi_res_format =
-    " %ws elapsed wall clock time\n";
-
-  void show_time(boost::timer::nanosecond_type time,
-    std::ostream& os, const std::string& fmt, short places)
-  //  NOTE WELL: Will truncate least-significant digits to LDBL_DIG, which may
-  //  be as low as 10, although will be 15 for many common platforms.
-  {
-    const char* format (fmt.empty() ? default_hi_res_format : fmt.c_str());
-
-    if (places > 9)
-      places = 9;
-    else if (places < 0)
-      places = boost::timer::default_places;
-
-    boost::io::ios_flags_saver ifs(os);
-    boost::io::ios_precision_saver ips(os);
-    os.setf(std::ios_base::fixed, std::ios_base::floatfield);
-    os.precision(places);
-
-    const long double sec = 1000000000.0L;
-
-    for (; *format; ++format)
-    {
-      if (*format != '%' || !*(format+1) || !std::strchr("w", *(format+1)))
-        os << *format;  // anything except % followed by a valid format character
-                        // gets sent to the output stream
-      else
-      {
-        ++format;
-        switch (*format)
-        {
-        case 'w':
-          os << time / sec;
-          break;
-        default:
-          assert(0);  // program logic error in "// anything except..." if stmt 
-                      // above; no user error should ever fire this assert
-        }
-      }
-    }
-  }
-
 }  // unnamed namespace
 
 namespace boost
@@ -150,53 +105,23 @@ namespace boost
   {
     //  format  ------------------------------------------------------------------------//
 
-    std::string format(nanosecond_type time, short places, const std::string& fmt)
-    {
-      std::stringstream ss;
-      show_time(time, ss, fmt, places);
-      return ss.str();
-    }
-
     std::string format(const cpu_times& times, short places, const std::string& fmt)
     {
       std::stringstream ss;
       show_time(times, ss, fmt, places);
       return ss.str();
     }
+ 
+    //  auto_cpu_timer  ----------------------------------------------------------------//
 
-    //  high_resolution_timer  ---------------------------------------------------------//
-
-    void high_resolution_timer::report()
+    void auto_cpu_timer::report()
     {
-      if (m_os)
-        show_time(stop(), *m_os, m_format, m_places);
-     }
-
-    high_resolution_timer::~high_resolution_timer()
-    { 
-      if (m_os && !is_stopped())
-      {
-        try
-        {
-          report();
-        }
-        catch (...) // eat any exceptions
-        {
-        }
-      }
+        show_time(stop(), m_os, m_format, m_places);
     }
 
-    //  cpu_timer  ---------------------------------------------------------------------//
-
-    void cpu_timer::report()
-    {
-      if (m_os)
-        show_time(stop(), *m_os, m_format, m_places);
-    }
-
-    cpu_timer::~cpu_timer()
+    auto_cpu_timer::~auto_cpu_timer()
     { 
-      if (m_os && !is_stopped())
+      if (!is_stopped())
       {
         try
         {
