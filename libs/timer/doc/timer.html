@@ -68,14 +68,25 @@ class auto_cpu_timer;   // inherits cpu_timer, adds automatic report() on destru
     <td width="100%" bgcolor="#E8F5FF">
       <a href="#Introduction">Introduction</a><br>
       <a href="#Example">Examples</a><br>
+      <a href="#Reference">Reference</a><br>
+      <code>&nbsp;<a href="#Synopsis">&lt;boost/timer/timer.hpp&gt;</a></code><a href="#Synopsis"> 
+      synopsis</a><br>
+      &nbsp; <a href="#nanosecond_type">Typedef <code>nanosecond_type</code></a><br>
+&nbsp;
       <a href="#Non-member-functions">Non-member functions</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#format"><code>format()</code></a><br>
+      &nbsp;
       <a href="#Class-cpu_timer">Class <code>cpu_timer</code></a><br>
-      &nbsp;&nbsp;<code> <a href="#cpu_timer-constructors">cpu_timer</a></code><a href="#cpu_timer-constructors"> 
+      &nbsp;&nbsp;<code>&nbsp; <a href="#cpu_timer-constructors">cpu_timer</a></code><a href="#cpu_timer-constructors"> 
 constructors, destructor</a><br>
-      &nbsp;&nbsp;<code> <a href="#cpu_timer-observers">cpu_timer</a></code><a href="#cpu_timer-observers"> 
+      &nbsp;&nbsp;<code>&nbsp; <a href="#cpu_timer-observers">cpu_timer</a></code><a href="#cpu_timer-observers"> 
 observers</a><br>
-      &nbsp;&nbsp;<code> <a href="#cpu_timer-actions">cpu_timer</a></code><a href="#cpu_timer-actions"> 
+      &nbsp;&nbsp;<code>&nbsp; <a href="#cpu_timer-actions">cpu_timer</a></code><a href="#cpu_timer-actions"> 
 actions</a><br>
+      &nbsp; <a href="#Class-auto_cpu_timer">Class <code>auto_cpu_timer</code></a><br>
+      &nbsp;&nbsp;&nbsp;<code> <a href="#auto_cpu_timer-constructors">auto_cpu_timer</a></code><a href="#auto_cpu_timer-constructors"> constructors</a><br>
+      &nbsp;&nbsp;&nbsp;<code> <a href="#auto_cpu_timer-destructor">auto_cpu_timer</a></code><a href="#auto_cpu_timer-destructor"> destructor</a><br>
+      &nbsp;&nbsp;&nbsp;<code> <a href="#auto_cpu_timer-actions">auto_cpu_timer</a></code><a href="#auto_cpu_timer-actions"> actions</a><br>
       <a href="#FAQ">FAQ</a><br>
       <a href="#Acknowledgements">Acknowledgements</a><br>
   </tr>
@@ -87,9 +98,10 @@ into wall-clock time, CPU time spent by the user, and CPU time spent by the
 operating system servicing user requests.</p>
 
 <p>Class <code><a href="#Class-cpu_timer">cpu_timer</a></code> measures 
-wall-clock time, user CPU process time, and system CPU process time. These times 
-can be obtained as values for processing by the program, or can optionally be 
-reported automatically when the <code>cpu_timer</code> object is destroyed.</p>
+wall-clock time, user CPU process time, and system CPU process time.  Class <code>
+<a href="#Class-auto_cpu_timer">auto_cpu_timer</a></code> is a refinement of
+<code>cpu_timer</code> that automatically reports the elapsed times when the <code>
+auto_cpu_timer</code> object is destroyed.</p>
 
 <h2><a name="Example">Examples</a></h2>
 
@@ -100,7 +112,7 @@ reported automatically when the <code>cpu_timer</code> object is destroyed.</p>
 
 int main()
 {
-  <span style="background-color: #D7EEFF">boost::timer::autocpu_timer</span><span style="background-color: #D7EEFF"> t;</span>
+  <span style="background-color: #D7EEFF">boost::timer::auto_cpu_timer</span><span style="background-color: #D7EEFF"> t;</span>
 
   for (long i = 0; i &lt; 100000000; ++i)
     std::sqrt(123.456L); // burn some time
@@ -108,7 +120,7 @@ int main()
   return 0;
 }</pre>
 </blockquote>
-<p dir="ltr">When the <code>cpu_timer t</code> object is created, it starts timing. When 
+<p>When the <code>cpu_timer t</code> object is created, it starts timing. When 
 it is destroyed at the end of the program, its destructor stops the timer and 
 displays timing information on an output stream that defaults to <code>std::cout</code>.</p>
 <p>The output of this program, run with a debug build on a circa 2006 desktop processor:</p>
@@ -154,9 +166,10 @@ run_timer_example2 &quot;%w wall clock seconds\n&quot; 6
 run_timer_example2 &quot;%t total CPU seconds\n&quot; 3
 0.422 total CPU seconds</pre>
 </blockquote>
-<h2><code>&lt;boost/timer/timer.hpp&gt;</code> <a name="Reference">Reference</a></h2>
+<h2> <a name="Reference">Reference</a></h2>
 <h3>
-<font size="5"><a name="Synopsis">Synopsis</a></font></h3>
+<code>&lt;boost/timer/timer.hpp&gt;</code>
+<a name="Synopsis">Synopsis</a></h3>
 <div align="left">
 <pre>namespace boost
 {
@@ -220,7 +233,7 @@ POSIX.</p>
 
 <h3><a name="Non-member-functions">Non-member functions</a></h3>
 
-<pre>std::string format(const cpu_times&amp; times,
+<pre>std::string <a name="format">format</a>(const cpu_times&amp; times,
                    short places = default_places,
                    const std::string&amp; format = default_format); </pre>
 <blockquote>
@@ -278,30 +291,21 @@ from the appropriate operating system API functions such as <code>times()</code>
 on POSIX or <code>
 GetProcessTimes()</code> on Windows.</p>
 
-<h3 dir="ltr"> <code>cpu_timer</code> synopsis</h3>
+<h3> <a name="cpu_timer-synopsis"> <code>cpu_timer</code> synopsis</a></h3>
 
-<pre dir="ltr">    class <a name="cpu_timer">cpu_timer</a>
+<pre>    class <a name="cpu_timer">cpu_timer</a>
     {
     public:
 
-      //  constructors, destructor
+      //  constructor, destructor
       cpu_timer() noexcept;
-
-      // these 4 constructors enable automatic report() on destruction
-      explicit cpu_timer(std::ostream&amp; os,
-                         short places = default_places,
-                         const std::string&amp; format = default_format);
-      cpu_timer(std::ostream&amp; os, const std::string&amp; format);
-      explicit cpu_timer(short places, const std::string&amp; format = default_format);
-      explicit cpu_timer(const std::string&amp; format);
-
-     ~cpu_timer() noexcept;
+     ~cpu_timer() noexcept {}
 
       //  observers
       bool              is_stopped() const noexcept;
       cpu_times         elapsed() const noexcept;
-      std::string       format(const std::string& format = default_format,
-                               int places = default_places) const;
+      std::string       format(int places = default_places,
+                               const std::string& format = default_format) const;
       //  actions
       void              start() noexcept;
       const cpu_times&  stop() noexcept;
@@ -311,95 +315,32 @@ GetProcessTimes()</code> on Windows.</p>
       cpu_times         m_times;          // <b><i>exposition only</i></b>
       bool              m_is_stopped;     // <b><i>exposition only</i></b>
     };</pre>
-<h3><a name="cpu_timer-constructors"><code>cpu_timer</code> 
-constructors</a>, destructor</h3>
+<h3><a name="cpu_timer-constructors"><code>cpu_timer</code> constructor</a>, destructor</h3>
 <pre>cpu_timer() noexcept;</pre>
 <blockquote>
   <p><i>Effects:</i> <code>start()</code>.</p>
-<p><i>Postconditions:</i></p>
-  <blockquote>
-    <pre>m_os == 0;</pre>
-  </blockquote>
 </blockquote>
-<pre>explicit cpu_timer(std::ostream&amp; os,
-                   short places = default_places,
-                   const std::string&amp; format = default_format);</pre>
+<pre>~cpu_timer() noexcept {}</pre>
 <blockquote>
-<p><i>Effects:</i> <code>start()</code>, enable automatic <code>report()</code> 
-on destruction.</p>
-<p><i>Postconditions:</i></p>
-  <blockquote>
-    <pre>m_os == &amp;os;
-m_places == places;
-m_format == format;</pre>
-  </blockquote>
-</blockquote>
-<pre>cpu_timer(std::ostream&amp; os, const std::string&amp; format);</pre>
-<blockquote>
-<p><i>Effects:</i> <code>start()</code>, enable automatic <code>report()</code> 
-on destruction.</p>
-<p><i>Postconditions:</i></p>
-  <blockquote>
-    <pre>m_os == &amp;os;
-m_places == default_places;
-m_format == format;</pre>
-  </blockquote>
-</blockquote>
-<pre>explicit cpu_timer(short places, const std::string&amp; format = default_format);</pre>
-<blockquote>
-<p><i>Effects:</i> <code>start()</code>, enable automatic <code>report()</code> 
-on destruction.</p>
-<p><i>Postconditions:</i></p>
-  <blockquote>
-    <pre>m_os == &amp;std::cout;
-m_places == places;
-m_format == format;</pre>
-  </blockquote>
-</blockquote>
-<pre>explicit cpu_timer(const std::string&amp; format);</pre>
-<blockquote>
-<p><i>Effects:</i> <code>start()</code>, enable automatic <code>report()</code> 
-on destruction.</p>
-<p><i>Postconditions:</i></p>
-  <blockquote>
-    <pre>m_os == &amp;std::cout;
-m_places == default_places;
-m_format == format;</pre>
-  </blockquote>
-</blockquote>
-<pre>~cpu_timer() noexcept;</pre>
-<blockquote>
-  <p><i>Effects:</i> As if:</p>
-  <blockquote>
-    <pre>if (<i><b>automatic-report()-on-destruction-enabled</b></i> &amp;&amp; !is_stopped())
-{
-  try
-  {
-    report();
-  }
-  catch (...)
-  {
-  }
-}</pre>
-  </blockquote>
+  <p><i>Effects:</i> None</p>
 </blockquote>
 <h3><a name="cpu_timer-observers"><code>cpu_timer</code> 
 observers</a></h3>
 <pre>bool is_stopped() const noexcept;</pre>
 <blockquote>
-  <p dir="ltr"><i>Returns:</i> <code>m_is_stopped</code>.</p>
+  <p><i>Returns:</i> <code>m_is_stopped</code>.</p>
 </blockquote>
 <pre>cpu_times elapsed() const noexcept;</pre>
 <blockquote>
-  <p dir="ltr"><i>Returns:</i> If <code>is_stopped()</code>, <code>m_times</code>. 
+  <p><i>Returns:</i> If <code>is_stopped()</code>, <code>m_times</code>. 
   Otherwise, the difference between <code>m_times</code> values and 
   <a href="#Current-time-values">current time values</a>.</p>
 
 </blockquote>
-<pre>std::string format(const std::string&amp; format = default_format,
-                   int places = default_places) const;</pre>
+<pre>std::string format(int places = default_places,
+                   const std::string&amp; format = default_format) const;</pre>
 <blockquote>
-  <p><i>Returns:</i> <code>format(elapsed(), format, places)</code>.</p>
+  <p><i>Returns:</i> <code>timer::format(elapsed(), places, format)</code>.</p>
 </blockquote>
 <h3><a name="cpu_timer-actions"><code>cpu_timer</code> 
 actions</a></h3>
@@ -435,86 +376,83 @@ Postconditions</i>.</p>
 }</pre>
   </blockquote>
 </blockquote>
-<h3 dir="ltr"><a name="Class-auto_cpu_timer">Class <code>auto_cpu_timer</code></a></h3>
+<h3><a name="Class-auto_cpu_timer">Class <code>auto_cpu_timer</code></a></h3>
 
-<p dir="ltr">Class <code>auto_cpu_timer</code> adds a <code>report()</code> 
+<p>Class <code>auto_cpu_timer</code> adds a <code>report()</code> 
 function to <code>class cpu_timer</code>, and automatically calls <code>report()</code> 
 on destruction.</p>
 
-<h3 dir="ltr"> <code>auto_cpu_timer</code> synopsis</h3>
+<h3> <a name="auto_cpu_timer-synopsis"> <code>auto_cpu_timer</code> synopsis</a></h3>
 
-<pre dir="ltr">    class <a name="auto_cpu_timer">auto_cpu_timer</a> : public cpu_timer
+<pre>    class <a name="auto_cpu_timer">auto_cpu_timer</a> : public cpu_timer
     {
     public:
-      explicit
-      auto_cpu_timer(int places = default_places) noexcept;
-
-      auto_cpu_timer(int places, std::ostream& os) noexcept;
-
-      explicit
-      auto_cpu_timer(const std::string& format,
-                     int places = default_places);
-
-      auto_cpu_timer(const std::string& format,
-                     int places, std::ostream& os);
+      explicit auto_cpu_timer(short places = default_places,
+                              const std::string&amp; format = default_format);
+      explicit auto_cpu_timer(const std::string&amp; format);
+      explicit auto_cpu_timer(std::ostream&amp; os,
+                              short places = default_places,
+                              const std::string&amp; format = default_format);
+      auto_cpu_timer(std::ostream&amp; os, const std::string&amp; format);
 
      ~auto_cpu_timer() noexcept;
 
       void            report();
 
     private:
-      int             m_places;           // <b><i>exposition only</i></b>
       std::ostream&   m_os;               // <b><i>exposition only</i></b>
+      short           m_places;           // <b><i>exposition only</i></b>
       std::string     m_format;           // <b><i>exposition only</i></b>
     };</pre>
 <p>Each constructor has two overloads to avoid an explicit default to <code>
 std::cout</code>. Such a default would require including <code>&lt;iostream&gt;</code>, 
 with its high costs, even when the standard streams are not used.</p>
-<h3 dir="ltr"><code>auto_cpu_timer</code> constructors</h3>
-<pre dir="ltr">explicit auto_cpu_timer(int places = default_places) noexcept;</pre>
+<h3><a name="auto_cpu_timer-constructors"><code>auto_cpu_timer</code> constructors</a></h3>
+<pre>explicit auto_cpu_timer(short places = default_places,
+                        const std::string&amp; format = default_format);</pre>
 <blockquote>
-  <p dir="ltr"><i>Effects:</i> Constructs an object of type <code>
+  <p><i>Effects:</i> Constructs an object of type <code>
   auto_cpu_timer</code>.</p>
   <p><i>Postconditions:<br>
-  </i><code>&nbsp; m_places == places,<br>
-&nbsp; m_os == std::cout,<br>
+  </i><code>&nbsp; m_os == std::cout</code>,<code><br>
+  &nbsp; m_places == places</code>,<code><br>
 &nbsp; m_format == default_format</code></p>
 </blockquote>
-<pre dir="ltr">auto_cpu_timer(int places, std::ostream& os) noexcept;</pre>
+<pre>explicit auto_cpu_timer(const std::string&amp; format);</pre>
 <blockquote>
-  <p dir="ltr"><i>Effects:</i> Constructs an object of type <code>
+  <p><i>Effects:</i> Constructs an object of type <code>
   auto_cpu_timer</code>.</p>
   <p><i>Postconditions:<br>
-  </i><code>&nbsp; m_places == places,<br>
-&nbsp; m_os == os,<br>
-&nbsp; m_format == default_format</code></p>
-</blockquote>
-<pre dir="ltr">explicit auto_cpu_timer(const std::string& format,
-                                    int places = default_places);</pre>
-<blockquote>
-  <p dir="ltr"><i>Effects:</i> Constructs an object of type <code>
-  auto_cpu_timer</code>.</p>
-  <p><i>Postconditions:<br>
-  </i><code>&nbsp; m_places == places,<br>
-&nbsp; m_os == std::cout,<br>
+  </i><code>&nbsp; m_os == std::cout</code>,<code><br>
+  &nbsp; m_places == default_places</code>,<code><br>
 &nbsp; m_format == format</code></p>
 </blockquote>
-<pre dir="ltr">auto_cpu_timer(const std::string& format,
-                           int places, std::ostream& os);</pre>
+<pre>explicit auto_cpu_timer(std::ostream&amp; os,
+                        short places = default_places,
+                        const std::string&amp; format = default_format);</pre>
 <blockquote>
-  <p dir="ltr"><i>Effects:</i> Constructs an object of type <code>
+  <p><i>Effects:</i> Constructs an object of type <code>
   auto_cpu_timer</code>.</p>
   <p><i>Postconditions:<br>
-  </i><code>&nbsp; m_places == places,<br>
-&nbsp; m_os == os,<br>
+  </i><code>&nbsp; m_os == os</code>,<code><br>
+  &nbsp; m_places == places</code>,<code><br>
 &nbsp; m_format == format</code></p>
 </blockquote>
-<h3 dir="ltr"><code>auto_cpu_timer</code> destructor</h3>
-<pre dir="ltr">~auto_cpu_timer() noexcept;</pre>
+<pre>auto_cpu_timer(std::ostream&amp; os, const std::string&amp; format);</pre>
 <blockquote>
-<p dir="ltr"><i>Effects: </i>As if:</p>
+  <p><i>Effects:</i> Constructs an object of type <code>
+  auto_cpu_timer</code>.</p>
+  <p><i>Postconditions:<br>
+  </i><code>&nbsp; m_os == os</code>,<code><br>
+  &nbsp; m_places == default_places</code>,<code><br>
+&nbsp; m_format == format</code></p>
+</blockquote>
+<h3><a name="auto_cpu_timer-destructor"><code>auto_cpu_timer</code> destructor</a></h3>
+<pre>~auto_cpu_timer() noexcept;</pre>
+<blockquote>
+<p><i>Effects: </i>As if:</p>
   <blockquote>
-    <pre dir="ltr">if (!is_stopped())
+    <pre>if (!is_stopped())
 {
   try
   {
@@ -526,19 +464,22 @@ with its high costs, even when the standard streams are not used.</p>
 }</pre>
   </blockquote>
 </blockquote>
-<h3 dir="ltr"><code>auto_cpu_timer</code> actions</h3>
-<pre dir="ltr">std::ostream& report();</pre>
+<h3><a name="auto_cpu_timer-actions"><code>auto_cpu_timer</code> actions</a></h3>
+<pre>void report();</pre>
 <blockquote>
-  <p dir="ltr"><i>Effects: </i>As if:</p>
+  <p><i>Effects: </i>As if:</p>
   <blockquote>
-    <pre dir="ltr">m_os &lt;&lt; timer::report(
+    <pre>m_os &lt;&lt; timer::format(
           stop(),
           m_format.empty()
             ? &quot; %ws wall, %us user + %ss system = %ts cpu (%p%)\n&quot;
             : m_format,
           m_places);</pre>
   </blockquote>
-    <p dir="ltr"><i>Returns: </i><code>m_os</code>.</p>
+
+  <p>[<i>Note:</i> <code>stop()</code> is called because doing I/O while the 
+  timer is running might produce misleading results. <i>--end note</i>]</p>
+
 </blockquote>
 
   <h2><a name="FAQ">FAQ</a></h2>
