@@ -69,6 +69,11 @@ namespace
     BOOST_TEST_EQ(format(times),
       string(" 5.123457s wall, 2.123457s user + 1.234568s system = 3.358025s cpu (65.5%)\n"));
 
+    BOOST_TEST_EQ(format(times, 5, " %w, %u, %s, %t, %%p%"),
+      string(" 5.12346, 2.12346, 1.23457, 3.35802, %65.5%"));
+
+    BOOST_TEST_EQ(format(times, 5, "boo"), string("boo"));
+
     cout << "  format test complete" << endl; 
   }
 
