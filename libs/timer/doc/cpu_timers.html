@@ -5,59 +5,40 @@
 <meta name="GENERATOR" content="Microsoft FrontPage 5.0">
 <meta name="ProgId" content="FrontPage.Editor.Document">
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-<title>Boost Timer Library</title>
-  <link rel="stylesheet" type="text/css" href=
-  "../../../doc/src/minimal.css">
+<title>CPU Timers</title>
+<style type="text/css">
+ ins {background-color:#A0FFA0}
+ del {background-color:#FFA0A0}
+ body
+ { 
+   font-family: sans-serif;
+   max-width : 8.5in;
+   margin: 1em;
+ }
+</style>
 </head>
 
 <body>
 
-<h1><img border="0" src="../../../boost.png" align="center" width="277" height="86"> 
-Boost Timer Library Version 2<br>
-&nbsp;</h1>
-  <center>
-  <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="70%" bgcolor="#CCFFFF">
-    <tr>
-      <td width="100%">
-      <p align="center"><font size="6"><b>This is a major revision of the 
-      Version 2 draft</b></font><b><font size="6">!</font></b></p>
-      <ul>
-        <li>
-        <p align="left">The original content of the Boost.Timer library is now 
-        deprecated.</li>
-        <li>
-        <p align="left">The new headers for Boost.Timer are in <code>
-        &lt;boost/timer/...&gt;</code></li>
-        <li>
-        <p align="left">All new content is in namespace <code>boost::timer</code>. </li>
-        <li>
-        <p align="left">The unit of time has been changed from microseconds to 
-        nanoseconds.</li>
-        <li>
-        <p align="left">The wall-clock time implementation has been changed to use Boost.Chrono.<br>
-        This has resulted in much improved resolution for wall clock time - 1 microsecond or better on 
-        the<br>
-        development machine.</li>
-        <li>
-        <p align="left">The class names have been changed to:</li>
-      </ul>
-      <blockquote>
-        <blockquote>
-          <div align="left">
-            <pre>class cpu_timer;        // wall-clock, user, and system timer
-class auto_cpu_timer;   // inherits cpu_timer, adds automatic report() on destruction</pre>
-          </div>
-        </blockquote>
-      </blockquote>
-      <ul>
-        <li>
-        <p align="left">Formatting is now based on free function <code>format()</code>.</li>
-      </ul>
-      </td>
-    </tr>
-  </table>
-  </center>
+<table border="0" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="750">
+  <tr>
+    <td width="300">
+<a href="../../../index.htm">
+<img src="../../../boost.png" alt="boost.png (6897 bytes)" align="middle" width="300" height="86" border="0"></a></td>
+    <td align="middle" width="430">
+    <font size="7">Timer Library<br>
+    CPU Timers</font></td>
+  </tr>
+</table>
 
+<table border="0" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" bgcolor="#D7EEFF" width="100%">
+  <tr>
+    <td><a href="index.html">Timer Home</a> &nbsp;&nbsp;
+    <a href="cpu_timers.html">CPU timers</a> &nbsp;&nbsp;
+    <a href="original_timer.html">Original timers</a> &nbsp;&nbsp;
+    </td>
+  </tr>
+</table>
 
 <h2><a name="Introduction">Introduction</a></h2>
 <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" align="right">
@@ -150,25 +131,26 @@ sets of constructor arguments:</p>
     <td><i><b>Resulting Output</b></i></td>
   </tr>
   <tr>
-    <td><code>t</code></td>
-    <td><code>5.713010s wall, 5.709637s user + 0.000000s system = 5.709637s cpu (99.9%)</code></td>
+    <td><code><font size="1">t</font></code></td>
+    <td><code><font size="1">5.713010s wall, 5.709637s user + 0.000000s system = 5.709637s cpu (99.9%)</font></code></td>
   </tr>
   <tr>
-    <td><code>t(std::cerr, 2)</code></td>
-    <td><code>5.71s wall, 5.70s user + 0.00s system = 5.70s cpu (99.9%)</code></td>
+    <td><code><font size="1">t(std::cerr</font><font size="1">, 2)</font></code></td>
+    <td><code><font size="1">5.71s wall, 5.70s user + 0.00s system = 5.70s cpu (99.9%)</font></code></td>
   </tr>
   <tr>
-    <td><code>t(1)</code></td>
-    <td><code>5.7s wall, 5.7s user + 0.0s system = 5.7s cpu (99.9%)</code></td>
+    <td><code><font size="1">t(1)</font></code></td>
+    <td><code><font size="1">5.7s wall, 5.7s user + 0.0s system = 5.7s cpu (99.9%)</font></code></td>
   </tr>
   <tr>
-    <td><code>t(3, &quot;%w seconds\n&quot;)</code></td>
-    <td><code>5.713 seconds<br>
-&nbsp;</code></td>
+    <td><code><font size="1">t(3, &quot;%w seconds\n&quot;)</font></code></td>
+    <td><code><font size="1">5.713 seconds<br>
+&nbsp;</font></code></td>
   </tr>
   <tr>
-    <td><code>t(&quot;%t sec cpu, %w sec real&quot;) </code></td>
-    <td><code>5.709637 sec cpu, 5.713010 sec real</code></td>
+    <td><code><font size="1">t(&quot;%t</font><font size="1"> sec cpu, %w sec real&quot;)
+    </font> </code></td>
+    <td><code><font size="1">5.709637 sec cpu, 5.713010 sec real</font></code></td>
   </tr>
 </table>
 <p> The processing of the format string is described <a href="#format">here</a>.</p>
