@@ -105,6 +105,7 @@ namespace boost
   {
     //  format  ------------------------------------------------------------------------//
 
+    BOOST_TIMER_DECL
     std::string format(const cpu_times& times, short places, const std::string& fmt)
     {
       std::stringstream ss;

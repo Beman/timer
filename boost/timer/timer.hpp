@@ -53,6 +53,7 @@ namespace timer
   static const std::string   default_format;
   static const short         default_places = 6;
 
+  BOOST_TIMER_DECL
   std::string format(const cpu_times& times,
                      short places = default_places,
                      const std::string& fmt = default_format); 
