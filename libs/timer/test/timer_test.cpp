@@ -14,6 +14,11 @@
 #include <iostream>
 #include <string>
 
+namespace old
+{
+#include <boost/timer.hpp>
+}
+
 using std::string;
 using std::cout;
 using std::endl;
@@ -25,8 +30,6 @@ using boost::timer::auto_cpu_timer;
 
 namespace
 {
-
-
   void format_test()
   {
     cout << "format test..." << endl;
@@ -77,6 +80,27 @@ namespace
     cout << "  format test complete" << endl; 
   }
 
+  void std_c_consistency_test()
+  {
+    cout << "C library consistency test..." << endl;
+
+    cout << "  CLOCKS_PER_SEC is " << CLOCKS_PER_SEC << endl;
+
+    cpu_timer t;
+
+    old::boost::timer c_t;
+
+    while (c_t.elapsed() <= 1.0) {}
+
+    t.stop();
+
+    cout << "  t.elapsed().wall is " << t.elapsed().wall << endl;
+    BOOST_TEST(t.elapsed().wall >= 1000000000LL); 
+    BOOST_TEST(t.elapsed().wall  < 1000000000LL + 1000000000LL/(CLOCKS_PER_SEC/2)); 
+
+    cout << "  C library consistency test complete" << endl; 
+  }
+
 
 }  // unnamed namespace
 
@@ -85,7 +109,10 @@ namespace
 int cpp_main(int argc, char * argv[])
 {
   cout << "----------  timer_test  ----------\n";
+
   format_test();
+  std_c_consistency_test();
+
   return ::boost::report_errors();
 }
 
