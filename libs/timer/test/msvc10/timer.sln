@@ -33,6 +33,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cpu_timer_example", "cpu_ti
 		{BC364B41-28C9-48D0-8728-A46740122552} = {BC364B41-28C9-48D0-8728-A46740122552}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cpu_timer_info", "cpu_timer_info\cpu_timer_info.vcxproj", "{8648F680-856D-40C6-9E67-D53FD85A16BB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FEFC051D-2276-480C-A18F-C657F9C22B6E} = {FEFC051D-2276-480C-A18F-C657F9C22B6E}
+		{994AF121-7D16-41AC-B864-B32D8ED5DD01} = {994AF121-7D16-41AC-B864-B32D8ED5DD01}
+		{BC364B41-28C9-48D0-8728-A46740122552} = {BC364B41-28C9-48D0-8728-A46740122552}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -63,6 +70,10 @@ Global
 		{6A6C63B4-9E4F-4DFF-9AD3-AF3B8D06EBEF}.Debug|Win32.Build.0 = Debug|Win32
 		{6A6C63B4-9E4F-4DFF-9AD3-AF3B8D06EBEF}.Release|Win32.ActiveCfg = Release|Win32
 		{6A6C63B4-9E4F-4DFF-9AD3-AF3B8D06EBEF}.Release|Win32.Build.0 = Release|Win32
+		{8648F680-856D-40C6-9E67-D53FD85A16BB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8648F680-856D-40C6-9E67-D53FD85A16BB}.Debug|Win32.Build.0 = Debug|Win32
+		{8648F680-856D-40C6-9E67-D53FD85A16BB}.Release|Win32.ActiveCfg = Release|Win32
+		{8648F680-856D-40C6-9E67-D53FD85A16BB}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
