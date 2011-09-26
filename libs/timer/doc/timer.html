@@ -5,7 +5,7 @@
 <meta name="GENERATOR" content="Microsoft FrontPage 5.0">
 <meta name="ProgId" content="FrontPage.Editor.Document">
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-<title>Boost System Timers</title>
+<title>Boost Timer Library</title>
   <link rel="stylesheet" type="text/css" href=
   "../../../doc/src/minimal.css">
 </head>
@@ -68,7 +68,9 @@ class auto_cpu_timer;   // inherits cpu_timer, adds automatic report() on destru
   <tr>
     <td width="100%" bgcolor="#E8F5FF">
       <a href="#Introduction">Introduction</a><br>
-      <a href="#Example">Examples</a><br>
+      <a href="#Example">Using the timers</a><br>
+&nbsp; <a href="#using-auto_cpu_timer">Using <code>auto_cpu_time</code>r</a><br>
+&nbsp; <a href="#using-cpu_timer">Using <code>cpu_timer</code></a><br>
       <a href="#Reference">Reference</a><br>
       <code>&nbsp;<a href="#Synopsis">&lt;boost/timer/timer.hpp&gt;</a></code><a href="#Synopsis"> 
       synopsis</a><br>
@@ -101,12 +103,17 @@ operating system servicing user requests.</p>
 <p>Class <code><a href="#Class-cpu_timer">cpu_timer</a></code> measures 
 wall-clock time, user CPU process time, and system CPU process time.  Class <code>
 <a href="#Class-auto_cpu_timer">auto_cpu_timer</a></code> is a refinement of
-<code>cpu_timer</code> that automatically reports the elapsed times when the <code>
+<code>cpu_timer</code> that automatically reports the elapsed times when an <code>
 auto_cpu_timer</code> object is destroyed.</p>
 
-<h2><a name="Example">Examples</a></h2>
+<h2><a name="Example">Using the timers</a></h2>
 
-<p>Here is <a href="../example/cpu_timer_example.cpp">cpu_timer_example.cpp</a>, supplied with the Boost Timer library:</p>
+<h3>Using <code><a name="using-auto_cpu_timer">auto_cpu_timer</a></code></h3>
+
+<p>The simplest and most common use is to add the two lines high-lighted below 
+to a scope you want to time. See <code>
+<a href="../example/auto_cpu_example.cpp">auto_cpu_timer_example.cpp</a></code> 
+for the source code. </p>
 <blockquote>
   <pre><span style="background-color: #D7EEFF">#include &lt;boost/timer/</span><span style="background-color: #D7EEFF">timer.hpp</span><span style="background-color: #D7EEFF">&gt;</span>
 #include &lt;cmath&gt;
@@ -121,9 +128,9 @@ int main()
   return 0;
 }</pre>
 </blockquote>
-<p>When the <code>cpu_timer t</code> object is created, it starts timing. When 
-it is destroyed at the end of the program, its destructor stops the timer and 
-displays timing information on an output stream that defaults to <code>std::cout</code>.</p>
+<p>When the <code>auto_cpu_timer</code> object is created, it starts timing. When 
+it is destroyed at the end of the scope, its destructor stops the timer and 
+displays timing information on the default output stream, <code>std::cout</code>.</p>
 <p>The output of this program, run with a debug build on a circa 2006 desktop processor:</p>
 <p><code>&nbsp;&nbsp;&nbsp; 5.713010s wall, 5.709637s user + 0.000000s system = 
 5.709637s cpu (99.9%)</code></p>
@@ -132,40 +139,57 @@ clock on the wall, the operating system charged it for  <code>5.709637</code> se
 time and 0 seconds of system CPU time, the total of these two was  <code>5.709637</code>, and that 
 represented  <code>99.9</code> percent of the wall clock time.</p>
 
-<p>The <a href="../example/cpu_timer_example2.cpp">cpu_timer_example2.cpp</a> 
-program is the same, except that it supplies additional constructor arguments 
-from the command line:</p>
-<blockquote>
-  <pre>#include &lt;boost/timer/timer.hpp&gt;
-#include &lt;cmath&gt;
+<p>The output stream, number of decimal places reported, and reporting format 
+can be controlled by <code>auto_cpu_timer</code> constructor arguments. Here is 
+what the output from the above program would look like for several different 
+sets of constructor arguments:</p>
 
-int main(int argc, char * argv[])
+<table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111">
+  <tr>
+    <td><i><b>Constructor Arguments</b></i></td>
+    <td><i><b>Resulting Output</b></i></td>
+  </tr>
+  <tr>
+    <td><code>t</code></td>
+    <td><code>5.713010s wall, 5.709637s user + 0.000000s system = 5.709637s cpu (99.9%)</code></td>
+  </tr>
+  <tr>
+    <td><code>t(std::cerr, 2)</code></td>
+    <td><code>5.71s wall, 5.70s user + 0.00s system = 5.70s cpu (99.9%)</code></td>
+  </tr>
+  <tr>
+    <td><code>t(1)</code></td>
+    <td><code>5.7s wall, 5.7s user + 0.0s system = 5.7s cpu (99.9%)</code></td>
+  </tr>
+  <tr>
+    <td><code>t(3, &quot;%w seconds\n&quot;)</code></td>
+    <td><code>5.713 seconds<br>
+&nbsp;</code></td>
+  </tr>
+  <tr>
+    <td><code>t(&quot;%t sec cpu, %w sec real&quot;) </code></td>
+    <td><code>5.709637 sec cpu, 5.713010 sec real</code></td>
+  </tr>
+</table>
+<p> The processing of the format string is described <a href="#format">here</a>.</p>
+<h3> Using <code><a name="using-cpu_timer">cpu_timer</a></code></h3>
+<p> The following code calls a checkpoint function every twenty seconds of user 
+cpu time:</p>
+<blockquote>
+  <pre>using boost::timer::cpu_timer;
+...
+nanosecond_type last_checkpoint = 0;
+cpu_timer checkpoint_timer;  // start the timer
+
+while (more_transactions)
 {
-  const char* format = argc &gt; 1 ? argv[1] : &quot;%t cpu seconds\n&quot;;
-  int places = argc &gt; 2 ? std::atoi( argv[2] ) : 2;
-
-  boost::timer::cpu_timer t(format, places);
-
-  for (long i = 0; i &lt; 10000000; ++i)
-    std::sqrt(123.456L); // burn some time
-
-  return 0;
+  process_a_transaction();
+  if (checkpoint_timer.elapsed().user - last_checkpoint &gt; 20*1000000000)
+  {
+    create_checkpoint();
+    last_checkpoint = checkpoint_timer.elapsed().user;  
+  }
 }</pre>
-</blockquote>
-<p>Here is the output for this program for several sets of command line 
-arguments:</p>
-<blockquote>
-  <pre>run_timer_example2
-0.42 cpu seconds
-
-run_timer_example2 &quot;%w wall clock seconds\n&quot;
-0.41 wall clock seconds
-
-run_timer_example2 &quot;%w wall clock seconds\n&quot; 6
-0.421875 wall clock seconds
-
-run_timer_example2 &quot;%t total CPU seconds\n&quot; 3
-0.422 total CPU seconds</pre>
 </blockquote>
 <h2> <a name="Reference">Reference</a></h2>
 <h3>
@@ -219,7 +243,7 @@ often a bit less than one <b>microsecond</b>. For user and system time, typical
 resolutions is 15 <b>milliseconds</b> on Windows and 10 <b>milliseconds</b> on 
 POSIX.</p>
 
-<h3>Struct <a name="times_t"><code>cpu_times</code></a></h3>
+<h3><a name="cpu_times">Struct <code>cpu_times</code></a></h3>
 
 <p>Struct <code>cpu_times</code> packages three elapsed times:</p>
 
@@ -234,7 +258,7 @@ POSIX.</p>
 
 <h3><a name="Non-member-functions">Non-member functions</a></h3>
 
-<pre>std::string <a name="format">format</a>(const cpu_times&amp; times,
+<pre>std::string <a name="format">format</a>(const <a href="#cpu_times">cpu_times</a>&amp; times,
                    short places = default_places,
                    const std::string&amp; format = default_format); </pre>
 <blockquote>
@@ -250,6 +274,8 @@ Times are reported in seconds,
 shown to <code>places</code> decimal places. Percentage is reported to one 
 decimal place. [<i>Note:</i> percentage may exceed 100% due to differences in 
 how operating systems measure various times. <i>--end note</i>]</p>
+
+<p><i><b><a name="Format-replacement-sequences">Format replacement sequences</a></b></i></p>
 
   <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="39%">
     <tr>
@@ -488,13 +514,16 @@ with its high costs, even when the standard streams are not used.</p>
   <p>&nbsp;</p>
 
   <h2><a name="Acknowledgements">Acknowledgements</a></h2>
-  <p>Rob Stewart contributed many corrections, comments, and suggestions. In 
+  <p>Comments and suggestions came from Greg Rubino, Dave Abrahams, Vicente 
+  Botet, John Maddock, and Rob Stewart.</p>
+
+  <p>Rob  contributed many corrections, comments, and suggestions. In 
   particular, he suggested the <code>resume()</code> and <code>format()</code> 
   functions, resulting in improved ease-of-use for several use cases.</p>
 
 <hr>
 <p><font size="2">Last revised:
-<!--webbot bot="Timestamp" s-type="EDITED" s-format="%d %B, %Y" startspan -->25 September, 2011<!--webbot bot="Timestamp" endspan i-checksum="39340" --></font></p>
+<!--webbot bot="Timestamp" s-type="EDITED" s-format="%d %B, %Y" startspan -->26 September, 2011<!--webbot bot="Timestamp" endspan i-checksum="39342" --></font></p>
 <p><font size="2">© Copyright Beman Dawes, 2006, 2011</font></p>
 <p><font size="2">Distributed under the Boost Software License, Version 1.0.  See <a href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/ LICENSE_1_0.txt</a></font></p>
 
