@@ -46,7 +46,7 @@ int cpp_main( int argc, char * argv[] )
     cpu_timer cpu;
     std::cout << "measure boost::timer::cpu_timer resolution for wall-clock time..."
               << std::endl;
-    for (int i = 0; i < 1000; ++i)
+    for (int i = 0; i < 100; ++i)
     {
       cpu.start();
       start_time.wall = cpu.elapsed().wall;
@@ -55,7 +55,7 @@ int cpp_main( int argc, char * argv[] )
       {
         current_time.wall = cpu.elapsed().wall;
       }
-      std::cout << current_time.wall - start_time.wall << ' ';
+      std::cout << current_time.wall - start_time.wall << "ns ";
     }
   }
  return 0;

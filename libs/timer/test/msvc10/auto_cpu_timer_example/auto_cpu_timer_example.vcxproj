@@ -11,9 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{1C8E9995-2177-4063-A0EC-12AF93CB2DFB}</ProjectGuid>
+    <ProjectGuid>{7B28A88C-F339-4756-9411-018C302B3922}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>example</RootNamespace>
+    <RootNamespace>auto_cpu_timer_example</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -76,14 +76,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\example\example.cpp" />
+    <ClCompile Include="..\..\..\example\auto_cpu_timer_example.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\chrono_dll\chrono_dll.vcxproj">
+      <Project>{994af121-7d16-41ac-b864-b32d8ed5dd01}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\system_dll\system_dll.vcxproj">
       <Project>{bc364b41-28c9-48d0-8728-a46740122552}</Project>
     </ProjectReference>
     <ProjectReference Include="..\timer_dll\timer_dll.vcxproj">
-      <Project>{f3d65991-5574-4d60-93ad-dbe1a699bd95}</Project>
+      <Project>{fefc051d-2276-480c-a18f-c657f9c22b6e}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
