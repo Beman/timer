@@ -10,12 +10,22 @@
 project
     : requirements
       <library>/boost/timer//boost_timer
-      <library>/boost/chrono//boost_chrono  #GCC needs this for high_resolution_timer
+#      <library>/boost/chrono//boost_chrono  #GCC needs this for high_resolution_timer
       <toolset>msvc:<asynch-exceptions>on
     ;
  
    test-suite "timer"
    :
+     [ run ../example/auto_cpu_timer_example.cpp
+       : # command line
+       : # input files
+       : <test-info>always_show_run_output # requirements
+     ]
+     [ run cpu_timer_info.cpp
+       : # command line
+       : # input files
+       : <test-info>always_show_run_output # requirements
+     ]
      [ run timer_test.cpp
        : # command line
        : # input files
