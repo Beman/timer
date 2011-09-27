@@ -40,6 +40,31 @@
   </tr>
 </table>
 
+<p></p>
+
+<center>
+  <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="80%">
+    <tr>
+      <td width="100%" bgcolor="#FFFF00">
+<p><i><b>These timers are deprecated.</b></i> They date from the earliest days 
+of Boost and do not conform 
+to current Boost practice.</p>
+<ul>
+  <li>The interfaces are the same across all platforms, but the semantics differ 
+  according to platform. Wall-clock time is measured on Windows, while CPU time 
+  is measured on POSIX-like systems.</li>
+  <li>The internal implementation uses only C/C++ standard library functions, so 
+  cannot supply desirable precision and functionality.</li>
+  <li>The headers live in the main Boost header directory.</li>
+  <li>The content are in namespace <code>boost</code>.</li>
+</ul>
+      Please see the Version 2
+    <a href="cpu_timers.html">CPU timers</a> for replacements that conform to 
+      current Boost practice.</td>
+    </tr>
+  </table>
+</center>
+  
 <p>The timer library provides two headers and three classes: </p>
 
 <blockquote>
@@ -235,7 +260,7 @@ more reliable, and so was retained even on this platform with its own timer API.
 <a href="http://www.boost.org/LICENSE_1_0.txt"><font size="2">www.boost.org/LICENSE_1_0.txt</font></a></p>
 
 <p><font size="2">Revised 
-<!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%B %d, %Y" startspan -->September 26, 2011<!--webbot bot="Timestamp" endspan i-checksum="37994" -->
+<!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%B %d, %Y" startspan -->September 27, 2011<!--webbot bot="Timestamp" endspan i-checksum="38002" -->
 </font>
 </p>
 

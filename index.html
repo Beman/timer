@@ -41,26 +41,26 @@
 
 <p>The Boost Timer Library has two distinct sets of components:<h2>
     <a href="cpu_timers.html">CPU timers</a></h2>
-<p>These version 2 components conform to current Boost practice.</p>
+<p>These Version 2 components conform to current Boost practice.</p>
 <ul>
-  <li>The headers live in a sub-directory, <code>&lt;boost/timer/...&gt;</code>.</li>
-  <li>The content is in a sub-namespace, <code>boost::timer</code>.</li>
   <li>The interfaces and their semantics are the same across all platforms.</li>
   <li>The internal implementation uses operating system specific APIs to achieve 
   higher precision and supply functionality not otherwise available.&nbsp; </li>
+  <li>The headers live in a sub-directory, <code>&lt;boost/timer/...&gt;</code>.</li>
+  <li>The content is in a sub-namespace, <code>boost::timer</code>.</li>
 </ul>
 <h2 dir="ltr">
     <a href="original_timer.html">Original timers</a></h2>
-<p>These older components are deprecated. They pre-date Boost and do not conform 
+<p>These older components are deprecated. They date from the earliest days of Boost and do not conform 
 to current Boost practice.</p>
 <ul>
-  <li>The headers live in the main Boost header directory.</li>
-  <li>The content are in namespace <code>boost</code>.</li>
   <li>The interfaces are the same across all platforms, but the semantics differ 
   according to platform. Wall-clock time is measured on Windows, while CPU time 
   is measured on POSIX-like systems.</li>
   <li>The internal implementation uses only C/C++ standard library functions, so 
   cannot supply desirable precision and functionality.</li>
+  <li>The headers live in the main Boost header directory.</li>
+  <li>The content are in namespace <code>boost</code>.</li>
 </ul>
 <hr>
 <p><font size="2">© Copyright Beman Dawes&nbsp; 2001, 2011</font></p>
@@ -70,7 +70,7 @@ to current Boost practice.</p>
 <a href="http://www.boost.org/LICENSE_1_0.txt"><font size="2">www.boost.org/LICENSE_1_0.txt</font></a></p>
 
 <p><font size="2">Revised
-<!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%d %B %Y" startspan -->26 September 2011<!--webbot bot="Timestamp" endspan i-checksum="39628" --> </font>
+<!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%d %B %Y" startspan -->27 September 2011<!--webbot bot="Timestamp" endspan i-checksum="39630" --> </font>
 </p>
 
 
