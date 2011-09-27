@@ -10,7 +10,6 @@
 project
     : requirements
       <library>/boost/timer//boost_timer
-#      <library>/boost/chrono//boost_chrono  #GCC needs this for high_resolution_timer
       <toolset>msvc:<asynch-exceptions>on
     ;
  
@@ -34,6 +33,6 @@ project
      [ run ../example/timex.cpp
        : echo "Hello, world"
 	     :
-	     : <link>static <test-info>always_show_run_output
+	     : <test-info>always_show_run_output
      ]
    ;
