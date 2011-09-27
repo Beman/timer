@@ -84,9 +84,8 @@ namespace
   {
     cout << "C library consistency test..." << endl;
 
-    // This test is designed to account for the possibilies that C timer could be
-    // one tick behind cpu_timer and that another active process may have caused this
-    // process to take far more than one second to complete.
+    // This test is designed to account for C timer resolution and for the possibility
+    // that another active process may take up a lot of time.
 
     cout << "  CLOCKS_PER_SEC is " << CLOCKS_PER_SEC << endl;
 
@@ -107,12 +106,12 @@ namespace
     cout << "  t.elapsed().wall is " << t.elapsed().wall << endl;
     cout << "  t.elapsed().wall/1000000000.0L is "
          << t.elapsed().wall/1000000000.0L << endl;
-    cout << "  t.elapsed().wall/1000000000.0L - 1.0L/CLOCKS_PER_SEC is "
-         << t.elapsed().wall/1000000000.0L - 1.0L/CLOCKS_PER_SEC << endl;
+    cout << "  c_t_elapsed * 1.02L is "
+         << c_t_elapsed * 1.02L << endl;
 
     BOOST_TEST(t.elapsed().wall >= 1000000000);
 
-    BOOST_TEST(t.elapsed().wall / 1000000000.0L - 1.0L/CLOCKS_PER_SEC <= c_t_elapsed); 
+    BOOST_TEST(t.elapsed().wall / 1000000000.0L <= c_t_elapsed * 1.02L); 
 
     cout << "  C library consistency test complete" << endl; 
   }
