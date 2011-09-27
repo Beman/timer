@@ -1,0 +1,514 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>CPU Timers</title>
+<style type="text/css">
+ ins {background-color:#A0FFA0}
+ del {background-color:#FFA0A0}
+ body
+ { 
+   font-family: sans-serif;
+   max-width : 8.5in;
+   margin: 1em;
+ }
+</style>
+</head>
+
+<body>
+
+<table border="0" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="750">
+  <tr>
+    <td width="300">
+<a href="../../../index.htm">
+<img src="../../../boost.png" alt="boost.png (6897 bytes)" align="middle" width="300" height="86" border="0"></a></td>
+    <td align="middle" width="430">
+    <font size="7">Timer Library<br>
+    CPU Timers</font></td>
+  </tr>
+</table>
+
+<table border="0" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" bgcolor="#D7EEFF" width="100%">
+  <tr>
+    <td><a href="index.html">Timer Home</a> &nbsp;&nbsp;
+    <a href="cpu_timers.html">CPU timers</a> &nbsp;&nbsp;
+    <a href="original_timer.html">Original timers</a> &nbsp;&nbsp;
+    </td>
+  </tr>
+</table>
+
+<h2><a name="Introduction">Introduction</a></h2>
+<table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" align="right">
+  <tr>
+    <td width="100%" bgcolor="#D7EEFF" align="center">
+      <i><b>Contents</b></i></td>
+  </tr>
+  <tr>
+    <td width="100%" bgcolor="#E8F5FF">
+      <a href="#Introduction">Introduction</a><br>
+      <a href="#Example">Using the timers</a><br>
+&nbsp; <a href="#using-auto_cpu_timer">Using <code>auto_cpu_time</code>r</a><br>
+&nbsp; <a href="#using-cpu_timer">Using <code>cpu_timer</code></a><br>
+      <a href="#Reference">Reference</a><br>
+      <code>&nbsp;<a href="#Synopsis">&lt;boost/timer/timer.hpp&gt;</a></code><a href="#Synopsis"> 
+      synopsis</a><br>
+      &nbsp; <a href="#nanosecond_type">Typedef <code>nanosecond_type</code></a><br>
+&nbsp;
+      <a href="#Non-member-functions">Non-member functions</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#format"><code>format()</code></a><br>
+      &nbsp;
+      <a href="#Class-cpu_timer">Class <code>cpu_timer</code></a><br>
+      &nbsp;&nbsp;<code>&nbsp; <a href="#cpu_timer-constructors">cpu_timer</a></code><a href="#cpu_timer-constructors"> 
+constructors, destructor</a><br>
+      &nbsp;&nbsp;<code>&nbsp; <a href="#cpu_timer-observers">cpu_timer</a></code><a href="#cpu_timer-observers"> 
+observers</a><br>
+      &nbsp;&nbsp;<code>&nbsp; <a href="#cpu_timer-actions">cpu_timer</a></code><a href="#cpu_timer-actions"> 
+actions</a><br>
+      &nbsp; <a href="#Class-auto_cpu_timer">Class <code>auto_cpu_timer</code></a><br>
+      &nbsp;&nbsp;&nbsp;<code> <a href="#auto_cpu_timer-constructors">auto_cpu_timer</a></code><a href="#auto_cpu_timer-constructors"> constructors</a><br>
+      &nbsp;&nbsp;&nbsp;<code> <a href="#auto_cpu_timer-destructor">auto_cpu_timer</a></code><a href="#auto_cpu_timer-destructor"> destructor</a><br>
+      &nbsp;&nbsp;&nbsp;<code> <a href="#auto_cpu_timer-actions">auto_cpu_timer</a></code><a href="#auto_cpu_timer-actions"> actions</a><br>
+      <a href="#FAQ">FAQ</a><br>
+      <a href="#Acknowledgements">Acknowledgements</a><br>
+  </tr>
+</table>
+
+<p>Knowing how long a program takes to execute is useful in both test and 
+production environments. It may also be helpful if such timing information is broken down 
+into wall-clock time, CPU time spent by the user, and CPU time spent by the 
+operating system servicing user requests.</p>
+
+<p>Class <code><a href="#Class-cpu_timer">cpu_timer</a></code> measures 
+wall-clock time, user CPU process time, and system CPU process time.  Class <code>
+<a href="#Class-auto_cpu_timer">auto_cpu_timer</a></code> is a refinement of
+<code>cpu_timer</code> that automatically reports the elapsed times when an <code>
+auto_cpu_timer</code> object is destroyed.</p>
+
+<h2><a name="Example">Using the timers</a></h2>
+
+<h3>Using <code><a name="using-auto_cpu_timer">auto_cpu_timer</a></code></h3>
+
+<p>The simplest and most common use is to add the two lines high-lighted below 
+to a scope you want to time. See <code>
+<a href="../example/auto_cpu_example.cpp">auto_cpu_timer_example.cpp</a></code> 
+for the source code. </p>
+<blockquote>
+  <pre><span style="background-color: #D7EEFF">#include &lt;boost/timer/</span><span style="background-color: #D7EEFF">timer.hpp</span><span style="background-color: #D7EEFF">&gt;</span>
+#include &lt;cmath&gt;
+
+int main()
+{
+  <span style="background-color: #D7EEFF">boost::timer::auto_cpu_timer</span><span style="background-color: #D7EEFF"> t;</span>
+
+  for (long i = 0; i &lt; 100000000; ++i)
+    std::sqrt(123.456L); // burn some time
+
+  return 0;
+}</pre>
+</blockquote>
+<p>When the <code>auto_cpu_timer</code> object is created, it starts timing. When 
+it is destroyed at the end of the scope, its destructor stops the timer and 
+displays timing information on the default output stream, <code>std::cout</code>.</p>
+<p>The output of this program, run with a debug build on a circa 2006 desktop processor:</p>
+<p><code>&nbsp;&nbsp;&nbsp; 5.713010s wall, 5.709637s user + 0.000000s system = 
+5.709637s cpu (99.9%)</code></p>
+<p>In other words, this program ran in  <code>5.713010</code> seconds as would be measured by a 
+clock on the wall, the operating system charged it for  <code>5.709637</code> seconds of user CPU 
+time and 0 seconds of system CPU time, the total of these two was  <code>5.709637</code>, and that 
+represented  <code>99.9</code> percent of the wall clock time.</p>
+
+<p>The output stream, number of decimal places reported, and reporting format 
+can be controlled by <code>auto_cpu_timer</code> constructor arguments. Here is 
+what the output from the above program would look like for several different 
+sets of constructor arguments:</p>
+
+<table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111">
+  <tr>
+    <td><i><b>Constructor Arguments</b></i></td>
+    <td><i><b>Resulting Output</b></i></td>
+  </tr>
+  <tr>
+    <td><code><font size="1">t</font></code></td>
+    <td><code><font size="1">5.713010s wall, 5.709637s user + 0.000000s system = 5.709637s cpu (99.9%)</font></code></td>
+  </tr>
+  <tr>
+    <td><code><font size="1">t(std::cerr</font><font size="1">, 2)</font></code></td>
+    <td><code><font size="1">5.71s wall, 5.70s user + 0.00s system = 5.70s cpu (99.9%)</font></code></td>
+  </tr>
+  <tr>
+    <td><code><font size="1">t(1)</font></code></td>
+    <td><code><font size="1">5.7s wall, 5.7s user + 0.0s system = 5.7s cpu (99.9%)</font></code></td>
+  </tr>
+  <tr>
+    <td><code><font size="1">t(3, &quot;%w seconds\n&quot;)</font></code></td>
+    <td><code><font size="1">5.713 seconds<br>
+&nbsp;</font></code></td>
+  </tr>
+  <tr>
+    <td><code><font size="1">t(&quot;%t</font><font size="1"> sec cpu, %w sec real&quot;)
+    </font> </code></td>
+    <td><code><font size="1">5.709637 sec cpu, 5.713010 sec real</font></code></td>
+  </tr>
+</table>
+<p> The processing of the format string is described <a href="#format">here</a>.</p>
+<h3> Using <code><a name="using-cpu_timer">cpu_timer</a></code></h3>
+<p> The following code calls a checkpoint function every twenty seconds of user 
+cpu time:</p>
+<blockquote>
+  <pre>using boost::timer::cpu_timer;
+...
+nanosecond_type last_checkpoint = 0;
+cpu_timer checkpoint_timer;  // start the timer
+
+while (more_transactions)
+{
+  process_a_transaction();
+  if (checkpoint_timer.elapsed().user - last_checkpoint &gt; 20*1000000000)
+  {
+    create_checkpoint();
+    last_checkpoint = checkpoint_timer.elapsed().user;  
+  }
+}</pre>
+</blockquote>
+<h2> <a name="Reference">Reference</a></h2>
+<h3>
+<code>&lt;boost/timer/timer.hpp&gt;</code>
+<a name="Synopsis">Synopsis</a></h3>
+<div align="left">
+<pre>namespace boost
+{
+  namespace timer
+  {
+    class <a href="#Class-cpu_timer">cpu_timer</a>;       // wall-clock, user, and system timer
+    class <a href="#Class-auto_cpu_timer">auto_cpu_timer</a>;  // automatic report() on destruction 
+
+    typedef boost::int_least64_t nanosecond_type;
+
+    struct cpu_times
+    {
+      nanosecond_type wall;
+      nanosecond_type user;
+      nanosecond_type system;
+
+      void clear() { wall = user = system = 0LL; }
+    };
+      
+    static const std::string   default_format;
+    static const int           default_places = 6;
+
+    std::string format(const cpu_times&amp; times,
+                       short places = default_places,
+                       const std::string&amp; format = default_format); 
+  } // namespace timer
+} // namespace boost
+</pre>
+
+</div>
+
+<h3>Typedef <a name="nanosecond_type"><code>nanosecond_type</code></a></h3>
+
+<p>The typedef <code>nanosecond_type</code> provides an implementation defined type capable 
+of representing nanoseconds. For POSIX and Windows systems, <code>
+nanoseconds_type</code> is <code>boost::int_least64_</code>t.</p>
+
+<p>The underlying type is not based on the Boost Date-Time or Chrono library to avoid a 
+dependency on a large library. This design choice may change at some future 
+date.</p>
+
+<p>Although <code>nanosecond_type</code> is capable of representing one <b>
+nanosecond</b>, the actual resolution of common operating system timers may be 
+much lower. For wall clock time on desktop systems circa 2011, resolution is 
+often a bit less than one <b>microsecond</b>. For user and system time, typical 
+resolutions is 15 <b>milliseconds</b> on Windows and 10 <b>milliseconds</b> on 
+POSIX.</p>
+
+<h3><a name="cpu_times">Struct <code>cpu_times</code></a></h3>
+
+<p>Struct <code>cpu_times</code> packages three elapsed times:</p>
+
+<ul>
+  <li>Wall clock elapsed time, equivalent to the time that would be recorded by 
+  a stopwatch.</li>
+  <li>User central processing unit (CPU) time used by the process, as charged by 
+  the operating system.</li>
+  <li>System central processing unit (CPU) time used by the process, as charged 
+  by the operating system.</li>
+</ul>
+
+<h3><a name="Non-member-functions">Non-member functions</a></h3>
+
+<pre>std::string <a name="format">format</a>(const <a href="#cpu_times">cpu_times</a>&amp; times,
+                   short places = default_places,
+                   const std::string&amp; format = default_format); </pre>
+<blockquote>
+
+<p><i>Effects:</i> If <code>places</code> is less than 0,&nbsp; it is set to <code>default_places</code>. If <code>places</code> is 
+more than 9, it is set to 9. if the <code>format</code> 
+argument is <code>empty()</code>, it is set to <code>
+default_format</code>.</p>
+
+<p><i>Returns:</i> A string that is a copy of <code>format</code>, except that any 
+instances of the sequences shown below are replaced by the indicated value. 
+Times are reported in seconds, 
+shown to <code>places</code> decimal places. Percentage is reported to one 
+decimal place. [<i>Note:</i> percentage may exceed 100% due to differences in 
+how operating systems measure various times. <i>--end note</i>]</p>
+
+<p><i><b><a name="Format-replacement-sequences">Format replacement sequences</a></b></i></p>
+
+  <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="39%">
+    <tr>
+      <td width="25%"><b><i>Sequence</i></b></td>
+      <td width="75%"><b><i>Replacement value</i></b></td>
+    </tr>
+    <tr>
+      <td width="25%" align="center"><code>%w</code></td>
+      <td width="75%"><code>times.wall</code></td>
+    </tr>
+    <tr>
+      <td width="25%" align="center"><code>%u</code></td>
+      <td width="75%"><code>times.user</code></td>
+    </tr>
+    <tr>
+      <td width="25%" align="center"><code>%s</code></td>
+      <td width="75%"><code>times.system</code></td>
+    </tr>
+    <tr>
+      <td width="25%" align="center"><code>%t</code></td>
+      <td width="75%"><code>times.user + times.system</code></td>
+    </tr>
+    <tr>
+      <td width="25%" align="center"><code>%p</code></td>
+      <td width="75%">The percentage of <code>times.wall</code> represented by by <code>
+      times.user + times.system</code></td>
+    </tr>
+  </table>
+  </blockquote>
+
+<h3><a name="Class-cpu_timer">Class <code>cpu_timer</code></a></h3>
+
+<p> <code>cpu_timer</code> objects measure wall-clock elapsed time, process elapsed 
+time charged to the user, and process elapsed time charged to the system.</p>
+
+<p><i><b><a name="Current-time-values">Current time values</a></b></i> are 
+obtained as follows: Current wall-clock time is obtained from the Boost.Chrono <code>
+high_resolution_clock</code>. Current user and system time values are obtained 
+from the appropriate operating system API functions such as <code>times()</code> 
+on POSIX or <code>
+GetProcessTimes()</code> on Windows.</p>
+
+<h3> <a name="cpu_timer-synopsis"> <code>cpu_timer</code> synopsis</a></h3>
+
+<pre>    class <a name="cpu_timer">cpu_timer</a>
+    {
+    public:
+
+      //  constructor, destructor
+      cpu_timer() noexcept;
+     ~cpu_timer() noexcept {}
+
+      //  observers
+      bool              is_stopped() const noexcept;
+      cpu_times         elapsed() const noexcept;
+      std::string       format(int places = default_places,
+                               const std::string& format = default_format) const;
+      //  actions
+      void              start() noexcept;
+      const cpu_times&  stop() noexcept;
+      void              resume() noexcept;
+
+    private:
+      cpu_times         m_times;          // <b><i>exposition only</i></b>
+      bool              m_is_stopped;     // <b><i>exposition only</i></b>
+    };</pre>
+<h3><a name="cpu_timer-constructors"><code>cpu_timer</code> constructor</a>, destructor</h3>
+<pre>cpu_timer() noexcept;</pre>
+<blockquote>
+  <p><i>Effects:</i> <code>start()</code>.</p>
+</blockquote>
+<pre>~cpu_timer() noexcept {}</pre>
+<blockquote>
+  <p><i>Effects:</i> None</p>
+</blockquote>
+<h3><a name="cpu_timer-observers"><code>cpu_timer</code> 
+observers</a></h3>
+<pre>bool is_stopped() const noexcept;</pre>
+<blockquote>
+  <p><i>Returns:</i> <code>m_is_stopped</code>.</p>
+</blockquote>
+<pre>cpu_times elapsed() const noexcept;</pre>
+<blockquote>
+  <p><i>Returns:</i> If <code>is_stopped()</code>, <code>m_times</code>. 
+  Otherwise, the difference between <code>m_times</code> values and 
+  <a href="#Current-time-values">current time values</a>.</p>
+
+</blockquote>
+<pre>std::string format(int places = default_places,
+                   const std::string&amp; format = default_format) const;</pre>
+<blockquote>
+  <p><i>Returns:</i> <code>timer::format(elapsed(), places, format)</code>.</p>
+</blockquote>
+<h3><a name="cpu_timer-actions"><code>cpu_timer</code> 
+actions</a></h3>
+<pre>void start() noexcept;</pre>
+<blockquote>
+
+<p><i>Postconditions:</i> <code>!is_stopped()</code> and <code>m_times</code> 
+values are set to the <a href="#Current-time-values">current time values</a>.</p>
+
+</blockquote>
+<pre>cpu_times stop() noexcept;</pre>
+<blockquote>
+
+<p><i>Postconditions:</i> <code>is_stopped()</code> and <code>m_times</code> is 
+set to the difference between <code>m_times</code> values and
+<a href="#Current-time-values">current time values</a>.</p>
+
+<p><i>Returns:</i> <code>m_times,</code> after the establishment of the <i>
+Postconditions</i>.</p>
+
+</blockquote>
+<pre>void resume() noexcept;</pre>
+<blockquote>
+  <p><i>Effects:</i> As if:</p>
+  <blockquote>
+    <pre>if (is_stopped())
+{
+  cpu_times current (m_times);
+  start();
+  m_times.wall -= current.wall;
+  m_times.user -= current.user;
+  m_times.system -= current.system;
+}</pre>
+  </blockquote>
+</blockquote>
+<h3><a name="Class-auto_cpu_timer">Class <code>auto_cpu_timer</code></a></h3>
+
+<p>Class <code>auto_cpu_timer</code> adds a <code>report()</code> 
+function to <code>class cpu_timer</code>, and automatically calls <code>report()</code> 
+on destruction.</p>
+
+<h3> <a name="auto_cpu_timer-synopsis"> <code>auto_cpu_timer</code> synopsis</a></h3>
+
+<pre>    class <a name="auto_cpu_timer">auto_cpu_timer</a> : public cpu_timer
+    {
+    public:
+      explicit auto_cpu_timer(short places = default_places,
+                              const std::string&amp; format = default_format);
+      explicit auto_cpu_timer(const std::string&amp; format);
+      explicit auto_cpu_timer(std::ostream&amp; os,
+                              short places = default_places,
+                              const std::string&amp; format = default_format);
+      auto_cpu_timer(std::ostream&amp; os, const std::string&amp; format);
+
+     ~auto_cpu_timer() noexcept;
+
+      void            report();
+
+    private:
+      std::ostream&   m_os;               // <b><i>exposition only</i></b>
+      short           m_places;           // <b><i>exposition only</i></b>
+      std::string     m_format;           // <b><i>exposition only</i></b>
+    };</pre>
+<p>Each constructor has two overloads to avoid an explicit default to <code>
+std::cout</code>. Such a default would require including <code>&lt;iostream&gt;</code>, 
+with its high costs, even when the standard streams are not used.</p>
+<h3><a name="auto_cpu_timer-constructors"><code>auto_cpu_timer</code> constructors</a></h3>
+<pre>explicit auto_cpu_timer(short places = default_places,
+                        const std::string&amp; format = default_format);</pre>
+<blockquote>
+  <p><i>Effects:</i> Constructs an object of type <code>
+  auto_cpu_timer</code>.</p>
+  <p><i>Postconditions:<br>
+  </i><code>&nbsp; m_os == std::cout</code>,<code><br>
+  &nbsp; m_places == places</code>,<code><br>
+&nbsp; m_format == default_format</code></p>
+</blockquote>
+<pre>explicit auto_cpu_timer(const std::string&amp; format);</pre>
+<blockquote>
+  <p><i>Effects:</i> Constructs an object of type <code>
+  auto_cpu_timer</code>.</p>
+  <p><i>Postconditions:<br>
+  </i><code>&nbsp; m_os == std::cout</code>,<code><br>
+  &nbsp; m_places == default_places</code>,<code><br>
+&nbsp; m_format == format</code></p>
+</blockquote>
+<pre>explicit auto_cpu_timer(std::ostream&amp; os,
+                        short places = default_places,
+                        const std::string&amp; format = default_format);</pre>
+<blockquote>
+  <p><i>Effects:</i> Constructs an object of type <code>
+  auto_cpu_timer</code>.</p>
+  <p><i>Postconditions:<br>
+  </i><code>&nbsp; m_os == os</code>,<code><br>
+  &nbsp; m_places == places</code>,<code><br>
+&nbsp; m_format == format</code></p>
+</blockquote>
+<pre>auto_cpu_timer(std::ostream&amp; os, const std::string&amp; format);</pre>
+<blockquote>
+  <p><i>Effects:</i> Constructs an object of type <code>
+  auto_cpu_timer</code>.</p>
+  <p><i>Postconditions:<br>
+  </i><code>&nbsp; m_os == os</code>,<code><br>
+  &nbsp; m_places == default_places</code>,<code><br>
+&nbsp; m_format == format</code></p>
+</blockquote>
+<h3><a name="auto_cpu_timer-destructor"><code>auto_cpu_timer</code> destructor</a></h3>
+<pre>~auto_cpu_timer() noexcept;</pre>
+<blockquote>
+<p><i>Effects: </i>As if:</p>
+  <blockquote>
+    <pre>if (!is_stopped())
+{
+  try
+  {
+    report();
+  }
+  catch (...)
+  {
+  }
+}</pre>
+  </blockquote>
+</blockquote>
+<h3><a name="auto_cpu_timer-actions"><code>auto_cpu_timer</code> actions</a></h3>
+<pre>void report();</pre>
+<blockquote>
+  <p><i>Effects: </i>As if:</p>
+  <blockquote>
+    <pre>m_os &lt;&lt; timer::format(
+          stop(),
+          m_format.empty()
+            ? &quot; %ws wall, %us user + %ss system = %ts cpu (%p%)\n&quot;
+            : m_format,
+          m_places);</pre>
+  </blockquote>
+
+  <p>[<i>Note:</i> <code>stop()</code> is called because doing I/O while the 
+  timer is running might produce misleading results. <i>--end note</i>]</p>
+
+</blockquote>
+
+  <h2><a name="FAQ">FAQ</a></h2>
+
+  <p>&nbsp;</p>
+
+  <h2><a name="Acknowledgements">Acknowledgements</a></h2>
+  <p>Comments and suggestions came from Greg Rubino, Dave Abrahams, Vicente 
+  Botet, John Maddock, and Rob Stewart.</p>
+
+  <p>Rob  contributed many corrections, comments, and suggestions. In 
+  particular, he suggested the <code>resume()</code> and <code>format()</code> 
+  functions, resulting in improved ease-of-use for several use cases.</p>
+
+<hr>
+<p><font size="2">Last revised:
+<!--webbot bot="Timestamp" s-type="EDITED" s-format="%d %B, %Y" startspan -->26 September, 2011<!--webbot bot="Timestamp" endspan i-checksum="39342" --></font></p>
+<p><font size="2">© Copyright Beman Dawes, 2006, 2011</font></p>
+<p><font size="2">Distributed under the Boost Software License, Version 1.0.  See <a href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/ LICENSE_1_0.txt</a></font></p>
+
+</body>
+
+</html>
