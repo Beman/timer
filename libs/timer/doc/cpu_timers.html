@@ -72,7 +72,10 @@ actions</a><br>
       &nbsp;&nbsp;&nbsp;<code> <a href="#auto_cpu_timer-constructors">auto_cpu_timer</a></code><a href="#auto_cpu_timer-constructors"> constructors</a><br>
       &nbsp;&nbsp;&nbsp;<code> <a href="#auto_cpu_timer-destructor">auto_cpu_timer</a></code><a href="#auto_cpu_timer-destructor"> destructor</a><br>
       &nbsp;&nbsp;&nbsp;<code> <a href="#auto_cpu_timer-actions">auto_cpu_timer</a></code><a href="#auto_cpu_timer-actions"> actions</a><br>
-      <a href="#FAQ">FAQ</a><br>
+      <a href="#Timer-accuracy">Timer accuracy</a><br>
+&nbsp; <a href="#Resolution">Resolution</a><br>
+&nbsp; <a href="#Other-concerns">Other concerns</a><br>
+&nbsp; <a href="#Recommendations">Recommendations</a><br>
       <a href="#Acknowledgements">Acknowledgements</a><br>
   </tr>
 </table>
@@ -128,7 +131,7 @@ sets of constructor arguments:</p>
 
 <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111">
   <tr>
-    <td><i><b>Constructor Arguments</b></i></td>
+    <td><i><b>Constructor</b></i></td>
     <td><i><b>Resulting Output</b></i></td>
   </tr>
   <tr>
@@ -183,6 +186,11 @@ std::bad_alloc</code> exceptions if a memory allocation error occurs. Other
 errors are reported by time values of -1. [<i>Note:</i> Modern hardware and 
 operating systems have robust clock subsystems, so such errors are unusual if 
 even possible at all. <i>-- end note</i>]</p>
+<p dir="ltr"> The Timer library meets the same data race avoidance requirements 
+as the C++11 standard library (17.6.5.9 [res.on.data.races]). Shared objects of 
+Timer library types risk undefined behavior unless the user supplies a locking 
+mechanism. See C++11, 17.6.4.10 [res.on.objects], <i>Shared objects and the 
+library</i>. </p>
 <h3>
 <code>&lt;boost/timer/timer.hpp&gt;</code>
 <a name="Synopsis">Synopsis</a></h3>
@@ -507,9 +515,99 @@ escapes. <i>--end note</i>]</p>
 
 </blockquote>
 
-  <h2><a name="FAQ">FAQ</a></h2>
+  <h2><a name="Timer-accuracy">Timer accuracy</a></h2>
 
-  <p>&nbsp;</p>
+  <p>How accurate are these timers? </p>
+
+  <h3><a name="Resolution">Resolution</a></h3>
+
+  <p dir="ltr">The resolution of a clock, and thus timers built on that clock, 
+  is the minimum period time that can be measured. The program <code>
+  <a href="../example/cpu_timer_info.cpp">cpu_timer_info.cpp</a></code> measures 
+  the resolution of <code>cpu_timer</code>.</p>
+
+  <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111">
+    <tr>
+      <td rowspan="2">O/S</td>
+      <td rowspan="2">Processor</td>
+      <td colspan="2" align="center">Wall-clock</td>
+      <td colspan="2" align="center">CPU</td>
+    </tr>
+    <tr>
+      <td>Resolution</td>
+      <td>Comments</td>
+      <td align="center">User<br>
+      Resolution</td>
+      <td align="center">System<br>
+      Resolution</td>
+    </tr>
+    <tr>
+      <td>Windows 7</td>
+      <td>Intel Core i7 860 @ 2.9 GHz</td>
+      <td align="right">366ns</td>
+      <td>Some variation, usually in multiples of 366ns</td>
+      <td>15600100ns</td>
+      <td>15600100ns</td>
+    </tr>
+    <tr>
+      <td>Windows 7</td>
+      <td>Intel Mobile T7200 @ 2.0 GHz</td>
+      <td align="right">2050ns</td>
+      <td>Much variation. Resolution degrades when processor slows, probably due 
+      to known chipset errata. </td>
+      <td>15600100ns</td>
+      <td>15600100ns</td>
+    </tr>
+    <tr>
+      <td>Windows XP</td>
+      <td>Intel Atom N2800 @ 1.0 GHz</td>
+      <td align="right">1437ns</td>
+      <td>Some variation.</td>
+      <td>15625000ns</td>
+      <td>15625000ns</td>
+    </tr>
+    <tr>
+      <td>Mac OS X Lion</td>
+      <td>Intel circa 2007</td>
+      <td align="right">2100ns<br>
+      2200ns</td>
+      <td>Some variation within a range.</td>
+      <td>10000000ns</td>
+      <td>10000000ns</td>
+    </tr>
+    <tr>
+      <td>Ubuntu Linux 11.4</td>
+      <td>Intel circa 2005</td>
+      <td align="right">516ns</td>
+      <td>Very little variation, typically less than 5ns </td>
+      <td>10000000ns</td>
+      <td>10000000ns</td>
+    </tr>
+</table>
+
+  <h3><a name="Other-concerns">Other concerns</a></h3>
+
+  <p>Wall-clock time is subject to many outside influences, such as the impact 
+  of other processes, and may even run backwards on some systems, such as when 
+  the clock is reset such as during a daylight savings time transition.</p>
+
+  <p>Timings of debug builds are often significantly (I.E several times) slower 
+  than release builds, both because of the lack of compiler optimization and 
+  because libraries often contain very expensive error checks on debug builds.</p>
+
+  <p>Synthetic benchmark code may be optimized way by release builds. It may be 
+  necessary to inspect generated code to verify this isn't happening.</p>
+
+  <h3 dir="ltr"><a name="Recommendations">Recommendations</a></h3>
+
+  <p dir="ltr">Think about what is important to your application. For a 
+  production process, the wall-clock time may be what is most important. For 
+  studying the efficiency of code, CPU time is often a much better measure.</p>
+
+  <p dir="ltr">My personal preference is to never trust timings unless they are 
+  (1) at least 100 times longer than the CPU time resolution, (2) run multiple 
+  times, and (3) run on release builds. And results that are too good to be true 
+  need to be further investigate.</p>
 
   <h2><a name="Acknowledgements">Acknowledgements</a></h2>
   <p>Comments and suggestions came from Greg Rubino, Dave Abrahams, Vicente 
@@ -521,7 +619,7 @@ escapes. <i>--end note</i>]</p>
 
 <hr>
 <p><font size="2">Last revised:
-<!--webbot bot="Timestamp" s-type="EDITED" s-format="%d %B, %Y" startspan -->27 September, 2011<!--webbot bot="Timestamp" endspan i-checksum="39344" --></font></p>
+<!--webbot bot="Timestamp" s-type="EDITED" s-format="%d %B, %Y" startspan -->28 September, 2011<!--webbot bot="Timestamp" endspan i-checksum="39346" --></font></p>
 <p><font size="2">© Copyright Beman Dawes, 2006, 2011</font></p>
 <p><font size="2">Distributed under the Boost Software License, Version 1.0.  See <a href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/ LICENSE_1_0.txt</a></font></p>
 
