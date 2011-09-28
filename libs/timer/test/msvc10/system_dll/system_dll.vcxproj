@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\error_code.cpp" />
+    <ClCompile Include="..\..\..\..\..\..\trunk\libs\system\src\error_code.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{BC364B41-28C9-48D0-8728-A46740122552}</ProjectGuid>
