@@ -110,7 +110,7 @@ namespace boost
     BOOST_TIMER_DECL
     const std::string&  default_format()
     {
-      static std::string fmt(" %ws wall, %us user + %ss system = %ts cpu (%p%)\n");
+      static std::string fmt(" %ws wall, %us user + %ss system = %ts CPU (%p%)\n");
       return fmt;
     }
 

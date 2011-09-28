@@ -118,7 +118,7 @@ it is destroyed at the end of the scope, its destructor stops the timer and
 displays timing information on the default output stream, <code>std::cout</code>.</p>
 <p>The output of this program, run with a debug build on a circa 2006 desktop processor:</p>
 <p><code>&nbsp;&nbsp;&nbsp; 5.713010s wall, 5.709637s user + 0.000000s system = 
-5.709637s cpu (99.9%)</code></p>
+5.709637s CPU (99.9%)</code></p>
 <p>In other words, this program ran in  <code>5.713010</code> seconds as would be measured by a 
 clock on the wall, the operating system charged it for  <code>5.709637</code> seconds of user CPU 
 time and 0 seconds of system CPU time, the total of these two was  <code>5.709637</code>, and that 
@@ -136,15 +136,16 @@ sets of constructor arguments:</p>
   </tr>
   <tr>
     <td><code><font size="1">t</font></code></td>
-    <td><code><font size="1">5.713010s wall, 5.709637s user + 0.000000s system = 5.709637s cpu (99.9%)</font></code></td>
+    <td><code><font size="1">5.713010s wall, 5.709637s user + 0.000000s system = 5.709637s 
+    CPU (99.9%)</font></code></td>
   </tr>
   <tr>
     <td><code><font size="1">t(std::cerr</font><font size="1">, 2)</font></code></td>
-    <td><code><font size="1">5.71s wall, 5.70s user + 0.00s system = 5.70s cpu (99.9%)</font></code></td>
+    <td><code><font size="1">5.71s wall, 5.70s user + 0.00s system = 5.70s CPU (99.9%)</font></code></td>
   </tr>
   <tr>
     <td><code><font size="1">t(1)</font></code></td>
-    <td><code><font size="1">5.7s wall, 5.7s user + 0.0s system = 5.7s cpu (99.9%)</font></code></td>
+    <td><code><font size="1">5.7s wall, 5.7s user + 0.0s system = 5.7s CPU (99.9%)</font></code></td>
   </tr>
   <tr>
     <td><code><font size="1">t(3, &quot;%w seconds\n&quot;)</font></code></td>
@@ -152,9 +153,9 @@ sets of constructor arguments:</p>
 &nbsp;</font></code></td>
   </tr>
   <tr>
-    <td><code><font size="1">t(&quot;%t</font><font size="1"> sec cpu, %w sec real&quot;)
+    <td><code><font size="1">t(&quot;%t</font><font size="1"> sec CPU, %w sec real&quot;)
     </font> </code></td>
-    <td><code><font size="1">5.709637 sec cpu, 5.713010 sec real</font></code></td>
+    <td><code><font size="1">5.709637 sec CPU, 5.713010 sec real</font></code></td>
   </tr>
 </table>
 <p> The processing of the format string is described <a href="#format">here</a>.</p>
@@ -261,7 +262,7 @@ POSIX.</p>
 <pre><span style="background-color: #D7EEFF">const std::string&amp;  </span><span style="background-color: #D7EEFF"><a name="default_format">default_format</a>();</span></pre>
 <blockquote>
   <p><i>Returns:</i> <code>std::string(&quot; %ws wall, %us user + %ss system = %ts 
-  cpu (%p%)\n&quot;)</code>.</p>
+  CPU (%p%)\n&quot;)</code>.</p>
 </blockquote>
 <pre><span style="background-color: #D7EEFF">std::string </span><a name="format"><span style="background-color: #D7EEFF">format</span></a><span style="background-color: #D7EEFF">(const</span><span style="background-color: #D7EEFF"> </span><a href="#cpu_times"><span style="background-color: #D7EEFF">cpu_times</span></a><span style="background-color: #D7EEFF">&amp; times,
                    short places = </span><span style="background-color: #D7EEFF">default_places</span><span style="background-color: #D7EEFF">,
