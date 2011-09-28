@@ -50,13 +50,15 @@ namespace timer
     void clear() { wall = user = system = 0LL; }
   };
       
-  static const std::string   default_format;
-  static const short         default_places = 6;
+  const short         default_places = 6;
+
+  BOOST_TIMER_DECL
+  const std::string&  default_format();
 
   BOOST_TIMER_DECL
   std::string format(const cpu_times& times,
                      short places = default_places,
-                     const std::string& fmt = default_format); 
+                     const std::string& fmt = default_format()); 
 
 //  cpu_timer  ---------------------------------------------------------------------//
 
@@ -72,7 +74,7 @@ namespace timer
     bool              is_stopped() const           { return m_is_stopped; }
     cpu_times         elapsed() const;  // does not stop()
     std::string       format(int places = default_places,
-                             const std::string& format = default_format) const
+                             const std::string& format = default_format()) const
                                  { return timer::format(elapsed(), places, format); }
     //  actions
     void              start();
@@ -95,11 +97,11 @@ namespace timer
     //  streams are not actually used.
 
     explicit auto_cpu_timer(short places = default_places,
-                            const std::string& format = default_format);
+                            const std::string& format = default_format());
     explicit auto_cpu_timer(const std::string& format);
     explicit auto_cpu_timer(std::ostream& os,
                             short places = default_places,
-                            const std::string& format = default_format)
+                            const std::string& format = default_format())
                                    : m_places(places), m_os(os), m_format(format)
                                    { start(); }
     auto_cpu_timer(std::ostream& os, const std::string& format)

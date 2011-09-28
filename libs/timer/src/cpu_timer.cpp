@@ -107,6 +107,13 @@ namespace boost
   namespace timer
   {
 
+    BOOST_TIMER_DECL
+    const std::string&  default_format()
+    {
+      static std::string fmt(" %ws wall, %us user + %ss system = %ts cpu (%p%)\n");
+      return fmt;
+    }
+
     //  cpu_timer  ---------------------------------------------------------------------//
 
     void cpu_timer::start()

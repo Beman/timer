@@ -34,16 +34,11 @@ namespace
 {
   //  cpu_timer helpers  ---------------------------------------------------------------//
 
-  const char * default_format =
-    " %ws wall, %us user + %ss system = %ts cpu (%p%)\n";
-
   void show_time(const cpu_times& times,
     std::ostream& os, const std::string& fmt, short places)
   //  NOTE WELL: Will truncate least-significant digits to LDBL_DIG, which may
   //  be as low as 10, although will be 15 for many common platforms.
   {
-    const char* format (fmt.empty() ? default_format : fmt.c_str());
-
     if (places > 9)
       places = 9;
     else if (places < 0)
@@ -59,7 +54,7 @@ namespace
     long double wall_sec = times.wall / sec;
     long double total_sec = total / sec;
 
-    for (; *format; ++format)
+    for (const char* format = fmt.c_str(); *format; ++format)
     {
       if (*format != '%' || !*(format+1) || !std::strchr("wustp", *(format+1)))
         os << *format;  // anything except % followed by a valid format character
