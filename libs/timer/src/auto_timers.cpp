@@ -16,7 +16,6 @@
 #include <string>
 #include <sstream>
 #include <cstring>
-#include <cassert>
 
 using boost::timer::nanosecond_type;
 using boost::timer::cpu_times;
@@ -84,9 +83,6 @@ namespace
             os << "n/a";
           os.precision(places);
           break;
-        default:
-          assert(0);  // program logic error in "// anything except..." if stmt 
-                      // above; no user error should ever fire this assert
         }
       }
     }

@@ -74,7 +74,7 @@ namespace
     }
     else
     {
-      current.wall = current.system = current.user = boost::timer::nanosecond_type(-1);
+      current.system = current.user = boost::timer::nanosecond_type(-1);
     }
 # else
     tms tm;
