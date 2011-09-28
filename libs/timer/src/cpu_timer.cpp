@@ -5,17 +5,16 @@
 //  Distributed under the Boost Software License, Version 1.0. (See accompanying
 //  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-//  See http://www.boost.org/libs/system for documentation.
+//  See http://www.boost.org/libs/timer for documentation.
 
 //--------------------------------------------------------------------------------------//
 
-// define BOOST_TIMER_SOURCE so that <boost/system/config.hpp> knows
+// define BOOST_TIMER_SOURCE so that <boost/timer/config.hpp> knows
 // the library is being built (possibly exporting rather than importing code)
 #define BOOST_TIMER_SOURCE
 
 #include <boost/timer/timer.hpp>
 #include <boost/chrono/chrono.hpp>
-#include <boost/system/system_error.hpp>
 #include <boost/io/ios_state.hpp>
 #include <boost/throw_exception.hpp>
 #include <boost/cerrno.hpp>
@@ -87,10 +86,11 @@ namespace
     {
       current.system = boost::timer::nanosecond_type(tm.tms_stime + tm.tms_cstime);
       current.user = boost::timer::nanosecond_type(tm.tms_utime + tm.tms_cutime);
-      if (tick_factor() != -1)
+      boost::int_least64_t factor;
+      if ((factor = tick_factor()) != -1)
       {
-        current.user *= tick_factor();
-        current.system *= tick_factor();
+        current.user *= factor);
+        current.system *= factor);
       }
       else
       {
