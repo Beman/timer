@@ -507,7 +507,8 @@ escapes. <i>--end note</i>]</p>
 <blockquote>
   <p><i>Effects: </i>As if:</p>
   <blockquote>
-    <pre>m_os &lt;&lt; timer::format(stop(), m_places, m_format);</pre>
+    <pre>m_os &lt;&lt; timer::format(stop(), m_places, m_format);
+resume();</pre>
   </blockquote>
 
   <p>[<i>Note:</i> <code>stop()</code> is called because doing I/O while the 
@@ -523,7 +524,7 @@ escapes. <i>--end note</i>]</p>
 
   <p dir="ltr">The resolution of a clock, and thus timers built on that clock, 
   is the minimum period time that can be measured. The program <code>
-  <a href="../example/cpu_timer_info.cpp">cpu_timer_info.cpp</a></code> measures 
+  <a href="../test/cpu_timer_info.cpp">cpu_timer_info.cpp</a></code> measures 
   the resolution of <code>cpu_timer</code>.</p>
 
   <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111">

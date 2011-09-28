@@ -113,6 +113,7 @@ namespace boost
     void auto_cpu_timer::report()
     {
         show_time(stop(), m_os, m_format, m_places);
+        resume();
     }
 
     auto_cpu_timer::~auto_cpu_timer()
