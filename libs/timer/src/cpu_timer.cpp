@@ -89,8 +89,8 @@ namespace
       boost::int_least64_t factor;
       if ((factor = tick_factor()) != -1)
       {
-        current.user *= factor);
-        current.system *= factor);
+        current.user *= factor;
+        current.system *= factor;
       }
       else
       {
