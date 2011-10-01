@@ -589,13 +589,31 @@ resume();</pre>
 
   <h3><a name="Other-concerns">Other concerns</a></h3>
 
-  <p>Wall-clock time is subject to many outside influences, such as the impact 
-  of other processes, and may even run backwards on some systems, such as when 
-  the clock is reset such as during a daylight savings time transition.</p>
+  <p>Wall-clock timings are subject to many outside influences, such as the impact 
+  of other processes.</p>
 
-  <p>Timings of debug builds are often significantly (I.E several times) slower 
-  than release builds, both because of the lack of compiler optimization and 
-  because libraries often contain very expensive error checks on debug builds.</p>
+  <blockquote>
+
+  <p><code>cpu_timer</code> and <code>auto_cpu_timer</code> obtain Wall-clock 
+  timings from Boost.Chrono's <code>high_resolution_clock</code>. On Intel 
+  compatible CPU's running Windows, Linux, and Mac OS X, this is a &quot;steady 
+  clock&quot;, but may not be steady on other platforms. <code>
+  <a href="../test/cpu_timer_info.cpp">cpu_timer_info.cpp</a></code> reports 
+  whether or not the <code>high_resolution_clock</code> is steady on a 
+  particular platform.</p>
+
+  <p><i><b><a name="Steady-clocks">Steady clocks</a></b></i> are defined by the 
+  C++11 standard as clocks for which values never decrease as physical time 
+  advances and for which values advance at a steady rate relative to real time. 
+  That is, the clock may not be adjusted. Clocks that are steady never run 
+  backwards, even when the operating system's clock is reset backwards such as 
+  during a daylight saving time transition.</p>
+
+  </blockquote>
+
+  <p>Timings of debug builds are often several times slower 
+  than release builds, because  compiler optimization is turned off and 
+  because libraries often supply very expensive error checks on debug builds.</p>
 
   <p>Synthetic benchmark code may be optimized way by release builds. It may be 
   necessary to inspect generated code to verify this isn't happening.</p>
@@ -604,12 +622,16 @@ resume();</pre>
 
   <p dir="ltr">Think about what is important to your application. For a 
   production process, the wall-clock time may be what is most important. For 
-  studying the efficiency of code, CPU time is often a much better measure.</p>
+  studying the efficiency of code, total CPU time (user + system) is often a much better measure.</p>
 
-  <p dir="ltr">My personal preference is to never trust timings unless they are 
+  <p dir="ltr">A useful recommendation is to never trust timings unless they are 
   (1) at least 100 times longer than the CPU time resolution, (2) run multiple 
   times, and (3) run on release builds. And results that are too good to be true 
   need to be further investigate.</p>
+
+  <p>Shared libraries (DLL's) may incur extra time delays, including expensive 
+  disk accesses, the first time a timer or other function is called. If that 
+  would be misleading, static linking should be considered.</p>
 
   <h2><a name="Acknowledgements">Acknowledgements</a></h2>
   <p>Comments and suggestions came from Greg Rubino, Dave Abrahams, Vicente 
@@ -621,7 +643,7 @@ resume();</pre>
 
 <hr>
 <p><font size="2">Last revised:
-<!--webbot bot="Timestamp" s-type="EDITED" s-format="%d %B, %Y" startspan -->28 September, 2011<!--webbot bot="Timestamp" endspan i-checksum="39346" --></font></p>
+<!--webbot bot="Timestamp" s-type="EDITED" s-format="%d %B, %Y" startspan -->30 September, 2011<!--webbot bot="Timestamp" endspan i-checksum="39331" --></font></p>
 <p><font size="2">© Copyright Beman Dawes, 2006, 2011</font></p>
 <p><font size="2">Distributed under the Boost Software License, Version 1.0.  See <a href="http://www.boost.org/LICENSE_1_0.txt">www.boost.org/ LICENSE_1_0.txt</a></font></p>
 
