@@ -106,12 +106,12 @@ namespace
     cout << "  t.elapsed().wall is " << t.elapsed().wall << endl;
     cout << "  t.elapsed().wall/1000000000.0L is "
          << t.elapsed().wall/1000000000.0L << endl;
-    cout << "  c_t_elapsed * 1.02L is "
-         << c_t_elapsed * 1.02L << endl;
+    cout << "  c_t_elapsed * 1.05L is "
+         << c_t_elapsed * 1.05L << endl;
 
     BOOST_TEST(t.elapsed().wall >= 1000000000);
 
-    BOOST_TEST(t.elapsed().wall / 1000000000.0L <= c_t_elapsed * 1.02L); 
+    BOOST_TEST(t.elapsed().wall / 1000000000.0L <= c_t_elapsed * 1.05L); 
 
     cout << "  C library consistency test complete" << endl; 
   }
