@@ -208,8 +208,7 @@ library</i>. </p>
   <tr>
     <td bgcolor="#D7EEFF">
     <blockquote>
-      <pre>
-namespace boost
+      <pre>namespace boost
 {
   namespace timer
   {
@@ -358,6 +357,10 @@ GetProcessTimes()</code> on Windows.</p>
       <a href="#cpu_timer-ctor">cpu_timer</a>() noexcept;
      <a href="#cpu_timer-dtor">~cpu_timer</a>() noexcept {}
 
+      //  compiler generated
+      cpu_timer(const cpu_timer&amp;) = default;
+      cpu_timer&amp; operator=(const cpu_timer&amp;) = default;
+
       //  observers
       bool              <a href="#is_stopped">is_stopped</a>() const noexcept;
       cpu_times         <a href="#elapsed">elapsed</a>() const noexcept;
@@ -465,6 +468,9 @@ on destruction.</p>
       <a href="#auto_cpu_timer-4">auto_cpu_timer</a>(std::ostream&amp; os, const std::string&amp; format);
 
      <a href="#auto_cpu_timer-destructor">~auto_cpu_timer</a>() noexcept;
+
+      cpu_timer(const cpu_timer&amp;) = default;
+      cpu_timer&amp; operator=(const cpu_timer&amp;) = default;
 
       void            <a href="#report">report</a>();
 
